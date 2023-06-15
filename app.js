@@ -37,6 +37,12 @@ class App {
         this.readFile(file);
       }
     });
+
+    // Extract highlights button
+    const extractButton = document.querySelector("#extract");
+    extractButton.addEventListener("click", () => {
+      this.extractHighlights()
+    });
   }
 
   readFile(file) {
@@ -56,6 +62,29 @@ class App {
     this.uploads.push(upload)
     document.querySelector("#preview").innerText += upload.text;
     console.log(`File '${upload.name}' imported. ${this.uploads.length} uploads in memory`);
+  }
+
+  extractHighlights() {
+    // TODO: WIP
+    const text = this.uploads[0].text;
+    console.log(text);
+    const highlights = text.trim().split(/==========/);
+    highlights.forEach((highlight) => {
+      this.createHighlight(highlight);
+    });
+  }
+
+  createHighlight(text) {
+    // TODO: WIP
+    console.log("creating highlight")
+    if (!text) return null
+    const lines = text.trim().split(/\r?\n/)
+    console.log(lines)
+    const regexTitleAuthor = /(?<title>[\S ]+) (?:- (?<author_alt>[\w ]+)|\((?<author>[^(]+)\))/
+    // this.highlights.push(lines[0].match(regexTitleAuthor));
+    console.log(lines[0].match(regexTitleAuthor).groups);
+    const regexMetadata = /Your (?<type>\w+) on page (?<page>\d*)-?(?:\d*)(?: \| location (?<location_start>\d+)-?(?<location_end>\d*))? \| Added on (?<date>[\S ]*)/
+    console.log(lines[1].match(regexMetadata).groups);
   }
 }
 
