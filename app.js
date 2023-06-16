@@ -40,6 +40,12 @@ class App {
       }
     });
 
+    // Reset button
+    const resetButton = document.querySelector("#reset");
+    resetButton.addEventListener("click", () => {
+      this.reset();
+    });
+
     // Extract highlights button
     const extractButton = document.querySelector("#extract");
     extractButton.addEventListener("click", () => {
@@ -47,24 +53,27 @@ class App {
     });
   }
 
+  reset() {
+    this.uploads = [];
+    this.highlights = [];
+    this.displayUploads();
+    this.displayHighlights();
+    this.printAppState();
+  }
+
   readFile(file) {
     const reader = new FileReader();
     reader.addEventListener("load", (event) => {
-      const result = event.target.result;
       const upload = {
-        name: file.name,
-        text: result
+        filename: file.name,
+        text: event.target.result
       };
-      this.updateUploads(upload);
+      this.uploads.push(upload)
+      this.displayUploads();
+      console.log(`File '${upload.filename}' imported`);
       this.extractHighlights(); // TODO: Remove for production
     });
     reader.readAsText(file);
-  }
-
-  updateUploads(upload) {
-    this.uploads.push(upload)
-    document.querySelector("#preview").innerText += upload.text;
-    console.log(`File '${upload.name}' imported. ${this.uploads.length} uploads in memory`);
   }
 
   extractHighlights() {
@@ -73,14 +82,61 @@ class App {
       console.log(`${clippings.length} clippings in uploads`)
       clippings.forEach((clipping) => {
         if (!clipping) return null
-        const regex = /(?<title>[\S ]+) (?:- (?<author_alt>[\w ]+)|\((?<author>[^(]+)\))\s*- Your (?<type>\w+) on page (?<page>\d*)-?(?:\d*)(?: \| location (?<location_start>\d+)-?(?<location_end>\d*))? \| Added on (?<date>[\S ]*)\s*(?<text>.*)\s*/
+        const regex = /(?<title>[\S ]+) (?:- (?<authorAlt>[\w ]+)|\((?<author>[^(]+)\))\s*- Your (?<type>\w+) on page (?<page>\d*)-?(?:\d*)(?: \| location (?<locationStart>\d+)-?(?<locationEnd>\d*))? \| Added on (?<date>[\S ]*)\s*(?<text>.*)\s*/
         const highlight = clipping.match(regex).groups
         highlight.original = clipping
         this.highlights.push(highlight);
       });
-      console.log(`${this.highlights.length} highlights in memory`)
+      this.displayHighlights();
+      this.displayBookList()
+      this.printAppState();
     });
   }
+
+  // DISPLAY
+
+  displayUploads() {
+    const uploadsContainer = document.querySelector("#preview");
+
+    // Remove previous uploads
+    uploadsContainer.innerHTML = "";
+
+    // Insert uploads contained in instance variable as text
+    this.uploads.forEach((upload) => {
+      uploadsContainer.innerText = upload.text;
+    });
+  }
+
+  displayHighlights() {
+    const template = document.querySelector("#highlight-template");
+    const highlightsContainer = document.querySelector("#result");
+
+    // Remove previous highlights
+    highlightsContainer.innerHTML = "";
+
+    // Insert highlights contained in instance variable using content template
+    this.highlights.forEach((highlight) => {
+      const clone = template.content.cloneNode(true);
+      clone.querySelector(".highlight").textContent = highlight.text;
+      clone.querySelector(".metadata").textContent = `${highlight.title}, ${highlight.author} (page ${highlight.page}, loc ${highlight.locationStart}, on ${highlight.date})`; // TODO: 'page 2, loc 26, 14 August 2022'
+      highlightsContainer.appendChild(clone);
+    });
+  }
+
+  displayBookList() {
+    const template = document.querySelector("#booklist-template");
+    const booksContainer = document.querySelector("#booklist");
+
+    // TODO: WIP
+
+  }
+
+  // DEBUGGING
+
+  printAppState() {
+    console.log(`[State] ${this.uploads.length} uploads, ${this.highlights.length} highlights`)
+  }
+
 }
 
 const app = new App

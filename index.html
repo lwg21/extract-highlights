@@ -10,10 +10,23 @@
 <body>
   <h2>Highlight extractor</h1>
   <div id="drop-area">Drag-and-drop area</div>
+  <button id="reset">Reset</button>
   <button id="extract">Extract highlights</button>
+  <div id="booklist">
+    <span id="booklist-title"></span>
+    <ul></ul>
+  </div>
   <div class="flex">
     <div id="preview" accept=".txt, .md"></div>
     <div id="result"></div>
   </div>
+  <template id="highlight-template">
+    <span class="separator">---</span>
+    <div class="highlight"></div>
+    <div class="metadata"></div>
+  </template>
+  <template id="booklist-template">
+    <li class="book"></li>
+  </template>
 </body>
 </html>
