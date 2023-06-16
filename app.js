@@ -1,10 +1,12 @@
 class App {
 
-  uploads = []
-  highlights = []
+  // Initialise instance variables
+  uploads = [] // Container for raw strings from uploaded 'my clippings.txt' files
+  highlights = [] // Container for bjects representing individual highlights
 
+  // Run upon load the of DOM, initialises event listeners
   connect() {
-    // Check if app.js is connected upon HTML load
+    // Confirms whether app.js is connected
     document.addEventListener("DOMContentLoaded", () => {
       console.log("app.js connected")
     });
@@ -54,6 +56,7 @@ class App {
         text: result
       };
       this.updateUploads(upload);
+      this.extractHighlights(); // TODO: Remove for production
     });
     reader.readAsText(file);
   }
@@ -65,26 +68,18 @@ class App {
   }
 
   extractHighlights() {
-    // TODO: WIP
-    const text = this.uploads[0].text;
-    console.log(text);
-    const highlights = text.trim().split(/==========/);
-    highlights.forEach((highlight) => {
-      this.createHighlight(highlight);
+    this.uploads.forEach((upload) => {
+      const clippings = upload.text.trim().split(/\s*==========\s*/);
+      console.log(`${clippings.length} clippings in uploads`)
+      clippings.forEach((clipping) => {
+        if (!clipping) return null
+        const regex = /(?<title>[\S ]+) (?:- (?<author_alt>[\w ]+)|\((?<author>[^(]+)\))\s*- Your (?<type>\w+) on page (?<page>\d*)-?(?:\d*)(?: \| location (?<location_start>\d+)-?(?<location_end>\d*))? \| Added on (?<date>[\S ]*)\s*(?<text>.*)\s*/
+        const highlight = clipping.match(regex).groups
+        highlight.original = clipping
+        this.highlights.push(highlight);
+      });
+      console.log(`${this.highlights.length} highlights in memory`)
     });
-  }
-
-  createHighlight(text) {
-    // TODO: WIP
-    console.log("creating highlight")
-    if (!text) return null
-    const lines = text.trim().split(/\r?\n/)
-    console.log(lines)
-    const regexTitleAuthor = /(?<title>[\S ]+) (?:- (?<author_alt>[\w ]+)|\((?<author>[^(]+)\))/
-    // this.highlights.push(lines[0].match(regexTitleAuthor));
-    console.log(lines[0].match(regexTitleAuthor).groups);
-    const regexMetadata = /Your (?<type>\w+) on page (?<page>\d*)-?(?:\d*)(?: \| location (?<location_start>\d+)-?(?<location_end>\d*))? \| Added on (?<date>[\S ]*)/
-    console.log(lines[1].match(regexMetadata).groups);
   }
 }
 
