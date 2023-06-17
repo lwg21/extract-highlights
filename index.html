@@ -12,13 +12,23 @@
   <div id="drop-area">Drag-and-drop area</div>
   <button id="reset">Reset</button>
   <button id="extract">Extract highlights</button>
-  <div id="booklist">
-    <span id="booklist-title"></span>
-    <ul></ul>
-  </div>
   <div class="flex">
-    <div id="preview" accept=".txt, .md"></div>
-    <div id="result"></div>
+    <div id="booklist">
+      <h3 id="booklist-title"></h3>
+      <ul></ul>
+    </div>
+    <div id="preview">
+      <h3>Original</h3>
+      <button class="copy-to-clipboard">Copy</button>
+      <button class="download">Download</button>
+      <div id="preview-content" accept=".txt, .md"></div>
+    </div>
+    <div id="result">
+      <h3>Modified</h3>
+      <button class="copy-to-clipboard">Copy</button>
+      <button class="download">Download</button>
+      <div id="result-content"></div>
+    </div>
   </div>
   <template id="highlight-template">
     <span class="separator">---</span>

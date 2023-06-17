@@ -2,7 +2,9 @@ class App {
 
   // Initialise instance variables
   uploads = [] // Container for raw strings from uploaded 'my clippings.txt' files
-  highlights = [] // Container for bjects representing individual highlights
+  highlights = [] // Container for objects representing individual highlights
+  books = [] // Container for distinct books
+  // selectedBooks = []
 
   // Run upon load the of DOM, initialises event listeners
   connect() {
@@ -56,8 +58,10 @@ class App {
   reset() {
     this.uploads = [];
     this.highlights = [];
+    this.books = [];
     this.displayUploads();
     this.displayHighlights();
+    this.displayBooks();
     this.printAppState();
   }
 
@@ -87,16 +91,38 @@ class App {
         highlight.original = clipping
         this.highlights.push(highlight);
       });
+      this.extractBooks();
       this.displayHighlights();
-      this.displayBookList()
+      this.displayBooks()
       this.printAppState();
     });
+  }
+
+  extractBooks() {
+    this.books = [...new Set(this.highlights.map((highlight) => highlight.title))].sort()
+  }
+
+  copyToClipboard(text) {
+    window.navigator.clipboard.writeText(text);
+    console.log(`Copied to clipboard:\n${text}`);
+  }
+
+  downloadFile(filename, text) {
+    // Generate download url for data
+    const data = new Blob([text], {type: "text/plain"}); // Encoding can be specified here: "text/plain;charset=utf-8"
+    const url = window.URL.createObjectURL(data);
+
+    // Generating download link and activate download
+    const link = document.createElement("a");
+    link.setAttribute("href", url)
+    link.setAttribute("download", filename)
+    link.click()
   }
 
   // DISPLAY
 
   displayUploads() {
-    const uploadsContainer = document.querySelector("#preview");
+    const uploadsContainer = document.querySelector("#preview-content");
 
     // Remove previous uploads
     uploadsContainer.innerHTML = "";
@@ -109,7 +135,7 @@ class App {
 
   displayHighlights() {
     const template = document.querySelector("#highlight-template");
-    const highlightsContainer = document.querySelector("#result");
+    const highlightsContainer = document.querySelector("#result-content");
 
     // Remove previous highlights
     highlightsContainer.innerHTML = "";
@@ -123,12 +149,27 @@ class App {
     });
   }
 
-  displayBookList() {
+  displayBooks() {
     const template = document.querySelector("#booklist-template");
     const booksContainer = document.querySelector("#booklist");
 
-    // TODO: WIP
+    // Remove previous books
+    booksContainer.innerHTML = "";
 
+    // Insert total number of books
+    const allBooksSummary = document.createElement("h3");
+    allBooksSummary.innerText = `All books (${this.books.length})`;
+    booksContainer.appendChild(allBooksSummary);
+    console.log(allBooksSummary);
+
+    // Insert list of books
+    this.books.forEach((book) => {
+      const clone = template.content.cloneNode(true);
+      clone.querySelector("li").textContent = book;
+      booksContainer.appendChild(clone);
+    });
+
+    // TODO: WIP
   }
 
   // DEBUGGING

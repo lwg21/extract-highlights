@@ -5,11 +5,11 @@
 
 #preview {
   background-color: lightblue;
-  max-width: 50%;
+  width: 50%;
 }
 #result {
   background-color: salmon;
-  max-width: 50%;
+  width: 50%;
 }
 
 .flex {
