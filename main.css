@@ -3,18 +3,14 @@
   height: 80px;
 }
 
-#source {
+#view {
   background-color: lightblue;
-  width: 50%;
-}
-#highlights-imported {
-  background-color: mediumaquamarine;
-  width: 50%;
+  width: 70%;
 }
 
-#highlights-modified {
-  background-color: salmon;
-  width: 50%;
+#booklist {
+  background-color: ghostwhite;
+  width: 30%;
 }
 
 .flex {

@@ -10,30 +10,19 @@
 <body>
   <h2>Highlight extractor</h1>
   <button id="reset">Reset</button>
-  <button id="extract">Extract highlights</button>
+  <button id="view-source">View source</button>
+  <button id="view-highlights">View highlights</button>
   <div id="drop-area">Drag-and-drop area</div>
   <div class="flex">
     <div id="booklist">
       <h3 id="booklist-title">All books</h3>
       <ul></ul>
     </div>
-    <div id="source">
-      <h3 id="source-title">Source</h3>
+    <div id="view">
+      <h3 id="view-title">Source</h3>
       <button class="copy-to-clipboard">Copy</button>
       <button class="download">Download</button>
-      <div id="source-content" accept=".txt, .md"></div>
-    </div>
-    <div id="highlights-imported">
-      <h3>Original</h3>
-      <button class="copy-to-clipboard">Copy</button>
-      <button class="download">Download</button>
-      <div id="highlights-imported-content"></div>
-    </div>
-    <div id="highlights-modified">
-      <h3>Modified</h3>
-      <button class="copy-to-clipboard">Copy</button>
-      <button class="download">Download</button>
-      <div id="highlights-modified-content"></div>
+      <div id="view-content"></div>
     </div>
   </div>
   <template id="highlight-template">

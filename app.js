@@ -48,10 +48,16 @@ class App {
       this.reset();
     });
 
-    // Extract highlights button
-    const extractButton = document.querySelector("#extract");
-    extractButton.addEventListener("click", () => {
-      this.extractHighlights()
+    // View source button
+    const viewSourceButton = document.querySelector("#view-source");
+    viewSourceButton.addEventListener("click", () => {
+      this.viewSource();
+    });
+
+    // View highlights button
+    const viewHighlightsButton = document.querySelector("#view-highlights");
+    viewHighlightsButton.addEventListener("click", () => {
+      this.viewHighlights();
     });
   }
 
@@ -59,10 +65,9 @@ class App {
     this.uploads = [];
     this.highlights = [];
     this.books = [];
-    this.displaySource();
-    this.displayHighlights();
-    this.displayModified();
-    this.displayBooks();
+    this.viewSource();
+    this.viewHighlights();
+    this.viewBooks();
     this.printAppState();
   }
 
@@ -74,11 +79,18 @@ class App {
         text: event.target.result
       };
       this.uploads.push(upload)
-      this.displaySource();
+      this.viewSource();
       console.log(`File '${upload.filename}' imported`);
-      this.extractHighlights(); // TODO: Remove for production
+      this.extractData();
     });
     reader.readAsText(file);
+  }
+
+  extractData() {
+    this.extractHighlights(); // TODO: Remove for production
+    this.extractBooks();
+    this.viewBooks()
+    this.printAppState();
   }
 
   extractHighlights() {
@@ -92,11 +104,6 @@ class App {
         highlight.original = clipping
         this.highlights.push(highlight);
       });
-      this.extractBooks();
-      this.displayHighlights();
-      this.displayModified();
-      this.displayBooks()
-      this.printAppState();
     });
   }
 
@@ -121,58 +128,40 @@ class App {
     link.click()
   }
 
-  // DISPLAY
+  // VIEW
 
-  displaySource() {
-    const sourceContainer = document.querySelector("#source-content");
+  viewSource() {
+    const viewContainer = document.querySelector("#view-content");
 
-    // Remove previous uploads
-    sourceContainer.innerHTML = "";
+    // Clear view
+    viewContainer.innerHTML = "";
 
     // Insert uploads contained in instance variable as text
-    // this.uploads.forEach((upload) => {
-    //   sourceContainer.innerText += upload.text;
-    // });
-    sourceContainer.innerText += this.uploads[0].text;
+    viewContainer.innerText += this.uploads[0].text;
 
     // Update title with number of files
     const numberUploads = this.uploads.length;
-    document.querySelector("#source-title").innerText = `Source (${numberUploads} file${numberUploads > 1 ? 's' : ''})`;
+    document.querySelector("#view-title").innerText = `Source (${numberUploads} file${numberUploads > 1 ? 's' : ''})`;
   }
 
-  displayHighlights() {
+  viewHighlights(highlights = this.highlights) {
     const template = document.querySelector("#highlight-template");
-    const highlightsContainer = document.querySelector("#highlights-imported-content");
+    const viewContainer = document.querySelector("#view-content");
 
-    // Remove previous highlights
-    highlightsContainer.innerHTML = "";
+    // Clear view
+    viewContainer.innerHTML = "";
 
     // Insert highlights contained in instance variable using content template
-    this.highlights.slice(0,200).forEach((highlight) => {
+    highlights.slice(0,101).forEach((highlight) => {
       const clone = template.content.cloneNode(true);
       clone.querySelector(".highlight").textContent = highlight.original;
+      // clone.querySelector(".highlight").textContent = `${highlight.text}\n\n${highlight.title}, ${highlight.author || highlight.authorAlt} (page ${highlight.page}, loc ${highlight.locationStart}, on ${highlight.date})`;
       clone.querySelector(".separator").textContent = '==========';
-      highlightsContainer.appendChild(clone);
+      viewContainer.appendChild(clone);
     });
   }
 
-  displayModified() {
-    const template = document.querySelector("#highlight-template");
-    const highlightsContainer = document.querySelector("#highlights-modified-content");
-
-    // Remove previous highlights
-    highlightsContainer.innerHTML = "";
-
-    // Insert highlights contained in instance variable using content template
-    this.highlights.slice(0,200).forEach((highlight) => {
-      const clone = template.content.cloneNode(true);
-      clone.querySelector(".highlight").textContent = `${highlight.text}\n\n${highlight.title}, ${highlight.author || highlight.authorAlt} (page ${highlight.page}, loc ${highlight.locationStart}, on ${highlight.date})`; // TODO: 'page 2, loc 26, 14 August 2022'
-      clone.querySelector(".separator").textContent = '==========';
-      highlightsContainer.appendChild(clone);
-    });
-  }
-
-  displayBooks() {
+  viewBooks() {
     const template = document.querySelector("#booklist-template");
     const booksContainer = document.querySelector("#booklist");
 
@@ -193,7 +182,8 @@ class App {
     });
   }
 
-  // DEBUGGING
+
+  // UTILITIES
 
   printAppState() {
     console.log(`[State] ${this.uploads.length} uploads, ${this.highlights.length} highlights`)
