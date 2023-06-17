@@ -15,3 +15,8 @@
 .flex {
   display: flex;
 }
+
+li {
+  text-indent: 0;
+  list-style: none;
+}
