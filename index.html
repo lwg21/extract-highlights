@@ -17,23 +17,28 @@
       <h3 id="booklist-title">All books</h3>
       <ul></ul>
     </div>
-    <div id="preview">
+    <div id="source">
+      <h3 id="source-title">Source</h3>
+      <button class="copy-to-clipboard">Copy</button>
+      <button class="download">Download</button>
+      <div id="source-content" accept=".txt, .md"></div>
+    </div>
+    <div id="highlights-imported">
       <h3>Original</h3>
       <button class="copy-to-clipboard">Copy</button>
       <button class="download">Download</button>
-      <div id="preview-content" accept=".txt, .md"></div>
+      <div id="highlights-imported-content"></div>
     </div>
-    <div id="result">
+    <div id="highlights-modified">
       <h3>Modified</h3>
       <button class="copy-to-clipboard">Copy</button>
       <button class="download">Download</button>
-      <div id="result-content"></div>
+      <div id="highlights-modified-content"></div>
     </div>
   </div>
   <template id="highlight-template">
-    <span class="separator">---</span>
     <div class="highlight"></div>
-    <div class="metadata"></div>
+    <div class="separator"></div>
   </template>
   <template id="booklist-template">
     <li class="book"></li>

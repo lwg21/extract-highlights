@@ -3,11 +3,16 @@
   height: 80px;
 }
 
-#preview {
+#source {
   background-color: lightblue;
   width: 50%;
 }
-#result {
+#highlights-imported {
+  background-color: mediumaquamarine;
+  width: 50%;
+}
+
+#highlights-modified {
   background-color: salmon;
   width: 50%;
 }
@@ -19,4 +24,13 @@
 li {
   text-indent: 0;
   list-style: none;
+}
+
+li:hover {
+  background-color: moccasin;
+  cursor: pointer;
+}
+
+.highlight {
+  white-space: pre-wrap;
 }
