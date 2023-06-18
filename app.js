@@ -65,9 +65,9 @@ class App {
     this.uploads = [];
     this.highlights = [];
     this.books = [];
-    this.viewSource();
-    this.viewHighlights();
     this.viewBooks();
+    // this.viewSource();
+    this.viewHighlights();
     this.printAppState();
   }
 
@@ -159,6 +159,13 @@ class App {
       clone.querySelector(".separator").textContent = '==========';
       viewContainer.appendChild(clone);
     });
+
+    // Update title with number of highlights
+    this.viewTitle(`${highlights.length} highlight${highlights.length > 1 ? 's' : ''}`);
+  }
+
+  viewTitle(title, description = '') {
+    document.querySelector("#view-title").innerText = `${title}${description ? ` (${description})` : ''}`;
   }
 
   viewBooks() {
@@ -178,10 +185,17 @@ class App {
     this.books.forEach((book) => {
       const clone = template.content.cloneNode(true);
       clone.querySelector("li").textContent = book;
+      clone.querySelector("li").addEventListener("click", () => {
+        this.viewHighlightsOfBook(book);
+      });
       booksContainer.appendChild(clone);
     });
   }
 
+  viewHighlightsOfBook(book) {
+    const highlights = this.highlights.filter(highlight => highlight.title === book);
+    this.viewHighlights(highlights);
+  }
 
   // UTILITIES
 
