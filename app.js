@@ -4,7 +4,7 @@ class App {
   uploads = [] // Container for raw strings from uploaded 'my clippings.txt' files
   highlights = [] // Container for objects representing individual highlights
   books = [] // Container for distinct books
-  // selectedBooks = []
+  highlightId = 0;
 
   // Run upon load the of DOM, initialises event listeners
   connect() {
@@ -102,6 +102,7 @@ class App {
         const regex = /(?<title>[\S ]+) (?:- (?<authorAlt>[\w ]+)|\((?<author>[^(]+)\))\s*- Your (?<type>\w+) on page (?<page>\d*)-?(?:\d*)(?: \| location (?<locationStart>\d+)-?(?<locationEnd>\d*))? \| Added on (?<date>[\S ]*)\s*(?<text>.*)\s*/
         const highlight = clipping.match(regex).groups
         highlight.original = clipping
+        highlight.id = this.assignHighlightId();
         this.highlights.push(highlight);
       });
     });
@@ -128,6 +129,11 @@ class App {
     link.click()
   }
 
+  assignHighlightId() {
+    this.highlightId += 1;
+    return this.highlightId;
+  }
+
   // VIEW
 
   viewSource() {
@@ -152,9 +158,11 @@ class App {
     viewContainer.innerHTML = "";
 
     // Insert highlights contained in instance variable using content template
-    highlights.slice(0,101).forEach((highlight) => {
+    highlights.forEach((highlight) => {
       const clone = template.content.cloneNode(true);
-      clone.querySelector(".highlight").textContent = highlight.original;
+      const highlightElement = clone.querySelector(".highlight");
+      highlightElement.textContent = highlight.original;
+      highlightElement.setAttribute("data-id", highlight.id);
       // clone.querySelector(".highlight").textContent = `${highlight.text}\n\n${highlight.title}, ${highlight.author || highlight.authorAlt} (page ${highlight.page}, loc ${highlight.locationStart}, on ${highlight.date})`;
       clone.querySelector(".separator").textContent = '==========';
       viewContainer.appendChild(clone);
