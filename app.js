@@ -161,20 +161,27 @@ class App {
 
     // Insert highlights contained in instance variable using content template
     highlights.forEach((highlight) => {
+      // Populate template with highlight data
       const clone = template.content.cloneNode(true);
       clone.querySelector(".highlight").setAttribute("data-id", highlight.id);
       clone.querySelector(".highlight-metadata").textContent = highlight.metadata;
       clone.querySelector(".highlight-text").textContent = highlight.text;
       clone.querySelector(".separator").textContent = '==========';
-      viewContainer.appendChild(clone);
 
-      // highlightText.addEventListener("click", (event) => {
-      //   event.target.setAttribute("contentEditable", "true");
-      // });
-      // highlightText.addEventListener("blur", (event) => {
-        //   event.target.setAttribute("contentEditable", "false");
+      // Set event listeners to highlight actions
+      clone.querySelector(".action-copy").addEventListener("click", (event) => {
+        const id = event.target.closest(".highlight").dataset.id;
+        window.navigator.clipboard.writeText(this.highlights.find(highlight => highlight.id === Number.parseInt(id, 10)).text);
       });
-      // clone.querySelector(".highlight").textContent = `${highlight.text}\n\n${highlight.title}, ${highlight.author || highlight.authorAlt} (page ${highlight.page}, loc ${highlight.locationStart}, on ${highlight.date})`;
+
+      clone.querySelector(".action-edit").addEventListener("click", (event) => {
+        event.target.innerText = 'Save';
+        event.target.parentElement.querySelector(".highlight-text").setAttribute("contentEditable", "true");
+      });
+
+      // Insert highlight into DOM
+      viewContainer.appendChild(clone);
+    });
 
     // Update title with number of highlights
     this.viewTitle(`${highlights.length} highlight${highlights.length > 1 ? 's' : ''}`);
