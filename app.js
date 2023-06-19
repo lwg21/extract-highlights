@@ -95,7 +95,6 @@ class App {
         if (!clipping) return null
         const regex = /(?<title>[\S ]+) (?:- (?<authorAlt>[\w ]+)|\((?<author>[^(]+)\))\s*- Your (?<type>\w+) on page (?<pageStart>\d*)-?(?<pageEnd>\d*)(?: \| location (?<locationStart>\d+)-?(?<locationEnd>\d*))? \| Added on (?<date>[\S ]*)\s*(?<text>.*)\s*/
         const highlight = clipping.match(regex).groups
-        // highlight.original = clipping
         highlight.original = clipping;
         highlight.metadata = clipping.split(/(\r?\n)/).slice(0,3).join('');
         highlight.id = this.assignHighlightId();
@@ -165,7 +164,7 @@ class App {
       // Set event listeners to highlight actions
       clone.querySelector(".action-copy").addEventListener("click", (event) => {
         const id = event.target.closest(".highlight").dataset.id;
-        window.navigator.clipboard.writeText(this.highlights.find(highlight => highlight.id === Number.parseInt(id, 10)).text);
+        this.copyToClipboard(this.highlights.find(highlight => highlight.id === Number.parseInt(id, 10)).text);
       });
 
       clone.querySelector(".action-edit").addEventListener("click", (event) => {
