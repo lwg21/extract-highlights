@@ -19,7 +19,7 @@ class App {
   }
 
   initializeUI() {
-    // Initialize main navigation
+    // Initialize main actions
     document.querySelector("#reset").addEventListener("click", () => this.initializeData());
     document.querySelector("#view-source").addEventListener("click", () => this.viewSource());
     document.querySelector("#view-highlights").addEventListener("click", () => this.viewHighlights());
@@ -45,7 +45,7 @@ class App {
       event.preventDefault();
       dropArea.style.backgroundColor = "lightgrey";
 
-      // Read each dropped file
+      // Read each dropped file upon drop
       const files = event.dataTransfer.files;
       for (let i = 0; i < files.length; i++) {
         this.readFile(files.item(i));
@@ -82,9 +82,8 @@ class App {
   }
 
   extractHighlights() {
-    this.sources.forEach((upload) => {
-      const clippings = upload.text.split(/\s*==========\s*/);
-      console.log(`${clippings.length} clippings in uploads`)
+    this.sources.forEach((source) => {
+      const clippings = source.text.split(/\s*==========\s*/);
       clippings.forEach((clipping) => {
         if (!clipping) return null
         const regex = /(?<title>[\S ]+) (?:- (?<authorAlt>[\w ]+)|\((?<author>[^(]+)\))\s*- Your (?<type>\w+) on page (?<pageStart>\d*)-?(?<pageEnd>\d*)(?: \| location (?<locationStart>\d+)-?(?<locationEnd>\d*))? \| Added on (?<date>[\S ]*)\s*(?<text>.*)\s*/
@@ -135,8 +134,9 @@ class App {
     viewContainer.innerText += this.sources[0].text;
 
     // Update title with number of files
-    const numberUploads = this.sources.length;
-    document.querySelector("#view-title").innerText = `Source (${numberUploads} file${numberUploads > 1 ? 's' : ''})`;
+    const numberSources = this.sources.length;
+    this.viewTitle("Source", `${numberSources} file${numberSources > 1 ? 's' : ''}`)
+    // document.querySelector("#view-title").innerText = `Source (${numberUploads} file${numberUploads > 1 ? 's' : ''})`;
   }
 
   viewHighlights(highlights = this.highlights) {
