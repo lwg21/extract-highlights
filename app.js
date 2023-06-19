@@ -1,19 +1,23 @@
 class App {
 
   // Initialise instance variables
-  sources = [] // Container for raw strings from uploaded 'my clippings.txt' files
-  highlights = [] // Container for objects representing individual highlights
-  books = [] // Container for distinct books
-  highlightId = 0;
+  sources = [] // Contains raw strings from 'my clippings.txt' files
+  highlights = [] // Contains objects representing individual highlights
+  books = [] // Contains objects representing distinct books
 
-  // Run upon load the of DOM, initialises event listeners
+  // Initialise id counters
+  sourceId = 0;
+  highlightId = 0;
+  bookId = 0;
+
+  // Run upon load the of DOM
   connect() {
-    // Confirms whether app.js is connected
+    // Confirm whether app.js is connected
     document.addEventListener("DOMContentLoaded", () => {
       console.log("app.js connected")
     });
 
-    // Drag-and-drop area
+    // Initialise drag-and-drop area
     const dropArea = document.querySelector("#drop-area")
     dropArea.addEventListener("dragenter", (event) => {
       dropArea.style.backgroundColor = "lightgreen";
@@ -33,61 +37,51 @@ class App {
       event.stopPropagation();
       event.preventDefault();
       dropArea.style.backgroundColor = "lightgrey";
+
+      // Read each dropped file
       const files = event.dataTransfer.files;
       for (let i = 0; i < files.length; i++) {
-        let file = files.item(i)
-        console.log(file);
-        console.log(file.name)
-        this.readFile(file);
+        this.readFile(files.item(i));
       }
     });
 
-    // Reset button
-    const resetButton = document.querySelector("#reset");
-    resetButton.addEventListener("click", () => {
-      this.reset();
-    });
-
-    // View source button
-    const viewSourceButton = document.querySelector("#view-source");
-    viewSourceButton.addEventListener("click", () => {
-      this.viewSource();
-    });
-
-    // View highlights button
-    const viewHighlightsButton = document.querySelector("#view-highlights");
-    viewHighlightsButton.addEventListener("click", () => {
-      this.viewHighlights();
-    });
+    // Initialise main navigation
+    document.querySelector("#reset").addEventListener("click", () => this.reset());
+    document.querySelector("#view-source").addEventListener("click", () => this.viewSource());
+    document.querySelector("#view-highlights").addEventListener("click", () => this.viewHighlights());
   }
 
   reset() {
     this.sources = [];
     this.highlights = [];
     this.books = [];
-    this.viewBooks();
-    // this.viewSource();
     this.viewHighlights();
+    this.viewBooks();
     this.printAppState();
   }
 
   readFile(file) {
     const reader = new FileReader();
+
+    // Add a listener for the file load
     reader.addEventListener("load", (event) => {
       const upload = {
         filename: file.name,
         text: event.target.result
       };
+
+      // Add raw text to sources upon load
       this.sources.push(upload)
-      this.viewSource();
       console.log(`File '${upload.filename}' imported`);
+      this.viewSource();
       this.extractData();
     });
     reader.readAsText(file);
   }
 
   extractData() {
-    this.extractHighlights(); // TODO: Remove for production
+    // Analyse sources to populate highlights and books, update view
+    this.extractHighlights();
     this.extractBooks();
     this.viewBooks()
     this.printAppState();
