@@ -8,7 +8,7 @@ class App {
   // Initialise id counters
   sourceId = 0;
   highlightId = 0;
-  bookId = 0;
+  // bookId = 0;
 
   // Run upon load the of DOM
   connect() {
@@ -65,14 +65,15 @@ class App {
 
     // Add a listener for the file load
     reader.addEventListener("load", (event) => {
-      const upload = {
+      const source = {
+        id: this.assignSourceId(),
         filename: file.name,
         text: event.target.result
       };
 
       // Add raw text to sources upon load
-      this.sources.push(upload)
-      console.log(`File '${upload.filename}' imported`);
+      this.sources.push(source)
+      console.log(`File '${source.filename}' imported`);
       this.viewSource();
       this.extractData();
     });
@@ -104,6 +105,7 @@ class App {
   }
 
   extractBooks() {
+    const books =
     this.books = [...new Set(this.highlights.map((highlight) => highlight.title))].sort()
   }
 
@@ -127,6 +129,11 @@ class App {
   assignHighlightId() {
     this.highlightId += 1;
     return this.highlightId;
+  }
+
+  assignSourceId() {
+    this.sourceId += 1;
+    return this.sourceId;
   }
 
   // VIEW
