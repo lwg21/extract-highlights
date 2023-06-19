@@ -1,7 +1,7 @@
 class App {
 
   // Initialise instance variables
-  uploads = [] // Container for raw strings from uploaded 'my clippings.txt' files
+  sources = [] // Container for raw strings from uploaded 'my clippings.txt' files
   highlights = [] // Container for objects representing individual highlights
   books = [] // Container for distinct books
   highlightId = 0;
@@ -62,7 +62,7 @@ class App {
   }
 
   reset() {
-    this.uploads = [];
+    this.sources = [];
     this.highlights = [];
     this.books = [];
     this.viewBooks();
@@ -78,7 +78,7 @@ class App {
         filename: file.name,
         text: event.target.result
       };
-      this.uploads.push(upload)
+      this.sources.push(upload)
       this.viewSource();
       console.log(`File '${upload.filename}' imported`);
       this.extractData();
@@ -94,7 +94,7 @@ class App {
   }
 
   extractHighlights() {
-    this.uploads.forEach((upload) => {
+    this.sources.forEach((upload) => {
       const clippings = upload.text.split(/\s*==========\s*/);
       console.log(`${clippings.length} clippings in uploads`)
       clippings.forEach((clipping) => {
@@ -143,10 +143,10 @@ class App {
     viewContainer.innerHTML = "";
 
     // Insert uploads contained in instance variable as text
-    viewContainer.innerText += this.uploads[0].text;
+    viewContainer.innerText += this.sources[0].text;
 
     // Update title with number of files
-    const numberUploads = this.uploads.length;
+    const numberUploads = this.sources.length;
     document.querySelector("#view-title").innerText = `Source (${numberUploads} file${numberUploads > 1 ? 's' : ''})`;
   }
 
@@ -214,7 +214,7 @@ class App {
   // UTILITIES
 
   printAppState() {
-    console.log(`[State] ${this.uploads.length} uploads, ${this.highlights.length} highlights`)
+    console.log(`[State] ${this.sources.length} uploads, ${this.highlights.length} highlights`)
   }
 }
 
