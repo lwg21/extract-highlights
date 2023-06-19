@@ -99,9 +99,11 @@ class App {
       console.log(`${clippings.length} clippings in uploads`)
       clippings.forEach((clipping) => {
         if (!clipping) return null
-        const regex = /(?<title>[\S ]+) (?:- (?<authorAlt>[\w ]+)|\((?<author>[^(]+)\))\s*- Your (?<type>\w+) on page (?<page>\d*)-?(?:\d*)(?: \| location (?<locationStart>\d+)-?(?<locationEnd>\d*))? \| Added on (?<date>[\S ]*)\s*(?<text>.*)\s*/
+        const regex = /(?<title>[\S ]+) (?:- (?<authorAlt>[\w ]+)|\((?<author>[^(]+)\))\s*- Your (?<type>\w+) on page (?<pageStart>\d*)-?(?<pageEnd>\d*)(?: \| location (?<locationStart>\d+)-?(?<locationEnd>\d*))? \| Added on (?<date>[\S ]*)\s*(?<text>.*)\s*/
         const highlight = clipping.match(regex).groups
-        highlight.original = clipping
+        // highlight.original = clipping
+        highlight.original = clipping;
+        highlight.metadata = clipping.split(/(\r?\n)/).slice(0,3).join('');
         highlight.id = this.assignHighlightId();
         this.highlights.push(highlight);
       });
@@ -160,19 +162,19 @@ class App {
     // Insert highlights contained in instance variable using content template
     highlights.forEach((highlight) => {
       const clone = template.content.cloneNode(true);
-      const highlightElement = clone.querySelector(".highlight");
-      highlightElement.textContent = highlight.original;
-      highlightElement.setAttribute("data-id", highlight.id);
-      highlightElement.addEventListener("click", (event) => {
-        event.target.setAttribute("contentEditable", "true");
-      });
-      highlightElement.addEventListener("blur", (event) => {
-        event.target.setAttribute("contentEditable", "false");
-      });
-      // clone.querySelector(".highlight").textContent = `${highlight.text}\n\n${highlight.title}, ${highlight.author || highlight.authorAlt} (page ${highlight.page}, loc ${highlight.locationStart}, on ${highlight.date})`;
+      clone.querySelector(".highlight").setAttribute("data-id", highlight.id);
+      clone.querySelector(".highlight-metadata").textContent = highlight.metadata;
+      clone.querySelector(".highlight-text").textContent = highlight.text;
       clone.querySelector(".separator").textContent = '==========';
       viewContainer.appendChild(clone);
-    });
+
+      // highlightText.addEventListener("click", (event) => {
+      //   event.target.setAttribute("contentEditable", "true");
+      // });
+      // highlightText.addEventListener("blur", (event) => {
+        //   event.target.setAttribute("contentEditable", "false");
+      });
+      // clone.querySelector(".highlight").textContent = `${highlight.text}\n\n${highlight.title}, ${highlight.author || highlight.authorAlt} (page ${highlight.page}, loc ${highlight.locationStart}, on ${highlight.date})`;
 
     // Update title with number of highlights
     this.viewTitle(`${highlights.length} highlight${highlights.length > 1 ? 's' : ''}`);
