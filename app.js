@@ -199,19 +199,25 @@ class App {
     booksContainer.innerHTML = "";
 
     // Insert total number of books
-    const allBooksSummary = document.createElement("h3");
-    allBooksSummary.innerText = `All books (${this.books.length})`;
-    booksContainer.appendChild(allBooksSummary);
-    console.log(allBooksSummary);
+    const clone = template.content.cloneNode(true);
+    const booksTitle = clone.querySelector("#booklist-title");
+    booksTitle.innerText = `All books (${this.books.length})`;
+    booksContainer.appendChild(booksTitle);
 
     // Insert list of books
     this.books.forEach((book) => {
-      const clone = template.content.cloneNode(true);
-      clone.querySelector("li").textContent = book;
-      clone.querySelector("li").addEventListener("click", () => {
+      const bookItem = document.createElement("li");
+      bookItem.textContent = book;
+
+      // Active book has different list item style
+      bookItem.addEventListener("click", (event) => {
         this.viewHighlightsOfBook(book);
+        const bookItems = Array.from(event.target.parentElement.children);
+        bookItems.forEach(item => item.classList.remove("book-open"));
+        event.target.classList.add("book-open");
       });
-      booksContainer.appendChild(clone);
+
+      booksContainer.appendChild(bookItem);
     });
   }
 

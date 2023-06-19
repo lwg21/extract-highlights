@@ -8,16 +8,13 @@
   <script defer src="./app.js"></script>
 </head>
 <body>
-  <h2>Highlight extractor</h1>
+  <h2>📚 Highlight extractor</h1>
   <button id="reset">Reset</button>
   <button id="view-source">View source</button>
   <button id="view-highlights">View highlights</button>
   <div id="drop-area">Drag-and-drop area</div>
   <main class="flex">
-    <div id="booklist">
-      <h3 id="booklist-title">All books</h3>
-      <ul></ul>
-    </div>
+    <div id="booklist"></div>
     <div id="view">
       <h3 id="view-title">Source</h3>
       <button class="copy-to-clipboard">Copy</button>
@@ -38,7 +35,8 @@
     </div>
   </template>
   <template id="booklist-template">
-    <li class="book"></li>
+    <h3 id="booklist-title">All books</h3>
+    <ul class="books"></li>
   </template>
 </body>
 </html>

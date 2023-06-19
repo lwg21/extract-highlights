@@ -17,14 +17,30 @@
   display: flex;
 }
 
+@counter-style book-blue {
+  system: cyclic;
+  symbols: "\1F4D8";
+  suffix: " ";
+}
+
+@counter-style book-open {
+  system: cyclic;
+  symbols: "\1F4D6";
+  suffix: " ";
+}
+
 li {
-  text-indent: 0;
-  list-style: none;
+  text-indent: 0px;
+  list-style: book-blue;
 }
 
 li:hover {
   background-color: moccasin;
   cursor: pointer;
+}
+
+.book-open {
+  list-style: book-open;
 }
 
 .highlight-metadata {
