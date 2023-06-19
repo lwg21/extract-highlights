@@ -13,7 +13,7 @@
   <button id="view-source">View source</button>
   <button id="view-highlights">View highlights</button>
   <div id="drop-area">Drag-and-drop area</div>
-  <div class="flex">
+  <main class="flex">
     <div id="booklist">
       <h3 id="booklist-title">All books</h3>
       <ul></ul>
@@ -24,14 +24,12 @@
       <button class="download">Download</button>
       <div id="view-content"></div>
     </div>
-  </div>
+  </main>
   <template id="highlight-template">
-    <div class="highlight-card">
-      <div class="highlight">
-        <div class="highlight-metadata"></div>
-        <br>
-        <div class="highlight-text"></div>
-      </div>
+    <div class="highlight">
+      <div class="highlight-metadata"></div>
+      <br>
+      <div class="highlight-text"></div>
       <span class="separator"></span>
       <button class="copy">Copy</button>
       <button class="edit">Edit</button>
