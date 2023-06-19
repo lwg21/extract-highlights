@@ -95,7 +95,7 @@ class App {
 
   extractHighlights() {
     this.uploads.forEach((upload) => {
-      const clippings = upload.text.trim().split(/\s*==========\s*/);
+      const clippings = upload.text.split(/\s*==========\s*/);
       console.log(`${clippings.length} clippings in uploads`)
       clippings.forEach((clipping) => {
         if (!clipping) return null
@@ -163,6 +163,12 @@ class App {
       const highlightElement = clone.querySelector(".highlight");
       highlightElement.textContent = highlight.original;
       highlightElement.setAttribute("data-id", highlight.id);
+      highlightElement.addEventListener("click", (event) => {
+        event.target.setAttribute("contentEditable", "true");
+      });
+      highlightElement.addEventListener("blur", (event) => {
+        event.target.setAttribute("contentEditable", "false");
+      });
       // clone.querySelector(".highlight").textContent = `${highlight.text}\n\n${highlight.title}, ${highlight.author || highlight.authorAlt} (page ${highlight.page}, loc ${highlight.locationStart}, on ${highlight.date})`;
       clone.querySelector(".separator").textContent = '==========';
       viewContainer.appendChild(clone);

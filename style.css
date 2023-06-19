@@ -30,3 +30,11 @@ li:hover {
 .highlight {
   white-space: pre-wrap;
 }
+
+.highlight-card button {
+  opacity: 0;
+}
+
+.highlight-card:hover button {
+  opacity: 1;
+}
