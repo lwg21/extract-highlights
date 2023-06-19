@@ -1,23 +1,30 @@
 class App {
-
-  // Initialise instance variables
-  sources = [] // Contains raw strings from 'my clippings.txt' files
-  highlights = [] // Contains objects representing individual highlights
-  books = [] // Contains objects representing distinct books
-
-  // Initialise id counters
-  sourceId = 0;
-  highlightId = 0;
-  // bookId = 0;
-
-  // Run upon load the of DOM
-  connect() {
+  constructor() {
     // Confirm whether app.js is connected
-    document.addEventListener("DOMContentLoaded", () => {
-      console.log("app.js connected")
-    });
+    document.addEventListener("DOMContentLoaded", () => {console.log("app.js connected")});
+    this.initializeData();
+    this.initializeUI();
+  }
 
-    // Initialise drag-and-drop area
+  initializeData() {
+    this.sources = [] // Contains raw strings from 'my clippings.txt' files
+    this.highlights = [] // Contains objects representing individual highlights
+    this.books = [] // Contains objects representing distinct books
+    this.sourceId = 0;
+    this.highlightId = 0;
+    this.bookId = 0;
+    this.viewHighlights();
+    this.viewBooks();
+    this.printAppState();
+  }
+
+  initializeUI() {
+    // Initialize main navigation
+    document.querySelector("#reset").addEventListener("click", () => this.initializeData());
+    document.querySelector("#view-source").addEventListener("click", () => this.viewSource());
+    document.querySelector("#view-highlights").addEventListener("click", () => this.viewHighlights());
+
+    // Initialize drag-and-drop area
     const dropArea = document.querySelector("#drop-area")
     dropArea.addEventListener("dragenter", (event) => {
       dropArea.style.backgroundColor = "lightgreen";
@@ -44,20 +51,6 @@ class App {
         this.readFile(files.item(i));
       }
     });
-
-    // Initialise main navigation
-    document.querySelector("#reset").addEventListener("click", () => this.reset());
-    document.querySelector("#view-source").addEventListener("click", () => this.viewSource());
-    document.querySelector("#view-highlights").addEventListener("click", () => this.viewHighlights());
-  }
-
-  reset() {
-    this.sources = [];
-    this.highlights = [];
-    this.books = [];
-    this.viewHighlights();
-    this.viewBooks();
-    this.printAppState();
   }
 
   readFile(file) {
@@ -126,15 +119,9 @@ class App {
     link.click()
   }
 
-  assignHighlightId() {
-    this.highlightId += 1;
-    return this.highlightId;
-  }
-
-  assignSourceId() {
-    this.sourceId += 1;
-    return this.sourceId;
-  }
+  assignHighlightId() {return this.highlightId += 1}
+  assignSourceId() {return this.sourceId += 1}
+  assignBookId() {return this.bookId += 1}
 
   // VIEW
 
@@ -234,4 +221,3 @@ class App {
 }
 
 const app = new App
-app.connect()
