@@ -2,8 +2,15 @@ class App {
   constructor() {
     // Confirm whether app.js is connected
     document.addEventListener("DOMContentLoaded", () => {console.log("app.js connected")});
+    this.initializeSettings();
     this.initializeData();
     this.initializeUI();
+  }
+
+  initializeSettings() {
+    this.settings = {
+      separator: "\r\n==========\r\n"
+    };
   }
 
   initializeData() {
@@ -97,8 +104,16 @@ class App {
   }
 
   extractBooks() {
-    const books =
-    this.books = [...new Set(this.highlights.map((highlight) => highlight.title))].sort()
+    const uniqueBooks = [...new Set(this.highlights.map(highlight => highlight.title))];
+    const books = uniqueBooks.map(book => {
+      return {
+        id: this.assignBookId(),
+        title: book
+      }
+    });
+    this.books = books.sort((a, b) => {
+      return a.title.localeCompare(b.title);
+    });
   }
 
   copyToClipboard(text) {
@@ -116,11 +131,28 @@ class App {
     link.setAttribute("href", url)
     link.setAttribute("download", filename)
     link.click()
+
+    URL.revokeObjectURL(url)
+  }
+
+  generateOutput(book) {
+    const highlights = this.getHighlightsFromBook(book);
+    const clippings = highlights.map(highlight => {
+      const text = highlight.textEdited || highlight.text;
+      return `${highlight.metadata}\r\n\r\n${text}`;
+    });
+    const output = clippings.join(this.settings.separator) + this.settings.separator;
+    console.log(output);
+    return output
   }
 
   assignHighlightId() {return this.highlightId += 1}
   assignSourceId() {return this.sourceId += 1}
   assignBookId() {return this.bookId += 1}
+
+  getHighlightsFromBook(book) {
+    return this.highlights.filter(highlight => highlight.title === book.title);
+  }
 
   // VIEW
 
@@ -194,7 +226,8 @@ class App {
     // Insert list of books
     this.books.forEach((book) => {
       const bookItem = document.createElement("li");
-      bookItem.textContent = book;
+      bookItem.setAttribute("data-id", book.id);
+      bookItem.textContent = book.title;
 
       // Active book has different list item style
       bookItem.addEventListener("click", (event) => {
@@ -209,8 +242,20 @@ class App {
   }
 
   viewHighlightsOfBook(book) {
-    const highlights = this.highlights.filter(highlight => highlight.title === book);
+    const highlights = this.getHighlightsFromBook(book);
     this.viewHighlights(highlights);
+
+    const actionsContainer = document.querySelector("#view-actions");
+    actionsContainer.innerHTML = "";
+
+    const downloadButton = document.createElement("button");
+    downloadButton.innerText = "Download";
+    downloadButton.addEventListener("click", () => {
+      const output = this.generateOutput(book);
+      this.downloadFile(`${book.title}.txt`, output);
+    });
+
+    actionsContainer.appendChild(downloadButton);
   }
 
   // UTILITIES

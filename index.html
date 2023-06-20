@@ -8,7 +8,7 @@
   <script defer src="./app.js"></script>
 </head>
 <body>
-  <h2>📚 Highlight extractor</h1>
+  <h1>📚 Highlight extractor</h1>
   <button id="reset">Reset</button>
   <button id="view-source">View source</button>
   <button id="view-highlights">View highlights</button>
@@ -16,9 +16,8 @@
   <main class="flex">
     <div id="booklist"></div>
     <div id="view">
-      <h3 id="view-title">Source</h3>
-      <button class="copy-to-clipboard">Copy</button>
-      <button class="download">Download</button>
+      <h2 id="view-title">Source</h2>
+      <div id="view-actions"></div>
       <div id="view-content"></div>
     </div>
   </main>
@@ -35,7 +34,7 @@
     </div>
   </template>
   <template id="booklist-template">
-    <h3 id="booklist-title">All books</h3>
+    <h2 id="booklist-title">All books</h2>
     <ul class="books"></li>
   </template>
 </body>
