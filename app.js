@@ -22,7 +22,7 @@ class App {
     this.bookId = 0;
     this.viewHighlights();
     this.viewBooks();
-    this.printAppState();
+    this.state();
   }
 
   initializeUI() {
@@ -83,9 +83,9 @@ class App {
   extractData() {
     // Analyse sources to populate highlights and books, update view
     this.extractHighlights();
-    this.extractBooks();
+    // this.extractBooks();
     this.viewBooks()
-    this.printAppState();
+    this.state();
   }
 
   extractHighlights() {
@@ -93,27 +93,58 @@ class App {
       const clippings = source.text.split(/\s*==========\s*/);
       clippings.forEach((clipping) => {
         if (!clipping) return null
+
+        // Parse clipping, create highlight object and add it to highlights
         const regex = /(?<title>[\S ]+) (?:- (?<authorAlt>[\w ]+)|\((?<author>[^(]+)\))\s*- Your (?<type>\w+) on page (?<pageStart>\d*)-?(?<pageEnd>\d*)(?: \| location (?<locationStart>\d+)-?(?<locationEnd>\d*))? \| Added on (?<date>[\S ]*)\s*(?<text>.*)\s*/
         const highlight = clipping.match(regex).groups
         highlight.original = clipping;
         highlight.metadata = clipping.split(/(\r?\n)/).slice(0,3).join('');
         highlight.id = this.assignHighlightId();
         this.highlights.push(highlight);
+
+        // Create new book if appropriate
+        let book = this.findBookbyTitle(highlight.title);
+        if (!book) {
+          book = this.createBook(highlight.title);
+        }
+
+        // Link highlight and book both ways
+        highlight.book = book;
+        book.highlights.push(highlight);
       });
     });
   }
 
-  extractBooks() {
-    const uniqueBooks = [...new Set(this.highlights.map(highlight => highlight.title))];
-    const books = uniqueBooks.map(book => {
-      return {
-        id: this.assignBookId(),
-        title: book
-      }
-    });
-    this.books = books.sort((a, b) => {
-      return a.title.localeCompare(b.title);
-    });
+  createBook(title) {
+    const book = {
+      id: this.assignBookId(),
+      title: title,
+      highlights: []
+    }
+    this.books.push(book);
+    return book;
+  }
+
+  // extractBooks() {
+  //   const uniqueBooks = [...new Set(this.highlights.map(highlight => highlight.title))];
+  //   const books = uniqueBooks.map(book => {
+  //     return {
+  //       id: this.assignBookId(),
+  //       title: book
+  //     }
+  //   });
+  //   this.books = books.sort((a, b) => {
+  //     return a.title.localeCompare(b.title);
+  //   });
+  // }
+
+
+  findBook(id) {
+    return this.books.find(book => book.id === Number.parseInt(id, 10));
+  }
+
+  findBookbyTitle(title) {
+    return this.books.find(book => book.title === title);
   }
 
   copyToClipboard(text) {
@@ -136,7 +167,7 @@ class App {
   }
 
   generateOutput(book) {
-    const highlights = this.getHighlightsFromBook(book);
+    const highlights = this.findHighlightsFromBook(book);
     const clippings = highlights.map(highlight => {
       const text = highlight.textEdited || highlight.text;
       return `${highlight.metadata}\r\n\r\n${text}`;
@@ -150,8 +181,30 @@ class App {
   assignSourceId() {return this.sourceId += 1}
   assignBookId() {return this.bookId += 1}
 
-  getHighlightsFromBook(book) {
-    return this.highlights.filter(highlight => highlight.title === book.title);
+  findHighlight(id) {
+    return this.highlights.find(highlight => highlight.id === Number.parseInt(id, 10));
+  }
+
+  findHighlightsFromBook(book) {
+    return this.highlights.filter(highlight => ((highlight.title === book.title) && !highlight.deleted));
+  }
+
+  findEditedHighlights() {
+    return this.highlights.filter(highlight => (highlight.textEdited));
+
+  }
+  findDeletedHighlights() {
+    return this.highlights.filter(highlight => (highlight.deleted));
+  }
+
+  deleteHighlight(highlight) {
+    highlight.deleted = true;
+    return highlight;
+  }
+
+  undoDeleteHighlight(highlight) {
+    highlight.deleted = false;
+    return highlight;
   }
 
   // VIEW
@@ -168,7 +221,7 @@ class App {
     // Update title with number of files
     const numberSources = this.sources.length;
     this.viewTitle("Source", `${numberSources} file${numberSources > 1 ? 's' : ''}`)
-    // document.querySelector("#view-title").innerText = `Source (${numberUploads} file${numberUploads > 1 ? 's' : ''})`;
+    // document.querySelector("#view-header").innerText = `Source (${numberUploads} file${numberUploads > 1 ? 's' : ''})`;
   }
 
   viewHighlights(highlights = this.highlights) {
@@ -190,7 +243,8 @@ class App {
       // Set event listeners to highlight actions
       clone.querySelector(".action-copy").addEventListener("click", (event) => {
         const id = event.target.closest(".highlight").dataset.id;
-        this.copyToClipboard(this.highlights.find(highlight => highlight.id === Number.parseInt(id, 10)).text);
+        const highlight = this.findHighlight(id);
+        this.copyToClipboard(highlight.text);
       });
 
       clone.querySelector(".action-edit").addEventListener("click", (event) => {
@@ -198,13 +252,29 @@ class App {
         event.target.parentElement.querySelector(".highlight-text").setAttribute("contentEditable", "true");
       });
 
+      clone.querySelector(".action-delete").addEventListener("click", (event) => {
+        const id = event.target.closest(".highlight").dataset.id;
+        const highlight = this.findHighlight(id);
+        this.deleteHighlight(highlight);
+        if (highlight.deleted) {
+          const id = event.target.closest(".highlight").remove();
+        }
+      });
+
       // Insert highlight into DOM
       viewContainer.appendChild(clone);
     });
   }
 
-  viewTitle(title, description = '') {
-    document.querySelector("#view-title").innerText = `${title}${description ? ` (${description})` : ''}`;
+  viewTitle(title, count = undefined) {
+    const header = document.querySelector("#view-header");
+    header.innerText = title;
+    if (count) {
+      if (count.unit) {
+
+      }
+      header.insertAdjacentHTML("beforeend", `${count.quantity}${count.unit ? ` ${count.unit}` : ""}`);
+    }
   }
 
   viewBooks() {
@@ -239,7 +309,7 @@ class App {
   }
 
   viewHighlightsOfBook(book) {
-    const highlights = this.getHighlightsFromBook(book);
+    const highlights = this.findHighlightsFromBook(book);
     this.viewHighlights(highlights);
 
     // Update title with number of highlights
@@ -258,10 +328,18 @@ class App {
     actionsContainer.appendChild(downloadButton);
   }
 
-  // UTILITIES
+  // UTILITIES & CHECKS
 
-  printAppState() {
-    console.log(`[State] ${this.sources.length} uploads, ${this.highlights.length} highlights`)
+  state() {
+    console.log(`*--State--*`
+      + `\n${this.sources.length} uploads`
+      + `\n${this.highlights.length} highlights (${this.findDeletedHighlights().length} deleted, ${this.findEditedHighlights().length} edited)`
+      + `\n${this.books.length} books`
+    )
+  }
+
+  runTests() {
+    // TODO: Write tests to compare number of highlights/books on display with objects in memory
   }
 }
 
