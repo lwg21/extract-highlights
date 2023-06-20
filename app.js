@@ -102,11 +102,8 @@ class App {
         highlight.id = this.assignHighlightId();
         this.highlights.push(highlight);
 
-        // Create new book if appropriate
-        let book = this.findBookbyTitle(highlight.title);
-        if (!book) {
-          book = this.createBook(highlight.title);
-        }
+        // Find existing book or create new book
+        const book = this.findBookbyTitle(highlight.title) || this.createBook(highlight.title);
 
         // Link highlight and book both ways
         highlight.book = book;
@@ -124,20 +121,6 @@ class App {
     this.books.push(book);
     return book;
   }
-
-  // extractBooks() {
-  //   const uniqueBooks = [...new Set(this.highlights.map(highlight => highlight.title))];
-  //   const books = uniqueBooks.map(book => {
-  //     return {
-  //       id: this.assignBookId(),
-  //       title: book
-  //     }
-  //   });
-  //   this.books = books.sort((a, b) => {
-  //     return a.title.localeCompare(b.title);
-  //   });
-  // }
-
 
   findBook(id) {
     return this.books.find(book => book.id === Number.parseInt(id, 10));
@@ -220,7 +203,7 @@ class App {
 
     // Update title with number of files
     const numberSources = this.sources.length;
-    this.viewTitle("Source", `${numberSources} file${numberSources > 1 ? 's' : ''}`)
+    this.viewSourceHeader("Source", `${numberSources} file${numberSources > 1 ? 's' : ''}`)
     // document.querySelector("#view-header").innerText = `Source (${numberUploads} file${numberUploads > 1 ? 's' : ''})`;
   }
 
@@ -266,15 +249,13 @@ class App {
     });
   }
 
-  viewTitle(title, count = undefined) {
+  viewBookHeader(book) {
     const header = document.querySelector("#view-header");
-    header.innerText = title;
-    if (count) {
-      if (count.unit) {
+    header.innerText = `${book.title} (${book.highlights.length} highlight${book.highlights.length > 1 ? "s" : ""})`;
+  }
 
-      }
-      header.insertAdjacentHTML("beforeend", `${count.quantity}${count.unit ? ` ${count.unit}` : ""}`);
-    }
+  viewSourceHeader() {
+    // TODO
   }
 
   viewBooks() {
@@ -290,11 +271,16 @@ class App {
     booksTitle.innerText = `All books (${this.books.length})`;
     booksContainer.appendChild(booksTitle);
 
+    // Get and sort books
+    const books = this.books.sort((a, b) => {
+      return a.title.localeCompare(b.title);
+    });
+
     // Insert list of books
-    this.books.forEach((book) => {
+    books.forEach((book) => {
       const bookItem = document.createElement("li");
       bookItem.setAttribute("data-id", book.id);
-      bookItem.textContent = book.title;
+      bookItem.textContent = book.title + ` (${book.highlights.length})`;
 
       // Active book has different list item style
       bookItem.addEventListener("click", (event) => {
@@ -313,7 +299,8 @@ class App {
     this.viewHighlights(highlights);
 
     // Update title with number of highlights
-    this.viewTitle(`${book.title}`, `${highlights.length} highlight${highlights.length > 1 ? 's' : ''}`);
+    this.viewBookHeader(book);
+    // this.viewBookHeader(`${book.title}`, `${highlights.length} highlight${highlights.length > 1 ? 's' : ''}`);
 
     const actionsContainer = document.querySelector("#view-actions");
     actionsContainer.innerHTML = "";
