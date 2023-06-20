@@ -14,7 +14,7 @@ class App {
   }
 
   initializeData() {
-    this.sources = [] // Contains raw strings from 'my clippings.txt' files
+    this.sources = [] // Contains objects representing raw source strings from 'my clippings.txt' files
     this.highlights = [] // Contains objects representing individual highlights
     this.books = [] // Contains objects representing distinct books
     this.sourceId = 0;
@@ -201,9 +201,6 @@ class App {
       // Insert highlight into DOM
       viewContainer.appendChild(clone);
     });
-
-    // Update title with number of highlights
-    this.viewTitle(`${highlights.length} highlight${highlights.length > 1 ? 's' : ''}`);
   }
 
   viewTitle(title, description = '') {
@@ -244,6 +241,9 @@ class App {
   viewHighlightsOfBook(book) {
     const highlights = this.getHighlightsFromBook(book);
     this.viewHighlights(highlights);
+
+    // Update title with number of highlights
+    this.viewTitle(`${book.title}`, `${highlights.length} highlight${highlights.length > 1 ? 's' : ''}`);
 
     const actionsContainer = document.querySelector("#view-actions");
     actionsContainer.innerHTML = "";

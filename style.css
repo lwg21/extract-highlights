@@ -15,7 +15,13 @@
 
 .flex {
   display: flex;
+  justify-content: space-between;
 }
+
+.align-items-center {
+  align-items: center;
+}
+
 
 @counter-style book-blue {
   system: cyclic;
@@ -32,6 +38,9 @@
 li {
   text-indent: 0px;
   list-style: book-blue;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 li:hover {
