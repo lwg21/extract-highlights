@@ -77,9 +77,25 @@ button {
   suffix: " ";
 }
 
+@counter-style ledger {
+  system: cyclic;
+  symbols: "📒";
+  suffix: " ";
+}
+
+@counter-style spiral {
+  system: cyclic;
+  symbols: "🗒️";
+  suffix: " ";
+}
+@counter-style note {
+  system: cyclic;
+  symbols: "📄";
+  suffix: " ";
+}
+
 li {
   text-indent: 0px;
-  list-style: book-blue;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -91,10 +107,22 @@ li:hover {
   cursor: pointer;
 }
 
-.book-open {
-  list-style: book-open;
+
+#booklist li {
+  list-style: book-blue;
 }
 
+#sourcelist li {
+  list-style: ledger;
+}
+
+.book-open {
+  list-style: book-open !important;
+}
+
+.spiral {
+  list-style: spiral !important;
+}
 
 .highlight-metadata {
   white-space: pre-wrap;

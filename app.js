@@ -76,7 +76,6 @@ class App {
       // Add raw text to sources upon load
       this.sources.push(source)
       console.log(`File '${source.filename}' imported`);
-      this.viewSource();
       this.extractData();
     });
     reader.readAsText(file);
@@ -130,6 +129,10 @@ class App {
 
   findBookbyTitle(title) {
     return this.books.find(book => book.title === title);
+  }
+
+  findSource(id) {
+    return this.sources.find(source => source.id === Number.parseInt(id, 10));
   }
 
   copyToClipboard(text) {
@@ -194,19 +197,17 @@ class App {
 
   // VIEW
 
-  viewSource() {
+  viewSource(source) {
     const viewContainer = document.querySelector("#view-content");
 
     // Clear view
     viewContainer.innerHTML = "";
 
     // Insert uploads contained in instance variable as text
-    viewContainer.innerText += this.sources[0].text;
+    viewContainer.innerText += source.text;
 
     // Update title with number of files
-    const numberSources = this.sources.length;
-    this.viewSourceHeader("Source", `${numberSources} file${numberSources > 1 ? 's' : ''}`)
-    // document.querySelector("#view-header").innerText = `Source (${numberUploads} file${numberUploads > 1 ? 's' : ''})`;
+    this.viewSourceHeader(source)
   }
 
   viewHighlights(highlights = this.highlights) {
@@ -261,13 +262,14 @@ class App {
     });
   }
 
-  viewBookHeader(book = undefined) {
+  viewBookHeader(book) {
     const header = document.querySelector("#view-header");
     header.innerText = `${book.title} (${book.highlights.length} highlight${book.highlights.length > 1 ? "s" : ""})`;
   }
 
-  viewSourceHeader() {
-    // TODO
+  viewSourceHeader(source) {
+    const header = document.querySelector("#view-header");
+    header.innerText = `Source '${source.filename}' (#${source.id})`;
   }
 
   viewSources() {
@@ -283,26 +285,22 @@ class App {
     sourcesTitle.innerText = `all sources (${this.sources.length})`;
     sourcesContainer.appendChild(sourcesTitle);
 
-    // Get and sort books
-    const books = this.books.sort((a, b) => {
-      return a.title.localeCompare(b.title);
-    });
+    // Insert list of sources
+    const sources = this.sources
+    sources.forEach((source) => {
+      const sourceItem = document.createElement("li");
+      sourceItem.setAttribute("data-id", source.id);
+      sourceItem.textContent = source.filename + ` (#${source.id})`;
 
-    // Insert list of books
-    books.forEach((book) => {
-      const bookItem = document.createElement("li");
-      bookItem.setAttribute("data-id", book.id);
-      bookItem.textContent = book.title + ` (${book.highlights.length})`;
-
-      // Active book has different list item style
-      bookItem.addEventListener("click", (event) => {
-        this.viewHighlightsOfBook(book);
-        const bookItems = Array.from(event.target.parentElement.children);
-        bookItems.forEach(item => item.classList.remove("book-open"));
-        event.target.classList.add("book-open");
+      // Active source has different list item style
+      sourceItem.addEventListener("click", (event) => {
+        this.viewSource(source);
+        const sourceItems = Array.from(event.target.parentElement.children);
+        sourceItems.forEach(item => item.classList.remove("spiral"));
+        event.target.classList.add("spiral");
       });
 
-      booksContainer.appendChild(bookItem);
+      sourcesContainer.appendChild(sourceItem);
     });
   }
 
