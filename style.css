@@ -10,7 +10,8 @@ header {
   height: 80px;
   padding-left: 20px;
   padding-right: 20px;
-  background-color: #B1E5F2;
+  /* background-color: #B1E5F2; */
+  background: linear-gradient(135deg, #96DCED 20%, #B1E5F2);
 }
 
 main {
@@ -47,7 +48,7 @@ button {
   flex-grow: 0;
   flex-shrink: 0;
   flex-basis: 400px;
-  background-color: #DCF3F9;
+  background-color: #fafafa;
 }
 
 #view {
@@ -70,31 +71,14 @@ button {
   suffix: " ";
 }
 
-@counter-style book-open {
-  system: cyclic;
-  symbols: "📙";
-  /* symbols: "\1F4D6"; */
-  suffix: " ";
-}
-
 @counter-style ledger {
   system: cyclic;
   symbols: "📒";
   suffix: " ";
 }
 
-@counter-style spiral {
-  system: cyclic;
-  symbols: "🗒️";
-  suffix: " ";
-}
-@counter-style note {
-  system: cyclic;
-  symbols: "📄";
-  suffix: " ";
-}
-
 li {
+  list-style: book-blue;
   text-indent: 0px;
   white-space: nowrap;
   overflow: hidden;
@@ -103,10 +87,9 @@ li {
 }
 
 li:hover {
-  background-color: #F1BCC8;
+  background-color: #F8D6A0;
   cursor: pointer;
 }
-
 
 #booklist li {
   list-style: book-blue;
@@ -116,8 +99,8 @@ li:hover {
   list-style: ledger;
 }
 
-.book-open {
-  list-style: book-open !important;
+li.active {
+  background-color: #F8D6A0;
 }
 
 .spiral {
@@ -141,12 +124,12 @@ li:hover {
 }
 
 .separator {
-  color: #DB5776;
+  color: #D4880C;
 }
 
 #view-actions button {
-  background-color: #F8DDE4;
-  color: #BA274A;
+  background-color: #FBE6C5;
+  color: #D4880C;
   padding: 3px 12px;
   border: none;
   border-radius: 3px;

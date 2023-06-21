@@ -35,7 +35,7 @@ class App {
     // Initialize drag-and-drop area
     const dropArea = document.querySelector("#menu")
     dropArea.addEventListener("dragenter", (event) => {
-      dropArea.style.backgroundColor = "#F1BCC8";
+      dropArea.style.backgroundColor = "#F8D6A0";
     });
 
     dropArea.addEventListener("dragleave", (event) => {
@@ -46,7 +46,7 @@ class App {
       event.stopPropagation();
       event.preventDefault();
       event.dataTransfer.dropEffect = 'copy';
-      dropArea.style.backgroundColor = "#F1BCC8";
+      dropArea.style.backgroundColor = "#F8D6A0";
     });
 
     dropArea.addEventListener("drop", (event) => {
@@ -296,8 +296,8 @@ class App {
       sourceItem.addEventListener("click", (event) => {
         this.viewSource(source);
         const sourceItems = Array.from(event.target.parentElement.children);
-        sourceItems.forEach(item => item.classList.remove("spiral"));
-        event.target.classList.add("spiral");
+        sourceItems.forEach(item => item.classList.remove("active"));
+        event.target.classList.add("active");
       });
 
       sourcesContainer.appendChild(sourceItem);
@@ -332,8 +332,8 @@ class App {
       bookItem.addEventListener("click", (event) => {
         this.viewHighlightsOfBook(book);
         const bookItems = Array.from(event.target.parentElement.children);
-        bookItems.forEach(item => item.classList.remove("book-open"));
-        event.target.classList.add("book-open");
+        bookItems.forEach(item => item.classList.remove("active"));
+        event.target.classList.add("active");
       });
 
       booksContainer.appendChild(bookItem);
@@ -374,7 +374,7 @@ class App {
     // element.style.transitionDuration = "0.05s";
     element.style.transitionDuration = "0s";
     element.transitionTimingFunction = null;
-    element.style.backgroundColor = "#F8DDE4";
+    element.style.backgroundColor = "#F8D6A0";
     setTimeout(() => {
       element.style.transitionDuration = "0.8s";
       element.transitionTimingFunction = "ease-out";
