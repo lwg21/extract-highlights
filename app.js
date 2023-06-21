@@ -35,23 +35,25 @@ class App {
     // Initialize drag-and-drop area
     const dropArea = document.querySelector("#menu")
     dropArea.addEventListener("dragenter", (event) => {
-      dropArea.style.backgroundColor = "lightgreen";
+      dropArea.style.backgroundColor = "#D2FF96";
     });
 
     dropArea.addEventListener("dragleave", (event) => {
-      dropArea.style.backgroundColor = "lightgrey";
+      dropArea.style.backgroundColor = null;
     });
 
     dropArea.addEventListener('dragover', (event) => {
       event.stopPropagation();
       event.preventDefault();
       event.dataTransfer.dropEffect = 'copy';
+      dropArea.style.backgroundColor = "#D2FF96";
+
     });
 
     dropArea.addEventListener("drop", (event) => {
       event.stopPropagation();
       event.preventDefault();
-      dropArea.style.backgroundColor = "lightgrey";
+      dropArea.style.backgroundColor = null;
 
       // Read each dropped file upon drop
       const files = event.dataTransfer.files;

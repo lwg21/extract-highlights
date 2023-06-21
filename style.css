@@ -5,6 +5,8 @@ html, body, div {
 
 header {
   height: 80px;
+  padding: 0 20px;
+  background-color: #FBCBC6;
 }
 
 main {
@@ -30,14 +32,21 @@ h1 {
   flex-grow: 0;
   flex-shrink: 0;
   flex-basis: 400px;
-  background-color: #C1ECE4;
-  resize: horizontal;
+  background-color: #FDEEED;
 }
 
 #view {
   flex-grow: 1;
   flex-shrink: 1;
-  background-color: #FEF1E6;
+  /* background-color: #FEF1E6; */
+}
+
+#view-header {
+  flex-grow: 1;
+}
+
+.container {
+  padding: 10px;
 }
 
 @counter-style book-blue {
