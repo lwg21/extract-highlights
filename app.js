@@ -85,8 +85,8 @@ class App {
   extractData() {
     // Analyse sources to populate highlights and books, update view
     this.extractHighlights();
-    // this.extractBooks();
-    this.viewBooks()
+    this.viewBooks();
+    this.viewSources();
     this.state();
   }
 
@@ -225,7 +225,17 @@ class App {
       clone.querySelector(".highlight-text").textContent = highlight.text;
       clone.querySelector(".separator").textContent = '==========';
 
-      // Set event listeners to highlight actions
+      // Set event listeners to highlights and actions
+      clone.querySelector(".highlight-text").addEventListener("mousedown", (event) => {
+        this.copyToClipboard(highlight.textEdited || highlight.text)
+        this.viewFlash(event.currentTarget);
+      })
+
+      clone.querySelector(".highlight-metadata").addEventListener("mousedown", (event) => {
+        this.copyToClipboard(highlight.original + this.settings.separator) // TODO: handle case if edited
+        this.viewFlash(event.currentTarget.parentElement);
+      })
+
       clone.querySelector(".action-copy").addEventListener("click", (event) => {
         const id = event.target.closest(".highlight").dataset.id;
         const highlight = this.findHighlight(id);
@@ -345,9 +355,10 @@ class App {
     // Add copy action
     const copyButton = document.createElement("button");
     copyButton.innerText = "Copy";
-    copyButton.addEventListener("click", () => {
+    copyButton.addEventListener("click", (event) => {
       const output = this.generateOutput(book);
       this.copyToClipboard(output);
+      this.viewFlash(event.currentTarget.closest("#view"))
     });
     actionsContainer.appendChild(copyButton);
 
@@ -359,6 +370,18 @@ class App {
       this.downloadFile(`${book.title}.txt`, output);
     });
     actionsContainer.appendChild(downloadButton);
+  }
+
+  viewFlash(element) {
+    // element.style.transitionDuration = "0.05s";
+    element.style.transitionDuration = "0s";
+    element.transitionTimingFunction = null;
+    element.style.backgroundColor = "#F8DDE4";
+    setTimeout(() => {
+      element.style.transitionDuration = "0.8s";
+      element.transitionTimingFunction = "ease-out";
+      element.style.backgroundColor = null;
+    }, 40);
   }
 
   // UTILITIES & CHECKS

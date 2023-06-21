@@ -6,8 +6,6 @@ html, body, div {
   color: black;
 }
 
-
-
 header {
   height: 80px;
   padding-left: 20px;
@@ -97,6 +95,7 @@ li:hover {
   list-style: book-open;
 }
 
+
 .highlight-metadata {
   white-space: pre-wrap;
 }
@@ -105,20 +104,16 @@ li:hover {
   opacity: 0;
 }
 
+.highlight-metadata:hover, .highlight-text:hover {
+  cursor: pointer;
+}
+
 .highlight:hover button {
   opacity: 1;
 }
 
 .separator {
   color: #DB5776;
-}
-
-.highlight:hover {
-  background-color: #F8DDE4;
-}
-
-.highlight-text:hover {
-  background-color: yellow;
 }
 
 #view-actions button {
