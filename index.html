@@ -8,22 +8,28 @@
   <script defer src="./app.js"></script>
 </head>
 <body>
-  <h1>📚 Highlight extractor</h1>
-  <button id="reset">Reset</button>
-  <button id="view-source">View source</button>
-  <button id="view-highlights">View highlights</button>
-  <div id="drop-area">Drag-and-drop area</div>
-  <main class="flex">
-    <div id="booklist"></div>
-    <div id="view">
-      <div class="flex align-items-center">
+  <header class="flex">
+    <h1>📚 Highlight extractor</h1>
+    <nav>
+      <button id="reset">Reset</button>
+      <button id="view-source">View source</button>
+      <button id="view-highlights">View highlights</button>
+    </nav>
+  </header>
+  <main>
+    <section id="menu" class="full-height">
+      <div id="booklist"></div>
+      <div id="sourcelist"></div>
+    </section>
+    <section id="view" class="full-height">
+      <div class="flex">
         <h2 id="view-header">Source</h2>
         <div id="view-actions"></div>
       </div>
       <div id="view-content"></div>
-    </div>
+    </section>
   </main>
-  <template id="highlight-template">
+    <template id="highlight-template">
     <div class="highlight">
       <div class="highlight-metadata"></div>
       <br>
@@ -34,6 +40,10 @@
       <button class="action-revert">Revert</button>
       <button class="action-delete">Delete</button>
     </div>
+  </template>
+  <template id="sourcelist-template">
+    <h2 id="sourcelist-title">All sources</h2>
+    <ul class="sources"></li>
   </template>
   <template id="booklist-template">
     <h2 id="booklist-title">All books</h2>

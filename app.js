@@ -20,8 +20,9 @@ class App {
     this.sourceId = 0;
     this.highlightId = 0;
     this.bookId = 0;
-    this.viewHighlights();
+    this.viewSources();
     this.viewBooks();
+    this.viewHighlights();
     this.state();
   }
 
@@ -32,7 +33,7 @@ class App {
     document.querySelector("#view-highlights").addEventListener("click", () => this.viewHighlights());
 
     // Initialize drag-and-drop area
-    const dropArea = document.querySelector("#drop-area")
+    const dropArea = document.querySelector("#menu")
     dropArea.addEventListener("dragenter", (event) => {
       dropArea.style.backgroundColor = "lightgreen";
     });
@@ -249,13 +250,49 @@ class App {
     });
   }
 
-  viewBookHeader(book) {
+  viewBookHeader(book = undefined) {
     const header = document.querySelector("#view-header");
     header.innerText = `${book.title} (${book.highlights.length} highlight${book.highlights.length > 1 ? "s" : ""})`;
   }
 
   viewSourceHeader() {
     // TODO
+  }
+
+  viewSources() {
+    const template = document.querySelector("#sourcelist-template");
+    const sourcesContainer = document.querySelector("#sourcelist");
+
+    // Remove previous sources
+    sourcesContainer.innerHTML = "";
+
+    // Insert total number of sources
+    const clone = template.content.cloneNode(true);
+    const sourcesTitle = clone.querySelector("#sourcelist-title");
+    sourcesTitle.innerText = `All sources (${this.sources.length})`;
+    sourcesContainer.appendChild(sourcesTitle);
+
+    // Get and sort books
+    const books = this.books.sort((a, b) => {
+      return a.title.localeCompare(b.title);
+    });
+
+    // Insert list of books
+    books.forEach((book) => {
+      const bookItem = document.createElement("li");
+      bookItem.setAttribute("data-id", book.id);
+      bookItem.textContent = book.title + ` (${book.highlights.length})`;
+
+      // Active book has different list item style
+      bookItem.addEventListener("click", (event) => {
+        this.viewHighlightsOfBook(book);
+        const bookItems = Array.from(event.target.parentElement.children);
+        bookItems.forEach(item => item.classList.remove("book-open"));
+        event.target.classList.add("book-open");
+      });
+
+      booksContainer.appendChild(bookItem);
+    });
   }
 
   viewBooks() {
