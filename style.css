@@ -1,12 +1,18 @@
 html, body, div {
   margin: 0;
   padding: 0;
+  font-family: "Inter";
+  font-size: 13pt;
+  color: black;
 }
+
+
 
 header {
   height: 80px;
-  padding: 0 20px;
-  background-color: #FBCBC6;
+  padding-left: 20px;
+  padding-right: 20px;
+  background-color: #B1E5F2;
 }
 
 main {
@@ -15,7 +21,18 @@ main {
 
 h1 {
   min-width: 300px;
-  flex: auto
+  flex: auto;
+  font-size: 1.4em;
+  color: #0A0A0A;
+}
+
+h2 {
+  font-size: 1.1em;
+  margin-bottom: 25px;
+}
+
+button {
+  font-size: 0.7em;
 }
 
 .flex {
@@ -32,7 +49,7 @@ h1 {
   flex-grow: 0;
   flex-shrink: 0;
   flex-basis: 400px;
-  background-color: #FDEEED;
+  background-color: #DCF3F9;
 }
 
 #view {
@@ -46,7 +63,7 @@ h1 {
 }
 
 .container {
-  padding: 10px;
+  padding: 10px 20px;
 }
 
 @counter-style book-blue {
@@ -57,7 +74,8 @@ h1 {
 
 @counter-style book-open {
   system: cyclic;
-  symbols: "\1F4D6";
+  symbols: "📙";
+  /* symbols: "\1F4D6"; */
   suffix: " ";
 }
 
@@ -67,10 +85,11 @@ li {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  padding: 1px 0px;
 }
 
 li:hover {
-  background-color: #F9D5A7;
+  background-color: #F1BCC8;
   cursor: pointer;
 }
 
@@ -91,5 +110,30 @@ li:hover {
 }
 
 .separator {
-  color: #FFB085;
+  color: #DB5776;
+}
+
+.highlight:hover {
+  background-color: #F8DDE4;
+}
+
+.highlight-text:hover {
+  background-color: yellow;
+}
+
+#view-actions button {
+  background-color: #F8DDE4;
+  color: #BA274A;
+  padding: 3px 12px;
+  border: none;
+  border-radius: 3px;
+  margin: 0 8px;
+  font-family: "Inter", sans-serif;
+}
+
+@font-face {
+	font-family: "Inter";
+	src: url(inter.ttf);
+	font-weight: 400;
+	font-style: normal;
 }

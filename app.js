@@ -35,7 +35,7 @@ class App {
     // Initialize drag-and-drop area
     const dropArea = document.querySelector("#menu")
     dropArea.addEventListener("dragenter", (event) => {
-      dropArea.style.backgroundColor = "#D2FF96";
+      dropArea.style.backgroundColor = "#F1BCC8";
     });
 
     dropArea.addEventListener("dragleave", (event) => {
@@ -46,8 +46,7 @@ class App {
       event.stopPropagation();
       event.preventDefault();
       event.dataTransfer.dropEffect = 'copy';
-      dropArea.style.backgroundColor = "#D2FF96";
-
+      dropArea.style.backgroundColor = "#F1BCC8";
     });
 
     dropArea.addEventListener("drop", (event) => {
@@ -271,7 +270,7 @@ class App {
     // Insert total number of sources
     const clone = template.content.cloneNode(true);
     const sourcesTitle = clone.querySelector("#sourcelist-title");
-    sourcesTitle.innerText = `All sources (${this.sources.length})`;
+    sourcesTitle.innerText = `all sources (${this.sources.length})`;
     sourcesContainer.appendChild(sourcesTitle);
 
     // Get and sort books
@@ -307,7 +306,7 @@ class App {
     // Insert total number of books
     const clone = template.content.cloneNode(true);
     const booksTitle = clone.querySelector("#booklist-title");
-    booksTitle.innerText = `All books (${this.books.length})`;
+    booksTitle.innerText = `all books (${this.books.length})`;
     booksContainer.appendChild(booksTitle);
 
     // Get and sort books
