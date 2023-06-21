@@ -300,18 +300,26 @@ class App {
 
     // Update title with number of highlights
     this.viewBookHeader(book);
-    // this.viewBookHeader(`${book.title}`, `${highlights.length} highlight${highlights.length > 1 ? 's' : ''}`);
 
     const actionsContainer = document.querySelector("#view-actions");
     actionsContainer.innerHTML = "";
 
+    // Add copy action
+    const copyButton = document.createElement("button");
+    copyButton.innerText = "Copy";
+    copyButton.addEventListener("click", () => {
+      const output = this.generateOutput(book);
+      this.copyToClipboard(output);
+    });
+    actionsContainer.appendChild(copyButton);
+
+    // Add download action
     const downloadButton = document.createElement("button");
     downloadButton.innerText = "Download";
     downloadButton.addEventListener("click", () => {
       const output = this.generateOutput(book);
       this.downloadFile(`${book.title}.txt`, output);
     });
-
     actionsContainer.appendChild(downloadButton);
   }
 
