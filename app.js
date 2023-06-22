@@ -168,9 +168,6 @@ class App {
   assignSourceId() {return this.sourceId += 1}
   assignBookId() {return this.bookId += 1}
 
-  findHighlight(id) {
-    return this.highlights.find(highlight => highlight.id === Number.parseInt(id, 10));
-  }
 
   findHighlightsFromBook(book) {
     return this.highlights.filter(highlight => ((highlight.title === book.title) && !highlight.deleted));
@@ -238,7 +235,6 @@ class App {
 
       clone.querySelector(".action-copy").addEventListener("click", (event) => {
         const id = event.target.closest(".highlight").dataset.id;
-        const highlight = this.findHighlight(id);
         this.copyToClipboard(highlight.text);
       });
 
@@ -249,7 +245,6 @@ class App {
 
       clone.querySelector(".action-delete").addEventListener("click", (event) => {
         const id = event.target.closest(".highlight").dataset.id;
-        const highlight = this.findHighlight(id);
         this.deleteHighlight(highlight);
         if (highlight.deleted) {
           const id = event.target.closest(".highlight").remove();
@@ -382,8 +377,10 @@ class App {
       element.transitionTimingFunction = "ease-in";
       element.style.backgroundColor = null;
     }, 20);
-    element.style.transitionDuration = "0s";
-    element.transitionTimingFunction = null;
+    setTimeout(() => {
+      element.style.transitionDuration = null;
+      element.transitionTimingFunction = null;
+    }, 620);
   }
 
   clearMenu() {

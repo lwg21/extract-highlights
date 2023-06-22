@@ -3,7 +3,7 @@ html, body, div {
   padding: 0;
   font-family: "Inter";
   font-size: 13pt;
-  color: black;
+  /* color: black; */
 }
 
 header {
