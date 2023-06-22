@@ -10,8 +10,7 @@ header {
   height: 80px;
   padding-left: 20px;
   padding-right: 20px;
-  /* background-color: #B1E5F2; */
-  background: linear-gradient(135deg, #96DCED 20%, #B1E5F2);
+  background-color: #145C9E;
 }
 
 main {
@@ -22,7 +21,7 @@ h1 {
   min-width: 300px;
   flex: auto;
   font-size: 1.4em;
-  color: #0A0A0A;
+  color: white;
 }
 
 h2 {
@@ -77,7 +76,8 @@ button {
 
 @counter-style book-blue {
   system: cyclic;
-  symbols: "\1F4D8";
+  symbols: "📘";
+  /* symbols: "\1F4D8"; */
   suffix: " ";
 }
 
@@ -137,13 +137,17 @@ li.active {
   color: #D4880C;
 }
 
+#view-actions {
+  margin-bottom: 20px;
+}
+
 #view-actions button {
   background-color: #FBE6C5;
   color: #D4880C;
   padding: 3px 12px;
   border: none;
   border-radius: 3px;
-  margin: 0 8px;
+  margin-right: 8px;
   font-family: "Inter", sans-serif;
 }
 
@@ -152,4 +156,13 @@ li.active {
 	src: url(inter.ttf);
 	font-weight: 400;
 	font-style: normal;
+}
+
+#drop-instructions {
+  display: flex;
+  flex-grow: 1;
+  margin: 30px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }

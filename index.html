@@ -14,24 +14,27 @@
       <button id="reset">Reset</button>
       <button id="view-source">View source</button>
       <button id="view-highlights">View highlights</button>
+      <a href="https://github.com/lwg21/extract-highlights">GitHub</a>
     </nav>
   </header>
   <main>
     <section id="menu" class="full-height">
+      <!-- <div id="drop-instructions">
+        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-monitor-up"><path d="m9 10 3-3 3 3"/><path d="M12 13V7"/><rect width="20" height="14" x="2" y="3" rx="2"/><path d="M12 17v4"/><path d="M8 21h8"/></svg>
+        <p>Drop your 'My clippings.txt' file here</p>
+      </div> -->
       <div id="booklist" class="v-pad"></div>
       <div id="sourcelist" class="v-pad"></div>
     </section>
     <section id="view" class="full-height">
       <div class="v-pad h-pad">
-        <div class="flex">
-          <h2 id="view-header">Source</h2>
-          <div id="view-actions"></div>
-        </div>
+        <h2 id="view-header"></h2>
+        <div id="view-actions"></div>
         <div id="view-content"></div>
       </div>
     </section>
   </main>
-    <template id="highlight-template">
+  <template id="highlight-template">
     <div class="highlight">
       <div class="highlight-metadata"></div>
       <br>

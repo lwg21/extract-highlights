@@ -20,9 +20,8 @@ class App {
     this.sourceId = 0;
     this.highlightId = 0;
     this.bookId = 0;
-    this.viewSources();
-    this.viewBooks();
-    this.viewHighlights();
+    this.clearMenu();
+    this.clearView();
     this.state();
   }
 
@@ -368,6 +367,9 @@ class App {
       this.downloadFile(`${book.title}.txt`, output);
     });
     actionsContainer.appendChild(downloadButton);
+
+    // Scroll to top
+    document.querySelector("#view").scrollTo(0, 0)
   }
 
   viewFlash(element) {
@@ -380,6 +382,15 @@ class App {
       element.transitionTimingFunction = "ease-out";
       element.style.backgroundColor = null;
     }, 40);
+  }
+
+  clearMenu() {
+  }
+
+  clearView() {
+    document.querySelector("#view-header").innerHTML = "";;
+    document.querySelector("#view-actions").innerHTML = "";;
+    document.querySelector("#view-content").innerHTML = "";;
   }
 
   // UTILITIES & CHECKS
