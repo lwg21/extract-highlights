@@ -295,7 +295,6 @@ class App {
       // Active source has different list item style
       sourceItem.addEventListener("click", (event) => {
         this.viewSource(source);
-        debugger
         const sourceItems = Array.from(event.currentTarget.closest("#menu").querySelectorAll("li"));
         sourceItems.forEach(item => item.classList.remove("active"));
         event.target.classList.add("active");
