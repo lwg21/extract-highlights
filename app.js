@@ -295,7 +295,8 @@ class App {
       // Active source has different list item style
       sourceItem.addEventListener("click", (event) => {
         this.viewSource(source);
-        const sourceItems = Array.from(event.target.parentElement.children);
+        debugger
+        const sourceItems = Array.from(event.currentTarget.closest("#menu").querySelectorAll("li"));
         sourceItems.forEach(item => item.classList.remove("active"));
         event.target.classList.add("active");
       });
@@ -331,7 +332,7 @@ class App {
       // Active book has different list item style
       bookItem.addEventListener("click", (event) => {
         this.viewHighlightsOfBook(book);
-        const bookItems = Array.from(event.target.parentElement.children);
+        const bookItems = Array.from(event.currentTarget.closest("#menu").querySelectorAll("li"));
         bookItems.forEach(item => item.classList.remove("active"));
         event.target.classList.add("active");
       });
