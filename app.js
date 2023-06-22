@@ -122,16 +122,8 @@ class App {
     return book;
   }
 
-  findBook(id) {
-    return this.books.find(book => book.id === Number.parseInt(id, 10));
-  }
-
   findBookbyTitle(title) {
     return this.books.find(book => book.title === title);
-  }
-
-  findSource(id) {
-    return this.sources.find(source => source.id === Number.parseInt(id, 10));
   }
 
   copyToClipboard(text) {
