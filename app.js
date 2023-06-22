@@ -28,8 +28,6 @@ class App {
   initializeUI() {
     // Initialize main actions
     document.querySelector("#reset").addEventListener("click", () => this.initializeData());
-    document.querySelector("#view-source").addEventListener("click", () => this.viewSource());
-    document.querySelector("#view-highlights").addEventListener("click", () => this.viewHighlights());
 
     // Initialize drag-and-drop area
     const dropArea = document.querySelector("#menu")

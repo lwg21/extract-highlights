@@ -9,8 +9,14 @@ html, body, div {
 header {
   height: 80px;
   padding-left: 20px;
-  padding-right: 20px;
+  padding-right: 40px;
   background-color: #145C9E;
+}
+
+header a {
+  color: white;
+  text-decoration: none;
+  font-size: 0.9em;
 }
 
 main {
