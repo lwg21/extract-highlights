@@ -161,8 +161,26 @@ li.active {
 #drop-instructions {
   display: flex;
   flex-grow: 1;
-  margin: 30px;
+  margin: 60px 30px;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+}
+
+#drop-instructions * {
+  color: #707070;
+  /* transition: all 6s ease-out; */
+  animation: pulse 6s infinite;
+}
+
+@keyframes pulse {
+  0% {
+		color: #e3e1e1;
+  }
+  50% {
+		color: #707070;
+  }
+  100% {
+		color: #e3e1e1;
+  }
 }

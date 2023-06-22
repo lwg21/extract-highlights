@@ -310,6 +310,9 @@ class App {
     // Remove previous books
     booksContainer.innerHTML = "";
 
+    // Remove drop instructions
+    document.querySelector("#drop-instructions").style.display = "none";
+
     // Insert total number of books
     const clone = template.content.cloneNode(true);
     const booksTitle = clone.querySelector("#booklist-title");
@@ -378,13 +381,16 @@ class App {
     element.transitionTimingFunction = null;
     element.style.backgroundColor = "#F8D6A0";
     setTimeout(() => {
-      element.style.transitionDuration = "0.8s";
-      element.transitionTimingFunction = "ease-out";
+      element.style.transitionDuration = "0.6s";
+      element.transitionTimingFunction = "ease-in";
       element.style.backgroundColor = null;
-    }, 40);
+    }, 20);
   }
 
   clearMenu() {
+    document.querySelector("#drop-instructions").style.display = "flex";
+    document.querySelector("#booklist").innerHTML = "";;
+    document.querySelector("#sourcelist").innerHTML = "";;
   }
 
   clearView() {
