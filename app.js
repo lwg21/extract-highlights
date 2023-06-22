@@ -376,15 +376,14 @@ class App {
   }
 
   viewFlash(element) {
-    // element.style.transitionDuration = "0.05s";
-    element.style.transitionDuration = "0s";
-    element.transitionTimingFunction = null;
     element.style.backgroundColor = "#F8D6A0";
     setTimeout(() => {
       element.style.transitionDuration = "0.6s";
       element.transitionTimingFunction = "ease-in";
       element.style.backgroundColor = null;
     }, 20);
+    element.style.transitionDuration = "0s";
+    element.transitionTimingFunction = null;
   }
 
   clearMenu() {
