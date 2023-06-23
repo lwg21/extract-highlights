@@ -10,7 +10,7 @@ class App {
   initializeSettings() {
     this.settings = {
       separator: "\r\n==========\r\n",
-      duplicateSubstringLength: 1
+      duplicateSubstringLength: 40
     };
   }
 
@@ -54,7 +54,6 @@ class App {
 
       // Read each dropped file upon drop
       const files = event.dataTransfer.files;
-      debugger
       for (let i = 0; i < files.length; i++) {
         this.readFile(files.item(i));
       }
@@ -99,7 +98,7 @@ class App {
         const highlight = clipping.match(regex).groups
         highlight.original = clipping;
         highlight.metadata = clipping.split(/(\r?\n)/).slice(0,3).join('');
-        highlight.duplicate = [];
+        highlight.duplicates = [];
         highlight.id = this.assignHighlightId();
         this.highlights.push(highlight);
 
@@ -184,14 +183,30 @@ class App {
     return highlight;
   }
 
-  checkDuplicate(highlight1, highlight2) {
+  duplicateCompare(highlight1, highlight2) {
     const check = this.checkForCommonSubstring(highlight1.text, highlight2.text, this.settings.duplicateSubstringLength);
     if (check.found) {
+      // Link duplicate highlights
       highlight1.duplicates.push(highlight2);
       highlight2.duplicates.push(highlight1);
+      return true;
+    }
+    return false
+  }
 
-      console.log("Duplicate!");
-      // TODO: represent the link between two duplicates.
+  scanForDuplicates(highlights) {
+    const n = highlights.length;
+
+    // Compare each highlight with all the others once
+    for (let i = 0; i <= n - 1; i++) {
+      for (let j = i + 1; j <= n - 1; j++) {
+        this.duplicateCompare(highlights[i], highlights[j])
+
+        // [TESTING]
+        // Count number of times a highlight has been tested (should equal n - 1)
+        highlights[i].tested = highlights[i].tested + 1 || 1;
+        highlights[j].tested = highlights[j].tested + 1 || 1;
+      }
     }
   }
 
@@ -217,6 +232,9 @@ class App {
     // Clear view
     viewContainer.innerHTML = "";
 
+    // [TESTING] TODO:REMOVE
+    this.scanForDuplicates(highlights);
+
     // Insert highlights contained in instance variable using content template
     highlights.forEach((highlight) => {
       // Populate template with highlight data
@@ -225,6 +243,11 @@ class App {
       clone.querySelector(".highlight-metadata").textContent = highlight.metadata;
       clone.querySelector(".highlight-text").textContent = highlight.text;
       clone.querySelector(".separator").textContent = '==========';
+
+      // [TESTING] TODO:REMOVE
+      highlight.duplicates.forEach(highlight => {
+        clone.querySelector(".separator").textContent += ' 🚨';
+      });
 
       // Set event listeners to highlights and actions
       clone.querySelector(".highlight-text").addEventListener("mousedown", (event) => {
@@ -402,7 +425,7 @@ class App {
   // UTILITIES & CHECKS
 
   checkForCommonSubstring(string1, string2, threshold = 50) {
-    // Adapted from subCompare courtesy of slebetman @ http://stackoverflow.com/a/13007065/1763297
+    // Adapted from slebetman (http://stackoverflow.com/a/13007065/1763297)
 
     // Identify smaller string
     const smallString = string1.length <= string2.length ? string1 : string2;
