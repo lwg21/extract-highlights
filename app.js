@@ -54,6 +54,7 @@ class App {
 
       // Read each dropped file upon drop
       const files = event.dataTransfer.files;
+      debugger
       for (let i = 0; i < files.length; i++) {
         this.readFile(files.item(i));
       }
@@ -98,6 +99,7 @@ class App {
         const highlight = clipping.match(regex).groups
         highlight.original = clipping;
         highlight.metadata = clipping.split(/(\r?\n)/).slice(0,3).join('');
+        highlight.duplicate = [];
         highlight.id = this.assignHighlightId();
         this.highlights.push(highlight);
 
@@ -183,8 +185,13 @@ class App {
   }
 
   checkDuplicate(highlight1, highlight2) {
-    if (this.checkForCommonSubstring(highlight1.text, highlight2.text, this.settings.duplicateSubstringLength).found) {
+    const check = this.checkForCommonSubstring(highlight1.text, highlight2.text, this.settings.duplicateSubstringLength);
+    if (check.found) {
+      highlight1.duplicates.push(highlight2);
+      highlight2.duplicates.push(highlight1);
+
       console.log("Duplicate!");
+      // TODO: represent the link between two duplicates.
     }
   }
 

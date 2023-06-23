@@ -173,18 +173,18 @@ li.active {
 
 #drop-instructions * {
   color: #707070;
-  /* transition: all 6s ease-out; */
-  animation: pulse 6s infinite;
+  transition: ease-out;
+  animation: pulse 3s infinite;
 }
 
 @keyframes pulse {
   0% {
-		color: #e3e1e1;
+    color: #707070;
   }
   50% {
-		color: #707070;
+    color: #e3e1e1;
   }
   100% {
-		color: #e3e1e1;
+    color: #707070;
   }
 }
