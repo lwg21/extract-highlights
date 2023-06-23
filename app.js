@@ -9,7 +9,8 @@ class App {
 
   initializeSettings() {
     this.settings = {
-      separator: "\r\n==========\r\n"
+      separator: "\r\n==========\r\n",
+      duplicateSubstringLength: 1
     };
   }
 
@@ -179,6 +180,12 @@ class App {
   undoDeleteHighlight(highlight) {
     highlight.deleted = false;
     return highlight;
+  }
+
+  checkDuplicate(highlight1, highlight2) {
+    if (this.checkForCommonSubstring(highlight1.text, highlight2.text, this.settings.duplicateSubstringLength).found) {
+      console.log("Duplicate!");
+    }
   }
 
   // VIEW
@@ -386,6 +393,33 @@ class App {
   }
 
   // UTILITIES & CHECKS
+
+  checkForCommonSubstring(string1, string2, threshold = 50) {
+    // Adapted from subCompare courtesy of slebetman @ http://stackoverflow.com/a/13007065/1763297
+
+    // Identify smaller string
+    const smallString = string1.length <= string2.length ? string1 : string2;
+    const bigString = string1.length <= string2.length ? string2 : string1;
+
+    // Search possible substrings from largest to smallest:
+    for (let i = smallString.length; i >= threshold; i--) {
+      for (let j = 0; j <= (smallString.length - i); j++) {
+        let substring = smallString.substr(j,i);
+        let k = bigString.indexOf(substring);
+        if (k != -1) {
+          return {
+            found: true,
+            substring: substring,
+            smallStringIndex: j,
+            bigStringIndex: k
+          }
+        }
+      }
+    }
+    return {
+      found : false
+    }
+  }
 
   state() {
     console.log(`*--State--*`
