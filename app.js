@@ -84,6 +84,7 @@ class App {
     this.extractHighlights();
     this.viewBooks();
     this.viewSources();
+    this.clearView();
     this.state();
   }
 
@@ -232,9 +233,6 @@ class App {
     // Clear view
     viewContainer.innerHTML = "";
 
-    // [TESTING] TODO:REMOVE
-    this.scanForDuplicates(highlights);
-
     // Insert highlights contained in instance variable using content template
     highlights.forEach((highlight) => {
       // Populate template with highlight data
@@ -245,8 +243,8 @@ class App {
       clone.querySelector(".separator").textContent = '==========';
 
       // [TESTING] TODO:REMOVE
-      highlight.duplicates.forEach(highlight => {
-        clone.querySelector(".separator").textContent += ' 🚨';
+      highlight.duplicates.forEach(duplicate => {
+        clone.querySelector(".separator").textContent += ` 🚨 (id: ${duplicate.id})`;
       });
 
       // Set event listeners to highlights and actions
@@ -393,6 +391,14 @@ class App {
     });
     actionsContainer.appendChild(downloadButton);
 
+    // Add scan for duplicates action
+    const scanButton = document.createElement("button");
+    scanButton.innerText = "Scan duplicates";
+    scanButton.addEventListener("click", () => {
+      this.viewDuplicatesOfBook(book);
+    });
+    actionsContainer.appendChild(scanButton);
+
     // Scroll to top
     document.querySelector("#view").scrollTo(0, 0);
   }
@@ -408,6 +414,12 @@ class App {
       element.style.transitionDuration = null;
       element.transitionTimingFunction = null;
     }, 620);
+  }
+
+  viewDuplicatesOfBook(book) {
+    this.scanForDuplicates(book.highlights);
+    console.log("done");
+    this.viewHighlightsOfBook(book);
   }
 
   clearMenu() {
