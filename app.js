@@ -357,7 +357,7 @@ class App {
     actionsContainer.appendChild(downloadButton);
 
     // Scroll to top
-    document.querySelector("#view").scrollTo(0, 0)
+    document.querySelector("#view").scrollTo(0, 0);
   }
 
   viewFlash(element) {

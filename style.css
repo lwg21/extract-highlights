@@ -1,9 +1,9 @@
-html, body, div {
+body {
   margin: 0;
   padding: 0;
   font-family: "Inter";
   font-size: 13pt;
-  /* color: black; */
+  color: black;
 }
 
 header {
@@ -67,7 +67,6 @@ button {
 #view {
   flex-grow: 1;
   flex-shrink: 1;
-  /* background-color: #FEF1E6; */
 }
 
 #view-header {
@@ -87,7 +86,6 @@ button {
 @counter-style book-blue {
   system: cyclic;
   symbols: "📘";
-  /* symbols: "\1F4D8"; */
   suffix: " ";
 }
 
