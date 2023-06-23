@@ -253,7 +253,7 @@ class App {
 
   viewSourceHeader(source) {
     const header = document.querySelector("#view-header");
-    header.innerText = `Source '${source.filename}' (#${source.id})`;
+    header.innerText = `Source #${source.id} '${source.filename}'`;
   }
 
   viewSources() {

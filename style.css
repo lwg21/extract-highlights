@@ -19,6 +19,10 @@ header a {
   font-size: 0.9em;
 }
 
+header a:hover {
+  color: #F8D6A0;
+}
+
 main {
   display: flex;
 }
@@ -117,10 +121,6 @@ li:hover {
 
 li.active {
   background-color: #F8D6A0;
-}
-
-.spiral {
-  list-style: spiral !important;
 }
 
 .highlight-metadata {
