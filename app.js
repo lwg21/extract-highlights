@@ -93,20 +93,26 @@ class App {
     clippings.forEach((clipping) => {
       if (!clipping) return null
 
-      // Parse clipping, create highlight object and add it to highlights
+      // Parse clipping and create highlight object
       const regex = /(?<title>[\S ]+) (?:- (?<authorAlt>[\w ]+)|\((?<author>[^(]+)\))\s*- Your (?<type>\w+) on page (?<pageStart>\d*)-?(?<pageEnd>\d*)(?: \| location (?<locationStart>\d+)-?(?<locationEnd>\d*))? \| Added on (?<date>[\S ]*)\s*(?<text>.*)\s*/
       const highlight = clipping.match(regex).groups
       highlight.original = clipping;
       highlight.metadata = clipping.split(/(\r?\n)/).slice(0,3).join('');
-      highlight.duplicates = [];
+
+      // Assign unique id
       highlight.id = this.assignHighlightId();
-      this.highlights.push(highlight);
+
+      // Initialise duplicates array
+      highlight.duplicates = [];
 
       // Find existing book or create new book
       const book = this.findBookbyTitle(highlight.title) || this.createBook(highlight.title);
 
       // Link highlight and book both ways
       highlight.book = book;
+
+      // Push highlight into highlights and book highlights
+      this.highlights.push(highlight);
       book.highlights.push(highlight);
     });
   }
@@ -123,11 +129,6 @@ class App {
 
   findBookbyTitle(title) {
     return this.books.find(book => book.title === title);
-  }
-
-  copyToClipboard(text) {
-    window.navigator.clipboard.writeText(text);
-    console.log(`Copied to clipboard:\n${text}`);
   }
 
   downloadFile(filename, text) {
@@ -433,6 +434,11 @@ class App {
   }
 
   // UTILITIES & CHECKS
+
+  copyToClipboard(text) {
+    window.navigator.clipboard.writeText(text);
+    console.log(`Copied to clipboard:\n${text}`);
+  }
 
   checkForCommonSubstring(string1, string2, threshold = 50) {
     // Adapted from slebetman (http://stackoverflow.com/a/13007065/1763297)
