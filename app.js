@@ -74,42 +74,40 @@ class App {
       // Add raw text to sources upon load
       this.sources.push(source)
       console.log(`File '${source.filename}' imported`);
-      this.extractData();
+      this.extractData(source);
     });
     reader.readAsText(file);
   }
 
-  extractData() {
+  extractData(source) {
     // Analyse sources to populate highlights and books, update view
-    this.extractHighlights();
+    this.extractHighlightsFromSource(source);
     this.viewBooks();
     this.viewSources();
     this.clearView();
     this.state();
   }
 
-  extractHighlights() {
-    this.sources.forEach((source) => {
-      const clippings = source.text.split(/\s*==========\s*/);
-      clippings.forEach((clipping) => {
-        if (!clipping) return null
+  extractHighlightsFromSource(source) {
+    const clippings = source.text.split(/\s*==========\s*/);
+    clippings.forEach((clipping) => {
+      if (!clipping) return null
 
-        // Parse clipping, create highlight object and add it to highlights
-        const regex = /(?<title>[\S ]+) (?:- (?<authorAlt>[\w ]+)|\((?<author>[^(]+)\))\s*- Your (?<type>\w+) on page (?<pageStart>\d*)-?(?<pageEnd>\d*)(?: \| location (?<locationStart>\d+)-?(?<locationEnd>\d*))? \| Added on (?<date>[\S ]*)\s*(?<text>.*)\s*/
-        const highlight = clipping.match(regex).groups
-        highlight.original = clipping;
-        highlight.metadata = clipping.split(/(\r?\n)/).slice(0,3).join('');
-        highlight.duplicates = [];
-        highlight.id = this.assignHighlightId();
-        this.highlights.push(highlight);
+      // Parse clipping, create highlight object and add it to highlights
+      const regex = /(?<title>[\S ]+) (?:- (?<authorAlt>[\w ]+)|\((?<author>[^(]+)\))\s*- Your (?<type>\w+) on page (?<pageStart>\d*)-?(?<pageEnd>\d*)(?: \| location (?<locationStart>\d+)-?(?<locationEnd>\d*))? \| Added on (?<date>[\S ]*)\s*(?<text>.*)\s*/
+      const highlight = clipping.match(regex).groups
+      highlight.original = clipping;
+      highlight.metadata = clipping.split(/(\r?\n)/).slice(0,3).join('');
+      highlight.duplicates = [];
+      highlight.id = this.assignHighlightId();
+      this.highlights.push(highlight);
 
-        // Find existing book or create new book
-        const book = this.findBookbyTitle(highlight.title) || this.createBook(highlight.title);
+      // Find existing book or create new book
+      const book = this.findBookbyTitle(highlight.title) || this.createBook(highlight.title);
 
-        // Link highlight and book both ways
-        highlight.book = book;
-        book.highlights.push(highlight);
-      });
+      // Link highlight and book both ways
+      highlight.book = book;
+      book.highlights.push(highlight);
     });
   }
 
