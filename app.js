@@ -82,7 +82,8 @@ class App {
   extractData(source) {
     // Analyse sources to populate highlights and books, update view
     this.extractHighlightsFromSource(source);
-    this.viewBooks();
+    // this.viewBooks();
+    this.displayBookList();
     this.viewSources();
     this.clearView();
     this.state();
@@ -209,6 +210,87 @@ class App {
     }
   }
 
+  // COMPONENTS
+
+  generateBookList() {
+    // Clone template
+    const template = document.querySelector("#booklist-template");
+    const clone = template.content.cloneNode(true);
+
+    // Update header with total number of books
+    clone.querySelector("#booklist-header").innerText = `all books (${this.books.length})`;
+
+    // Sort books alphabetically
+    this.books.sort((a, b) => {return a.title.localeCompare(b.title)});
+
+    // Add books as list items
+    this.books.forEach(book => {
+      const bookItem = document.createElement("li");
+      bookItem.setAttribute("data-id", book.id);
+      bookItem.textContent = book.title + ` (${book.highlights.length})`;
+
+      // Active book has different list item style
+      bookItem.addEventListener("click", (event) => {
+        this.viewHighlightsOfBook(book);
+        this.removeActiveMenu();
+        event.currentTarget.classList.add("active");
+      });
+
+      clone.querySelector("ul").appendChild(bookItem);
+    });
+
+    return clone
+  }
+
+  displayBookList() {
+    const bookList = document.querySelector("#booklist");
+    bookList.innerHTML = "";
+    bookList.appendChild(this.generateBookList());
+  }
+
+  removeActiveMenu() {
+    document.querySelectorAll("#menu .active").forEach(element => {element.classList.remove("active")});
+  }
+
+  // viewBooks() {
+  //   const template = document.querySelector("#booklist-template");
+  //   const booksContainer = document.querySelector("#booklist");
+
+  //   // Remove previous books
+  //   booksContainer.innerHTML = "";
+
+  //   // Remove drop instructions
+  //   document.querySelector("#drop-instructions").style.display = "none";
+
+  //   // Insert total number of books
+  //   const clone = template.content.cloneNode(true);
+  //   const booksTitle = clone.querySelector("#booklist-header");
+  //   booksTitle.innerText = `all books (${this.books.length})`;
+  //   booksContainer.appendChild(booksTitle);
+
+  //   // Get and sort books
+  //   const books = this.books.sort((a, b) => {
+  //     return a.title.localeCompare(b.title);
+  //   });
+
+  //   // Insert list of books
+  //   books.forEach((book) => {
+  //     const bookItem = document.createElement("li");
+  //     bookItem.setAttribute("data-id", book.id);
+  //     bookItem.textContent = book.title + ` (${book.highlights.length})`;
+
+  //     // Active book has different list item style
+  //     bookItem.addEventListener("click", (event) => {
+  //       this.viewHighlightsOfBook(book);
+  //       const bookItems = Array.from(event.currentTarget.closest("#menu").querySelectorAll("li"));
+  //       bookItems.forEach(item => item.classList.remove("active"));
+  //       event.target.classList.add("active");
+  //     });
+
+  //     booksContainer.appendChild(bookItem);
+  //   });
+  // }
+
   // VIEW
 
   viewSource(source) {
@@ -318,45 +400,6 @@ class App {
       });
 
       sourcesContainer.appendChild(sourceItem);
-    });
-  }
-
-  viewBooks() {
-    const template = document.querySelector("#booklist-template");
-    const booksContainer = document.querySelector("#booklist");
-
-    // Remove previous books
-    booksContainer.innerHTML = "";
-
-    // Remove drop instructions
-    document.querySelector("#drop-instructions").style.display = "none";
-
-    // Insert total number of books
-    const clone = template.content.cloneNode(true);
-    const booksTitle = clone.querySelector("#booklist-title");
-    booksTitle.innerText = `all books (${this.books.length})`;
-    booksContainer.appendChild(booksTitle);
-
-    // Get and sort books
-    const books = this.books.sort((a, b) => {
-      return a.title.localeCompare(b.title);
-    });
-
-    // Insert list of books
-    books.forEach((book) => {
-      const bookItem = document.createElement("li");
-      bookItem.setAttribute("data-id", book.id);
-      bookItem.textContent = book.title + ` (${book.highlights.length})`;
-
-      // Active book has different list item style
-      bookItem.addEventListener("click", (event) => {
-        this.viewHighlightsOfBook(book);
-        const bookItems = Array.from(event.currentTarget.closest("#menu").querySelectorAll("li"));
-        bookItems.forEach(item => item.classList.remove("active"));
-        event.target.classList.add("active");
-      });
-
-      booksContainer.appendChild(bookItem);
     });
   }
 

@@ -1,46 +1,11 @@
+/* CONTAINERS */
+
 body {
   margin: 0;
   padding: 0;
   font-family: "Inter";
   font-size: 13pt;
   color: black;
-}
-
-header {
-  height: 80px;
-  padding-left: 20px;
-  padding-right: 40px;
-  background-color: #145C9E;
-}
-
-header a {
-  color: white;
-  text-decoration: none;
-  font-size: 0.9em;
-}
-
-header a:hover {
-  color: #F8D6A0;
-}
-
-main {
-  display: flex;
-}
-
-h1 {
-  min-width: 300px;
-  flex: auto;
-  font-size: 1.4em;
-  color: white;
-}
-
-h2 {
-  font-size: 1.1em;
-  margin-bottom: 25px;
-}
-
-button {
-  font-size: 0.7em;
 }
 
 .flex {
@@ -53,26 +18,6 @@ button {
   overflow: auto;
 }
 
-#menu {
-  flex-grow: 0;
-  flex-shrink: 0;
-  flex-basis: 400px;
-  background-color: #fafafa;
-}
-
-#menu h2, #menu li {
-  padding: 0 20px;
-}
-
-#view {
-  flex-grow: 1;
-  flex-shrink: 1;
-}
-
-#view-header {
-  flex-grow: 1;
-}
-
 .v-pad {
   padding-top: 10px;
   padding-bottom: 10px;
@@ -83,20 +28,57 @@ button {
   padding-left: 20px;
 }
 
-@counter-style book-blue {
-  system: cyclic;
-  symbols: "📘";
-  suffix: " ";
+/* HEADER */
+
+header {
+  height: 80px;
+  padding-left: 20px;
+  padding-right: 40px;
+  background-color: #145C9E;
 }
 
-@counter-style ledger {
-  system: cyclic;
-  symbols: "📒";
-  suffix: " ";
+h1 {
+  min-width: 300px;
+  flex: auto;
+  font-size: 1.4em;
+  color: white;
+}
+
+header a {
+  color: white;
+  text-decoration: none;
+  font-size: 0.9em;
+}
+
+header a:hover {
+  color: #F8D6A0;
+}
+
+/* MAIN */
+
+main {
+  display: flex;
+}
+
+h2 {
+  font-size: 1.1em;
+  margin-bottom: 25px;
+}
+
+/* MENU */
+
+#menu {
+  flex-grow: 0;
+  flex-shrink: 0;
+  flex-basis: 400px;
+  background-color: #fafafa;
+}
+
+ul {
+  padding: 0;
 }
 
 li {
-  list-style: book-blue;
   text-indent: 0px;
   white-space: nowrap;
   overflow: hidden;
@@ -104,21 +86,75 @@ li {
   padding: 1px 0px;
 }
 
+
 li:hover {
   background-color: #FBE6C5;
   cursor: pointer;
 }
 
+li.active {
+  background-color: #F8D6A0;
+}
+
 #booklist li {
-  list-style: book-blue;
+  list-style: book-blue inside;
+}
+
+@counter-style book-blue {
+  system: cyclic;
+  symbols: 📘;
+  suffix: " ";
 }
 
 #sourcelist li {
-  list-style: ledger;
+  list-style: ledger inside;
 }
 
-li.active {
-  background-color: #F8D6A0;
+@counter-style ledger {
+  system: cyclic;
+  symbols: 📒;
+  suffix: " ";
+}
+
+#deletedlist {
+  list-style: red-book inside;
+}
+
+@counter-style red-book {
+  system: cyclic;
+  symbols: 📕;
+  suffix: " ";
+}
+
+#duplicatelist {
+  list-style: orange-book inside;
+}
+
+@counter-style orange-book {
+  system: cyclic;
+  symbols: 📙;
+  suffix: " ";
+}
+
+#bookmarklist {
+  list-style: bookmark inside;
+}
+
+@counter-style bookmark {
+  system: cyclic;
+  symbols: 🔖;
+  suffix: " ";
+}
+
+/* VIEW */
+
+#view {
+  flex-grow: 1;
+  flex-shrink: 1;
+}
+
+#view-header {
+  flex-grow: 1;
 }
 
 .highlight-metadata {
@@ -131,6 +167,10 @@ li.active {
 
 .highlight-metadata:hover, .highlight-text:hover {
   cursor: pointer;
+}
+
+button {
+  font-size: 0.7em;
 }
 
 .highlight:hover button {
@@ -161,13 +201,6 @@ li.active {
   cursor: pointer;
 }
 
-@font-face {
-	font-family: "Inter";
-	src: url(inter.ttf);
-	font-weight: 400;
-	font-style: normal;
-}
-
 #drop-instructions {
   display: flex;
   flex-grow: 1;
@@ -181,6 +214,15 @@ li.active {
   color: #707070;
   transition: ease-out;
   animation: pulse 3s infinite;
+}
+
+/* At Rules */
+
+@font-face {
+	font-family: "Inter";
+	src: url(inter.ttf);
+	font-weight: 400;
+	font-style: normal;
 }
 
 @keyframes pulse {
