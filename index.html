@@ -25,25 +25,8 @@
       <div id="sourcelist" class="v-pad"></div>
     </section>
     <section id="view" class="full-height">
-      <div class="v-pad h-pad">
-        <h2 id="view-header"></h2>
-        <div id="view-actions"></div>
-        <div id="view-content"></div>
-      </div>
     </section>
   </main>
-  <template id="highlight-template">
-    <div class="highlight">
-      <div class="highlight-metadata"></div>
-      <br>
-      <div class="highlight-text"></div>
-      <span class="separator"></span>
-      <button class="action-copy">Copy</button>
-      <button class="action-edit">Edit</button>
-      <button class="action-revert">Revert</button>
-      <button class="action-delete">Delete</button>
-    </div>
-  </template>
   <template id="sourcelist-template">
     <h2 id="sourcelist-header" class="h-pad"></h2>
     <ul class="sources h-pad"></li>
@@ -55,6 +38,25 @@
   <template id="smartlists-template">
     <h2 id="smartlists-header" class="h-pad"></h2>
     <ul class="smartlists h-pad"></li>
+  </template>
+  <template id="view-template">
+    <div class="v-pad h-pad">
+      <h2 id="view-header"></h2>
+      <div id="view-actions"></div>
+      <div id="view-content"></div>
+    </div>
+  </template>
+  <template id="highlight-template">
+    <div class="highlight">
+      <div class="highlight-metadata"></div>
+      <br>
+      <div class="highlight-text"></div>
+      <span class="separator"></span>
+      <button class="action-copy">Copy</button>
+      <button class="action-edit">Edit</button>
+      <button class="action-revert">Revert</button>
+      <button class="action-delete">Delete</button>
+    </div>
   </template>
 </body>
 </html>

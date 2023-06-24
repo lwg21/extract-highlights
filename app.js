@@ -373,6 +373,23 @@ class App {
     smartLists.appendChild(this.generateSmartLists());
   }
 
+  // ## VIEW
+
+  clearView() {
+    const view = document.querySelector("#view");
+    view.innerHTML = "";
+
+    const template = document.querySelector("#view-template");
+    const clone = template.content.cloneNode(true);
+    view.appendChild(clone);
+  }
+
+  // ### VIEW HEADER
+
+  displayViewHeader(text) {
+    document.querySelector("#view-header").innerText = text;
+  }
+
   // ##############
 
   viewSource(source) {
@@ -522,11 +539,6 @@ class App {
     this.viewHighlightsOfBook(book);
   }
 
-  clearView() {
-    document.querySelector("#view-header").innerHTML = "";;
-    document.querySelector("#view-actions").innerHTML = "";;
-    document.querySelector("#view-content").innerHTML = "";;
-  }
 
   // UTILITIES & CHECKS
 
