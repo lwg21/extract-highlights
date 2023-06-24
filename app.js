@@ -92,9 +92,8 @@ class App {
   extractData(source) {
     // Analyse sources to populate highlights and books, update view
     this.extractHighlightsFromSource(source);
-    this.hideDropInstructions()
-    // Sort books alphabetically
     this.sortBooksAlphabet();
+    this.hideDropInstructions()
     this.displayBookList();
     this.displaySourceList();
     this.displaySmartLists();
@@ -163,14 +162,12 @@ class App {
     URL.revokeObjectURL(url)
   }
 
-  generateOutput(book) {
-    const highlights = this.findHighlightsFromBook(book);
+  generateOutput(highlights) {
     const clippings = highlights.map(highlight => {
       const text = highlight.textEdited || highlight.text;
       return `${highlight.metadata}\r\n\r\n${text}`;
     });
     const output = clippings.join(this.settings.separator) + this.settings.separator;
-    console.log(output);
     return output
   }
 
@@ -582,7 +579,7 @@ class App {
     const copyButton = document.createElement("button");
     copyButton.innerText = "Copy";
     copyButton.addEventListener("click", (event) => {
-      const output = this.generateOutput(book);
+      const output = this.generateOutput(book.highlights);
       this.copyToClipboard(output);
       this.viewFlash(event.currentTarget.closest("#view"))
     });
@@ -592,7 +589,7 @@ class App {
     const downloadButton = document.createElement("button");
     downloadButton.innerText = "Download";
     downloadButton.addEventListener("click", () => {
-      const output = this.generateOutput(book);
+      const output = this.generateOutput(book.highlights);
       this.downloadFile(`${book.title}.txt`, output);
     });
     actionsContainer.appendChild(downloadButton);
