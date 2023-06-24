@@ -286,7 +286,7 @@ class App {
     this.sources.forEach(source => {
       const sourceItem = document.createElement("li");
       sourceItem.setAttribute("data-id", source.id);
-      sourceItem.textContent = source.filename + `(#${source.id})`;
+      sourceItem.textContent = source.filename + ` (#${source.id})`;
 
       // Add event listener to display source and toggle active
       sourceItem.addEventListener("click", (event) => {
@@ -316,7 +316,6 @@ class App {
 
     // Update header
     clone.querySelector("#smartlists-header").innerText = `all lists`
-
 
     const lists = [
       {
@@ -389,6 +388,74 @@ class App {
   displayViewHeader(text) {
     document.querySelector("#view-header").innerText = text;
   }
+
+  // ## VIEW ACTIONS
+  // TODO
+
+  // ## VIEW CONTENT
+
+  generateHighlight(highlight) {
+    // Clone template
+    const template = document.querySelector("#highlight-template");
+    const clone = template.content.cloneNode(true);
+
+    // Populate template with highlight data
+    clone.querySelector(".highlight").setAttribute("data-id", highlight.id);
+    clone.querySelector(".highlight-metadata").textContent = highlight.metadata;
+    clone.querySelector(".highlight-text").textContent = highlight.text;
+    clone.querySelector(".separator").textContent = '==========';
+
+    // Mark as duplicate TODO: rework
+    if (highlight.duplicates !== 0) {
+      highlight.duplicates.forEach(duplicate => {
+        clone.querySelector(".separator").textContent += ` 🚨 (id: ${duplicate.id})`;
+      });
+    }
+    // TODO: ADD ACTION AND EVENT LISTENERS
+    //   // Set event listeners to highlights and actions
+    //   clone.querySelector(".highlight-text").addEventListener("mousedown", (event) => {
+    //   this.copyToClipboard(highlight.textEdited || highlight.text)
+    //   this.viewFlash(event.currentTarget);
+    //   })
+
+    // clone.querySelector(".highlight-metadata").addEventListener("mousedown", (event) => {
+    //   this.copyToClipboard(highlight.original + this.settings.separator) // TODO: handle case if edited
+    //   this.viewFlash(event.currentTarget.parentElement);
+    // })
+
+    // clone.querySelector(".action-copy").addEventListener("click", (event) => {
+    //   const id = event.target.closest(".highlight").dataset.id;
+    //   this.copyToClipboard(highlight.text);
+    // });
+
+    // clone.querySelector(".action-edit").addEventListener("click", (event) => {
+    //   event.target.innerText = 'Save';
+    //   event.target.parentElement.querySelector(".highlight-text").setAttribute("contentEditable", "true");
+    // });
+
+    // clone.querySelector(".action-delete").addEventListener("click", (event) => {
+    //   const id = event.target.closest(".highlight").dataset.id;
+    //   this.deleteHighlight(highlight);
+    //   if (highlight.deleted) {
+    //     const id = event.target.closest(".highlight").remove();
+    //   }
+    // });
+    return clone;
+  }
+
+  generateHighlights(highlights) {
+    const fragment = new DocumentFragment;
+    highlights.forEach(highlight => {
+      fragment.appendChild(this.generateHighlight(highlight));
+    });
+    return fragment;
+  }
+
+  displayViewFromBook(book) {
+
+  }
+
+
 
   // ##############
 
