@@ -1,7 +1,9 @@
 class App {
   constructor() {
     // Confirm whether app.js is connected
-    document.addEventListener("DOMContentLoaded", () => {console.log("app.js connected")});
+    document.addEventListener("DOMContentLoaded", () => {
+      console.log("app.js connected")
+    });
     this.initializeSettings();
     this.initializeData();
     this.initializeUI();
@@ -18,17 +20,25 @@ class App {
     this.sources = [] // Contains objects representing raw source strings from 'my clippings.txt' files
     this.highlights = [] // Contains objects representing individual highlights
     this.books = [] // Contains objects representing distinct books
+    // this.marked
+    // this.edited
+    // this.duplicates
+    // this.deleted
+    // this.bookmarks
+    // this.notes
     this.sourceId = 0;
     this.highlightId = 0;
     this.bookId = 0;
-    this.clearMenu();
-    this.clearView();
-    this.state();
   }
 
   initializeUI() {
-    // Initialize main actions
-    document.querySelector("#reset").addEventListener("click", () => this.initializeData());
+    document.querySelector("#reset").addEventListener("click", () => {
+      // Reset data
+      this.initializeData();
+      this.clearMenu();
+      this.clearView();
+    }
+    );
 
     // Initialize drag-and-drop area
     const dropArea = document.querySelector("#menu")
@@ -83,6 +93,8 @@ class App {
     // Analyse sources to populate highlights and books, update view
     this.extractHighlightsFromSource(source);
     this.hideDropInstructions()
+    // Sort books alphabetically
+    this.sortBooksAlphabet();
     this.displayBookList();
     this.displaySourceList();
     this.displaySmartLists();
@@ -131,6 +143,10 @@ class App {
 
   findBookbyTitle(title) {
     return this.books.find(book => book.title === title);
+  }
+
+  sortBooksAlphabet(books) {
+    this.books.sort((a, b) => {return a.title.localeCompare(b.title)});
   }
 
   downloadFile(filename, text) {
@@ -243,9 +259,6 @@ class App {
 
     // Update header with total number of books
     clone.querySelector("#booklist-header").innerText = `all books (${this.books.length})`;
-
-    // Sort books alphabetically
-    this.books.sort((a, b) => {return a.title.localeCompare(b.title)});
 
     // Add books as list items
     this.books.forEach(book => {
@@ -453,9 +466,26 @@ class App {
 
   displayViewFromBook(book) {
 
+    const template = document.querySelector("#view-template");
+    const clone = template.content.cloneNode(true);
+
+    // Update header
+    const headerText = `${book.title} (${book.highlights.length} highlight${book.highlights.length > 1 ? "s" : ""})`;
+    clone.querySelector("#view-header").innerText = headerText;
+
+    // TODO update actions
+    // clone.querySelector("#view-actions").appendChild();
+    // TODO scroll to top
+
+    // Update content
+    const content = this.generateHighlights(book.highlights);
+    clone.querySelector("#view-content").appendChild(content);
+
+    const view = document.querySelector("#view");
+    view.innerHTML = "";
+
+    view.appendChild(clone)
   }
-
-
 
   // ##############
 
