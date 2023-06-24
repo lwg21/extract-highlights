@@ -84,7 +84,8 @@ class App {
     this.extractHighlightsFromSource(source);
     // this.viewBooks();
     this.displayBookList();
-    this.viewSources();
+    // this.viewSources();
+    this.displaySourceList();
     this.clearView();
     this.state();
   }
@@ -229,7 +230,7 @@ class App {
       bookItem.setAttribute("data-id", book.id);
       bookItem.textContent = book.title + ` (${book.highlights.length})`;
 
-      // Active book has different list item style
+      // Add event listener to display books and toggle active
       bookItem.addEventListener("click", (event) => {
         this.viewHighlightsOfBook(book);
         this.removeActiveMenu();
@@ -252,48 +253,42 @@ class App {
     document.querySelectorAll("#menu .active").forEach(element => {element.classList.remove("active")});
   }
 
-  // viewBooks() {
-  //   const template = document.querySelector("#booklist-template");
-  //   const booksContainer = document.querySelector("#booklist");
+  generateSourceList() {
+    // Clone template
+    const template = document.querySelector("#sourcelist-template");
+    const clone = template.content.cloneNode(true);
 
-  //   // Remove previous books
-  //   booksContainer.innerHTML = "";
+    // Update header with total number of sources
+    clone.querySelector("#sourcelist-title").innerText = `all sources (${this.sources.length})`
 
-  //   // Remove drop instructions
-  //   document.querySelector("#drop-instructions").style.display = "none";
+    // Add sources as list items
+    this.sources.forEach(source => {
+      const sourceItem = document.createElement("li");
+      sourceItem.setAttribute("data-id", source.id);
+      sourceItem.textContent = source.filename + `(#${source.id})`;
 
-  //   // Insert total number of books
-  //   const clone = template.content.cloneNode(true);
-  //   const booksTitle = clone.querySelector("#booklist-header");
-  //   booksTitle.innerText = `all books (${this.books.length})`;
-  //   booksContainer.appendChild(booksTitle);
+      // Add event listener to display source and toggle active
+      sourceItem.addEventListener("click", (event) => {
+        this.viewSource(source);
+        this.removeActiveMenu();
+        event.currentTarget.classList.add(".active");
+      });
 
-  //   // Get and sort books
-  //   const books = this.books.sort((a, b) => {
-  //     return a.title.localeCompare(b.title);
-  //   });
+      clone.querySelector("ul").appendChild(sourceItem);
+    });
 
-  //   // Insert list of books
-  //   books.forEach((book) => {
-  //     const bookItem = document.createElement("li");
-  //     bookItem.setAttribute("data-id", book.id);
-  //     bookItem.textContent = book.title + ` (${book.highlights.length})`;
+    return clone
+  }
 
-  //     // Active book has different list item style
-  //     bookItem.addEventListener("click", (event) => {
-  //       this.viewHighlightsOfBook(book);
-  //       const bookItems = Array.from(event.currentTarget.closest("#menu").querySelectorAll("li"));
-  //       bookItems.forEach(item => item.classList.remove("active"));
-  //       event.target.classList.add("active");
-  //     });
+  displaySourceList() {
+    const sourceList = document.querySelector("#sourcelist");
+    sourceList.innerHTML = "";
+    sourceList.appendChild(this.generateSourceList());
+  }
 
-  //     booksContainer.appendChild(bookItem);
-  //   });
-  // }
-
-  // VIEW
 
   viewSource(source) {
+    //  TODO: REWORK TO DISPLAY NOT JUST TEXT BUT HIGHLIGHTS FROM SOURCE
     const viewContainer = document.querySelector("#view-content");
 
     // Clear view
@@ -371,37 +366,37 @@ class App {
     header.innerText = `Source #${source.id} '${source.filename}'`;
   }
 
-  viewSources() {
-    const template = document.querySelector("#sourcelist-template");
-    const sourcesContainer = document.querySelector("#sourcelist");
+  // viewSources() {
+  //   const template = document.querySelector("#sourcelist-template");
+  //   const sourcesContainer = document.querySelector("#sourcelist");
 
-    // Remove previous sources
-    sourcesContainer.innerHTML = "";
+  //   // Remove previous sources
+  //   sourcesContainer.innerHTML = "";
 
-    // Insert total number of sources
-    const clone = template.content.cloneNode(true);
-    const sourcesTitle = clone.querySelector("#sourcelist-title");
-    sourcesTitle.innerText = `all sources (${this.sources.length})`;
-    sourcesContainer.appendChild(sourcesTitle);
+  //   // Insert total number of sources
+  //   const clone = template.content.cloneNode(true);
+  //   const sourcesTitle = clone.querySelector("#sourcelist-title");
+  //   sourcesTitle.innerText = `all sources (${this.sources.length})`;
+  //   sourcesContainer.appendChild(sourcesTitle);
 
-    // Insert list of sources
-    const sources = this.sources
-    sources.forEach((source) => {
-      const sourceItem = document.createElement("li");
-      sourceItem.setAttribute("data-id", source.id);
-      sourceItem.textContent = source.filename + ` (#${source.id})`;
+  //   // Insert list of sources
+  //   const sources = this.sources
+  //   sources.forEach((source) => {
+  //     const sourceItem = document.createElement("li");
+  //     sourceItem.setAttribute("data-id", source.id);
+  //     sourceItem.textContent = source.filename + ` (#${source.id})`;
 
-      // Active source has different list item style
-      sourceItem.addEventListener("click", (event) => {
-        this.viewSource(source);
-        const sourceItems = Array.from(event.currentTarget.closest("#menu").querySelectorAll("li"));
-        sourceItems.forEach(item => item.classList.remove("active"));
-        event.target.classList.add("active");
-      });
+  //     // Active source has different list item style
+  //     sourceItem.addEventListener("click", (event) => {
+  //       this.viewSource(source);
+  //       const sourceItems = Array.from(event.currentTarget.closest("#menu").querySelectorAll("li"));
+  //       sourceItems.forEach(item => item.classList.remove("active"));
+  //       event.target.classList.add("active");
+  //     });
 
-      sourcesContainer.appendChild(sourceItem);
-    });
-  }
+  //     sourcesContainer.appendChild(sourceItem);
+  //   });
+  // }
 
   viewHighlightsOfBook(book) {
     const highlights = this.findHighlightsFromBook(book);
