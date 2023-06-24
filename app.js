@@ -220,7 +220,6 @@ class App {
     document.querySelector("#booklist").innerHTML = "";
     document.querySelector("#smartlists").innerHTML = "";
     document.querySelector("#sourcelist").innerHTML = "";
-
   }
 
   showDropInstructions() {
@@ -293,7 +292,7 @@ class App {
       sourceItem.addEventListener("click", (event) => {
         this.viewSource(source);
         this.removeActiveMenu();
-        event.currentTarget.classList.add(".active");
+        event.currentTarget.classList.add("active");
       });
 
       clone.querySelector("ul").appendChild(sourceItem);
@@ -360,7 +359,7 @@ class App {
       item.addEventListener("click", (event) => {
         list.action();
         this.removeActiveMenu();
-        event.currentTarget.classList.add(".active");
+        event.currentTarget.classList.add("active");
       });
       clone.querySelector("ul").appendChild(item);
     });
