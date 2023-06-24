@@ -189,9 +189,8 @@ class App {
       // Link duplicate highlights
       highlight1.duplicates.push(highlight2);
       highlight2.duplicates.push(highlight1);
-      return true;
     }
-    return false
+    return check
   }
 
   scanForDuplicates(highlights) {
@@ -390,13 +389,21 @@ class App {
     });
     actionsContainer.appendChild(downloadButton);
 
-    // Add scan for duplicates action
-    const scanButton = document.createElement("button");
-    scanButton.innerText = "Scan duplicates";
-    scanButton.addEventListener("click", () => {
+    // Add scan for duplicate text
+    const scanTextButton = document.createElement("button");
+    scanTextButton.innerText = "Scan duplicate text";
+    scanTextButton.addEventListener("click", () => {
       this.viewDuplicatesOfBook(book);
     });
-    actionsContainer.appendChild(scanButton);
+    actionsContainer.appendChild(scanTextButton);
+
+    // Add scan for duplicate locations
+    const scanLocationButton = document.createElement("button");
+    scanLocationButton.innerText = "Scan duplicate location";
+    scanLocationButton.addEventListener("click", () => {
+      // this.viewDuplicatesOfBook(book);
+    });
+    actionsContainer.appendChild(scanLocationButton);
 
     // Scroll to top
     document.querySelector("#view").scrollTo(0, 0);
@@ -477,6 +484,12 @@ class App {
 
   runTests() {
     // TODO: Write tests to compare number of highlights/books on display with objects in memory
+  }
+
+  // EXPERIMENTAL
+
+  insertMark(text, start, end) {
+    return text.slice(0,start) + "<mark>" + text.slice(start, end) + "</mark>" + text.slice(end)
   }
 }
 

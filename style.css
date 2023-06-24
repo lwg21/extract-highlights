@@ -155,6 +155,12 @@ li.active {
   font-family: "Inter", sans-serif;
 }
 
+#view-actions button:hover {
+  background-color: #D4880C;
+  color: #FBE6C5;
+  cursor: pointer;
+}
+
 @font-face {
 	font-family: "Inter";
 	src: url(inter.ttf);
