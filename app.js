@@ -82,10 +82,10 @@ class App {
   extractData(source) {
     // Analyse sources to populate highlights and books, update view
     this.extractHighlightsFromSource(source);
-    // this.viewBooks();
+    this.hideDropInstructions()
     this.displayBookList();
-    // this.viewSources();
     this.displaySourceList();
+    this.displaySmartLists();
     this.clearView();
     this.state();
   }
@@ -211,7 +211,31 @@ class App {
     }
   }
 
-  // COMPONENTS
+  // # COMPONENTS
+
+  // ## MENU
+
+  clearMenu() {
+    this.showDropInstructions();
+    document.querySelector("#booklist").innerHTML = "";
+    document.querySelector("#smartlists").innerHTML = "";
+    document.querySelector("#sourcelist").innerHTML = "";
+
+  }
+
+  showDropInstructions() {
+    document.querySelector("#drop-instructions").style.display = "flex";
+  }
+
+  hideDropInstructions() {
+    document.querySelector("#drop-instructions").style.display = "none";
+  }
+
+  removeActiveMenu() {
+    document.querySelectorAll("#menu .active").forEach(element => {element.classList.remove("active")});
+  }
+
+  // ### BOOKLIST
 
   generateBookList() {
     // Clone template
@@ -249,9 +273,7 @@ class App {
     bookList.appendChild(this.generateBookList());
   }
 
-  removeActiveMenu() {
-    document.querySelectorAll("#menu .active").forEach(element => {element.classList.remove("active")});
-  }
+  // ### SOURCE LIST
 
   generateSourceList() {
     // Clone template
@@ -259,7 +281,7 @@ class App {
     const clone = template.content.cloneNode(true);
 
     // Update header with total number of sources
-    clone.querySelector("#sourcelist-title").innerText = `all sources (${this.sources.length})`
+    clone.querySelector("#sourcelist-header").innerText = `all sources (${this.sources.length})`
 
     // Add sources as list items
     this.sources.forEach(source => {
@@ -286,6 +308,73 @@ class App {
     sourceList.appendChild(this.generateSourceList());
   }
 
+  // ## SMART LISTS
+
+  generateSmartLists() {
+    // Clone template
+    const template = document.querySelector("#smartlists-template");
+    const clone = template.content.cloneNode(true);
+
+    // Update header
+    clone.querySelector("#smartlists-header").innerText = `all lists`
+
+
+    const lists = [
+      {
+        id: "markedlist",
+        header: `all marked (${0})`,
+        action: () => {console.log("TEST MARKED!")}
+      },
+      {
+        id: "editedlist",
+        header: `all edited (${0})`,
+        action: () => {console.log("TEST EDITED!")}
+      },
+      {
+        id: "duplicatelist",
+        header: `all duplicates (${0})`,
+        action: () => {console.log("TEST DUPLICATES!")}
+      },
+      {
+        id: "deletedlist",
+        header: `all deleted (${0})`,
+        action: () => {console.log("TEST DELETED!")}
+      },
+      {
+        id: "bookmarklist",
+        header: `all bookmarks (${0})`,
+        action: () => {console.log("TEST BOOKMARKS!")}
+      },
+      {
+        id: "notelist",
+        header: `all notes (${0})`,
+        action: () => {console.log("TEST NOTES!")}
+      },
+    ];
+
+    // Add lists as list items
+    lists.forEach(list => {
+      const item = document.createElement("li");
+      item.id = list.id;
+      item.textContent = list.header;
+      item.addEventListener("click", (event) => {
+        list.action();
+        this.removeActiveMenu();
+        event.currentTarget.classList.add(".active");
+      });
+      clone.querySelector("ul").appendChild(item);
+    });
+
+    return clone
+  }
+
+  displaySmartLists() {
+    const smartLists = document.querySelector("#smartlists");
+    smartLists.innerHTML = "";
+    smartLists.appendChild(this.generateSmartLists());
+  }
+
+  // ##############
 
   viewSource(source) {
     //  TODO: REWORK TO DISPLAY NOT JUST TEXT BUT HIGHLIGHTS FROM SOURCE
@@ -366,38 +455,6 @@ class App {
     header.innerText = `Source #${source.id} '${source.filename}'`;
   }
 
-  // viewSources() {
-  //   const template = document.querySelector("#sourcelist-template");
-  //   const sourcesContainer = document.querySelector("#sourcelist");
-
-  //   // Remove previous sources
-  //   sourcesContainer.innerHTML = "";
-
-  //   // Insert total number of sources
-  //   const clone = template.content.cloneNode(true);
-  //   const sourcesTitle = clone.querySelector("#sourcelist-title");
-  //   sourcesTitle.innerText = `all sources (${this.sources.length})`;
-  //   sourcesContainer.appendChild(sourcesTitle);
-
-  //   // Insert list of sources
-  //   const sources = this.sources
-  //   sources.forEach((source) => {
-  //     const sourceItem = document.createElement("li");
-  //     sourceItem.setAttribute("data-id", source.id);
-  //     sourceItem.textContent = source.filename + ` (#${source.id})`;
-
-  //     // Active source has different list item style
-  //     sourceItem.addEventListener("click", (event) => {
-  //       this.viewSource(source);
-  //       const sourceItems = Array.from(event.currentTarget.closest("#menu").querySelectorAll("li"));
-  //       sourceItems.forEach(item => item.classList.remove("active"));
-  //       event.target.classList.add("active");
-  //     });
-
-  //     sourcesContainer.appendChild(sourceItem);
-  //   });
-  // }
-
   viewHighlightsOfBook(book) {
     const highlights = this.findHighlightsFromBook(book);
     this.viewHighlights(highlights);
@@ -464,12 +521,6 @@ class App {
     this.scanForDuplicates(book.highlights);
     console.log("done");
     this.viewHighlightsOfBook(book);
-  }
-
-  clearMenu() {
-    document.querySelector("#drop-instructions").style.display = "flex";
-    document.querySelector("#booklist").innerHTML = "";;
-    document.querySelector("#sourcelist").innerHTML = "";;
   }
 
   clearView() {

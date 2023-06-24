@@ -146,6 +146,36 @@ li.active {
   suffix: " ";
 }
 
+#editedlist {
+  list-style: edited inside;
+}
+
+@counter-style edited {
+  system: cyclic;
+  symbols: 📓;
+  suffix: " ";
+}
+
+#markedlist {
+  list-style: marked inside;
+}
+
+@counter-style marked {
+  system: cyclic;
+  symbols: 📗;
+  suffix: " ";
+}
+
+#notelist {
+  list-style: note inside;
+}
+
+@counter-style note {
+  system: cyclic;
+  symbols: 📝;
+  suffix: " ";
+}
+
 /* VIEW */
 
 #view {
