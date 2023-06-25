@@ -28,9 +28,7 @@ class App {
     this.deleted = [];
     // this.bookmarks
     // this.notes
-    this.sourceId = 0;
-    this.highlightId = 0;
-    this.bookId = 0;
+    this.id = 0; // Unique id assign to object (of any kind)
   }
 
   initializeUI() {
@@ -72,6 +70,8 @@ class App {
     });
   }
 
+  assignId() {return this.id += 1}
+
   // FILES
 
   readFile(file) {
@@ -82,7 +82,7 @@ class App {
 
       // Create source and add to sources
       const source = {
-        id: this.assignSourceId(),
+        id: this.assignId(),
         filename: file.name,
         text: event.target.result
       };
@@ -130,13 +130,11 @@ class App {
     });
   }
 
-  assignSourceId() {return this.sourceId += 1}
-
   // BOOKS
 
   createBook(highlight) {
     const book = {
-      id: this.assignBookId(),
+      id: this.assignId(),
       title: highlight.title,
       author: highlight.author,
       highlights: []
@@ -159,8 +157,6 @@ class App {
     this.books.sort((a, b) => {return a.title.localeCompare(b.title)});
   }
 
-  assignBookId() {return this.bookId += 1}
-
   // HIGHLIGHTS
 
   createHighlight(clipping) {
@@ -173,7 +169,7 @@ class App {
     highlight.metadata = clipping.split(/(\r?\n)/).slice(0,3).join('');
 
     // Assign unique id
-    highlight.id = this.assignHighlightId();
+    highlight.id = this.assignId();
 
     // Initialise duplicates array
     highlight.duplicates = [];
@@ -241,12 +237,6 @@ class App {
     return highlights.filter(h => !h.deleted).length
   }
 
-  countHighlights2(highlights) {
-    return highlights.filter(h => !h.deleted).length
-  }
-
-  assignHighlightId() {return this.highlightId += 1}
-
   // # COMPONENTS
 
   // ## MENU
@@ -284,7 +274,9 @@ class App {
     this.books.forEach(book => {
       const bookItem = document.createElement("li");
       bookItem.setAttribute("data-id", book.id);
-      bookItem.textContent = book.title + ` (${book.highlights.length})`;
+      const countElement = document.createElement("span");
+      countElement.innerText = this.countHighlights(book.highlights);
+      bookItem.innerHTML = `${book.title} (${countElement.outerHTML})`;
 
       // Add event listener to display books and toggle active
       bookItem.addEventListener("click", (event) => {
