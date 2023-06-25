@@ -19,13 +19,13 @@ class App {
   }
 
   initializeData() {
-    this.sources = [] // Contains objects representing raw source strings from 'my clippings.txt' files
-    this.highlights = [] // Contains objects representing individual highlights
-    this.books = [] // Contains objects representing distinct books
+    this.sources = []; // Contains objects representing raw source strings from 'my clippings.txt' files
+    this.highlights = []; // Contains objects representing individual highlights
+    this.books = []; // Contains objects representing distinct books
     // this.marked
     // this.edited
     // this.duplicates
-    // this.deleted
+    this.deleted = [];
     // this.bookmarks
     // this.notes
     this.sourceId = 0;
@@ -145,24 +145,14 @@ class App {
     return book;
   }
 
-  // createBook(title) {
-  //   const book = {
-  //     id: this.assignBookId(),
-  //     title: title,
-  //     highlights: []
-  //   }
-  //   this.books.push(book);
-  //   return book;
-  // }
-
-  findBookbyTitle(title) {
-    return this.books.find(book => book.title === title);
-  }
-
-  findBookFromHighlight(highlight) {
+  findBookOfHighlight(highlight) {
     return this.books.find(book => {
       return (book.title === highlight.title) && (book.author === highlight.author)
     });
+  }
+
+  findOrCreateBook(highlight) {
+    return this.findBookOfHighlight(highlight) || this.createBook(highlight);
   }
 
   sortBooksAlphabet() {
@@ -189,8 +179,7 @@ class App {
     highlight.duplicates = [];
 
     // Find existing book or create new book
-    const book = this.findBookFromHighlight(highlight) || this.createBook(highlight);
-    // const book = this.findBookbyTitle(highlight.title) || this.createBook(highlight.title);
+    const book = this.findOrCreateBook(highlight);
 
     // Assign book to highlight
     highlight.book = book;
@@ -198,6 +187,8 @@ class App {
     // Push highlight into highlights and book highlights
     this.highlights.push(highlight);
     book.highlights.push(highlight);
+
+    return highlight;
   }
 
   createOutput(highlights) {
@@ -209,9 +200,9 @@ class App {
     return output
   }
 
-
   deleteHighlight(highlight) {
     highlight.deleted = true;
+    this.deleted.push(highlight);
     return highlight;
   }
 
@@ -244,6 +235,14 @@ class App {
         highlights[j].tested = highlights[j].tested + 1 || 1;
       }
     }
+  }
+
+  countHighlights(highlights) {
+    return highlights.filter(h => !h.deleted).length
+  }
+
+  countHighlights2(highlights) {
+    return highlights.filter(h => !h.deleted).length
   }
 
   assignHighlightId() {return this.highlightId += 1}
@@ -720,11 +719,21 @@ class App {
     return this.highlights.filter(highlight => (highlight.deleted));
   }
 
+  time(code) {
+    const startTime = performance.now();
+    eval(code);
+    const endTime = performance.now();
+    const measure = endTime - startTime
+    console.log(`${measure} ms`);
+    return measure
+  }
 
   runTests() {
     // TODO: Write tests to compare number of highlights/books on display with objects in memory
     // TODO: Compare highlights in book.highlights with findHighlightsFromBook(book)
     // TODO: same for edited, deleted, marked and duplicates
+    // TODO: Do all books have a title and an author?
+    // TODO: Do all highlights have a book?
   }
 }
 
