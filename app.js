@@ -72,6 +72,10 @@ class App {
 
   assignId() {return this.id += 1}
 
+  // findElementById(id) {
+  //   return document.querySelector(`[data-id="${id}"]`)
+  // }
+
   // FILES
 
   readFile(file) {
@@ -198,8 +202,15 @@ class App {
 
   deleteHighlight(highlight) {
     highlight.deleted = true;
+    highlight.marked = false;
+    highlight
     this.deleted.push(highlight);
+    this.displayBookList();
+    this.displaySmartLists();
+    this.displaySourceList();
+    this.displayHeaderFromBook(highlight.book);
     return highlight;
+
   }
 
   undoDeleteHighlight(highlight) {
@@ -275,6 +286,7 @@ class App {
       const bookItem = document.createElement("li");
       bookItem.setAttribute("data-id", book.id);
       const countElement = document.createElement("span");
+      countElement.classList.add("count");
       countElement.innerText = this.countHighlights(book.highlights);
       bookItem.innerHTML = `${book.title} (${countElement.outerHTML})`;
 
@@ -476,14 +488,22 @@ class App {
     return fragment;
   }
 
+  generateHeaderFromBook(book) {
+    const count = this.countHighlights(book.highlights);
+    return `${book.title} (${count} highlight${count > 1 ? "s" : ""})`
+  }
+
+  displayHeaderFromBook(book) {
+    document.querySelector("#view-header").innerText = this.generateHeaderFromBook(book);
+  }
+
   displayViewFromBook(book) {
 
     const template = document.querySelector("#view-template");
     const clone = template.content.cloneNode(true);
 
     // Update header
-    const headerText = `${book.title} (${book.highlights.length} highlight${book.highlights.length > 1 ? "s" : ""})`;
-    clone.querySelector("#view-header").innerText = headerText;
+    clone.querySelector("#view-header").innerText = this.generateHeaderFromBook(book);
 
     // TODO update actions
     // clone.querySelector("#view-actions").appendChild();
@@ -685,7 +705,7 @@ class App {
   state() {
     console.log(`*--State--*`
       + `\n${this.sources.length} uploads`
-      + `\n${this.highlights.length} highlights (${this.findDeletedHighlights().length} deleted, ${this.findEditedHighlights().length} edited)`
+      + `\n${this.highlights.length} highlights (${this.findDeletedHighlights(this.highlights).length} deleted, ${this.findEditedHighlights(this.highlights).length} edited)`
       + `\n${this.books.length} books`
     )
   }
@@ -703,12 +723,12 @@ class App {
     return this.highlights.filter(highlight => ((highlight.title === book.title) && !highlight.deleted));
   }
 
-  findEditedHighlights() {
-    return this.highlights.filter(highlight => (highlight.textEdited));
+  findEditedHighlights(highlights) {
+    return highlights.filter(highlight => (highlight.textEdited));
 
   }
-  findDeletedHighlights() {
-    return this.highlights.filter(highlight => (highlight.deleted));
+  findDeletedHighlights(highlights) {
+    return highlights.filter(highlight => (highlight.deleted));
   }
 
   time(code) {
