@@ -351,10 +351,10 @@ class App {
     clone.querySelector("#sourcelist-header").innerText = `all sources (${this.sources.length})`
 
     // Add sources as list items
-    this.sources.forEach(source => {
+    this.sources.forEach((source, index) => {
       const sourceItem = document.createElement("li");
       sourceItem.setAttribute("data-id", source.id);
-      sourceItem.textContent = source.filename + ` (#${source.id})`;
+      sourceItem.textContent = `${index + 1}. ` + source.filename + ` (${this.countHighlights(source.highlights)})`;
 
       // Add event listener to display source and toggle active
       sourceItem.addEventListener("click", (event) => {
