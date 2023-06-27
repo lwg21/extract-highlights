@@ -24,7 +24,7 @@ class App {
     this.books = []; // Contains objects representing distinct books
     this.marked = [];
     this.edited = [];
-    // this.duplicates
+    this.duplicates = [];
     this.deleted = [];
     // this.bookmarks
     // this.notes
@@ -399,8 +399,8 @@ class App {
       },
       {
         id: "duplicatelist",
-        text: `all duplicates (${0})`,
-        callback: () => {console.log("TEST DUPLICATES!")}
+        text: `all duplicates (${this.countHighlights(this.duplicates)})`,
+        callback: () => this.viewDuplicates()
       },
       {
         id: "deletedlist",
@@ -561,6 +561,22 @@ class App {
 
   viewEdited() {
     this.view = this.generateViewEdited();
+    this.renderView();
+  }
+  generateViewDuplicates() {
+    return {
+      header: {
+        text: "Duplicates",
+        count: this.duplicates.length
+      },
+      actions: this.generateActions(),
+      content: this.duplicates,
+      downloadFileName: "Duplicates"
+    }
+  }
+
+  viewDuplicates() {
+    this.view = this.generateViewDuplicates();
     this.renderView();
   }
 
