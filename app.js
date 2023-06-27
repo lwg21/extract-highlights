@@ -105,7 +105,8 @@ class App {
       const source = {
         id: this.assignId(),
         filename: file.name,
-        text: event.target.result
+        text: event.target.result,
+        highlights: []
       };
       this.sources.push(source)
       console.log(`File '${source.filename}' imported`);
@@ -198,8 +199,13 @@ class App {
     // Assign book to highlight
     highlight.book = book;
 
-    // Push highlight into highlights and book highlights
+    // Push into highlights
     this.highlights.push(highlight);
+
+    // Push to last imported source
+    this.sources.slice(-1)[0].highlights.push(highlight);
+
+    // Push to book
     book.highlights.push(highlight);
 
     return highlight;
@@ -222,7 +228,7 @@ class App {
     this.renderBookList();
     this.renderSmartLists();
     this.renderSourceList();
-    this.renderHeaderFromBook(highlight.book);
+    this.renderHeaderFromBook(highlight.book); // Obsolete
     return highlight;
 
   }
@@ -494,7 +500,6 @@ class App {
     }
   }
 
-
   viewSource(source) {
     this.view = this.generateViewFromSource(source);
     this.renderView();
@@ -582,6 +587,7 @@ class App {
     return `${book.title} (${count} highlight${count > 1 ? "s" : ""})`
   }
 
+  // TODO: OBSOLETE
   renderHeaderFromBook(book) {
     document.querySelector("#view-header").innerText = this.generateHeaderFromBook(book);
   }
@@ -610,7 +616,7 @@ class App {
 
   generateHeaderFromSource(source) {
     const count = this.countHighlights(source.highlights);
-    return `${source.filename} (${count} highlight${count > 1 ? "s" : ""})`
+    return `Source '${source.filename}' (${count} highlight${count > 1 ? "s" : ""})`
   }
 
 
