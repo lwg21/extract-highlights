@@ -246,6 +246,14 @@ button {
   animation: pulse 3s infinite;
 }
 
+.count:before {
+  content: ' (';
+}
+
+.count:after {
+  content: ')';
+}
+
 /* At Rules */
 
 @font-face {

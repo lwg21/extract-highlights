@@ -30,21 +30,12 @@ class App {
     // this.notes
     this.id = 0; // Unique id assign to object (of any kind)
     this.view = {
-      header: "",
-      actions: [
-        {
-          // TODO: TEMPORARY
-          text: "Copy",
-          callback: () => {console.log('COPY!')},
-        },
-        {
-          // TODO: TEMPORARY
-          text: "Download",
-          callback: () => {console.log('DOWNLOAD!')},
-        }
-      ],
-      // TODO: TEMPORARY
-      content: this.highlights
+      header: {
+        text: "",
+        count: null
+      },
+      actions: [],
+      content: []
     }
   }
 
@@ -221,16 +212,15 @@ class App {
   }
 
   deleteHighlight(highlight) {
-    highlight.deleted = true;
-    highlight.marked = false;
-    highlight
-    this.deleted.push(highlight);
-    this.renderBookList();
-    this.renderSmartLists();
-    this.renderSourceList();
-    this.renderHeaderFromBook(highlight.book); // Obsolete
+    if (!highlight.deleted) {
+      highlight.deleted = true;
+      highlight.marked = false;
+      this.deleted.push(highlight);
+      this.renderMenu();
+      this.view.header.count--;
+      this.renderViewHeader(this.view.header);
+    }
     return highlight;
-
   }
 
   undoDeleteHighlight(highlight) {
@@ -316,10 +306,12 @@ class App {
     this.books.forEach(book => {
       const bookItem = document.createElement("li");
       bookItem.setAttribute("data-id", book.id);
+      bookItem.textContent = book.title;
+
       const countElement = document.createElement("span");
       countElement.classList.add("count");
-      countElement.innerText = this.countHighlights(book.highlights);
-      bookItem.innerHTML = `${book.title} (${countElement.outerHTML})`;
+      countElement.textContent = this.countHighlights(book.highlights);
+      bookItem.appendChild(countElement);
 
       // Add event listener to display books and toggle active
       bookItem.addEventListener("click", (event) => {
@@ -354,7 +346,8 @@ class App {
     this.sources.forEach((source, index) => {
       const sourceItem = document.createElement("li");
       sourceItem.setAttribute("data-id", source.id);
-      sourceItem.textContent = `${index + 1}. ` + source.filename + ` (${this.countHighlights(source.highlights)})`;
+      const count = this.countHighlights(source.highlights);
+      sourceItem.textContent = `${index + 1}. ` + source.filename + ` (${count})`;
 
       // Add event listener to display source and toggle active
       sourceItem.addEventListener("click", (event) => {
@@ -365,7 +358,6 @@ class App {
 
       clone.querySelector("ul").appendChild(sourceItem);
     });
-
     return clone
   }
 
@@ -404,9 +396,7 @@ class App {
       {
         id: "deletedlist",
         text: `all deleted (${this.countDeletedHighlights(this.deleted)})`,
-        callback: () => {
-          console.log("TEST DELETED!");
-        }
+        callback: () => this.viewDeleted()
       },
       {
         id: "bookmarklist",
@@ -445,13 +435,21 @@ class App {
   // ## VIEW
 
   renderView() {
+    // Render view from app state
     this.renderViewHeader(this.view.header);
     this.renderViewActions(this.view.actions);
     this.renderViewContent(this.view.content);
   }
 
-  renderViewHeader(text) {
-    document.querySelector("#view-header").innerText = text;
+  renderViewHeader(header) {
+    const countElement = document.createElement("span");
+    countElement.id = "header-count";
+    countElement.classList.add("count");
+    countElement.textContent = header.count
+
+    const headerElement = document.querySelector("#view-header");
+    headerElement.textContent = header.text;
+    headerElement.appendChild(countElement);
   }
 
   renderViewActions(actions) {
@@ -474,7 +472,7 @@ class App {
   }
 
   clearView() {
-    this.view.header = "";
+    this.view.header = {};
     this.view.actions = [];
     this.view.content = [];
   }
@@ -483,7 +481,7 @@ class App {
     return {
       header: this.generateHeaderFromBook(book),
       actions: this.generateActions(),
-      content: book.highlights
+      content: book.highlights.filter(h => !h.deleted)
     }
   }
 
@@ -496,12 +494,25 @@ class App {
     return {
       header: this.generateHeaderFromSource(source),
       actions: this.generateActions(),
-      content: source.highlights
+      content: source.highlights.filter(h => !h.deleted)
     }
   }
 
   viewSource(source) {
     this.view = this.generateViewFromSource(source);
+    this.renderView();
+  }
+
+  generateDeletedView() {
+    return {
+      header: `Deleted highlights (${this.deleted.length})`,
+      actions: this.generateActions(),
+      content: this.deleted
+    }
+  }
+
+  viewDeleted() {
+    this.view = this.generateDeletedView();
     this.renderView();
   }
 
@@ -537,11 +548,11 @@ class App {
     clone.querySelector(".separator").textContent = '==========';
 
     // Mark as duplicate TODO: rework
-    if (highlight.duplicates !== 0) {
-      highlight.duplicates.forEach(duplicate => {
-        clone.querySelector(".separator").textContent += ` 🚨 (id: ${duplicate.id})`;
-      });
-    }
+    // if (highlight.duplicates !== 0) {
+    //   highlight.duplicates.forEach(duplicate => {
+    //     clone.querySelector(".separator").textContent += ` 🚨 (id: ${duplicate.id})`;
+    //   });
+    // }
     // TODO: ADD ACTION AND EVENT LISTENERS
     //   // Set event listeners to highlights and actions
     //   clone.querySelector(".highlight-text").addEventListener("mousedown", (event) => {
@@ -555,22 +566,21 @@ class App {
     // })
 
     // clone.querySelector(".action-copy").addEventListener("click", (event) => {
-    //   const id = event.target.closest(".highlight").dataset.id;
+    //   const id = event.currentTarget.closest(".highlight").dataset.id;
     //   this.copyToClipboard(highlight.text);
     // });
 
     // clone.querySelector(".action-edit").addEventListener("click", (event) => {
-    //   event.target.innerText = 'Save';
-    //   event.target.parentElement.querySelector(".highlight-text").setAttribute("contentEditable", "true");
+    //   event.currentTarget.innerText = 'Save';
+    //   event.currentTarget.parentElement.querySelector(".highlight-text").setAttribute("contentEditable", "true");
     // });
 
-    // clone.querySelector(".action-delete").addEventListener("click", (event) => {
-    //   const id = event.target.closest(".highlight").dataset.id;
-    //   this.deleteHighlight(highlight);
-    //   if (highlight.deleted) {
-    //     const id = event.target.closest(".highlight").remove();
-    //   }
-    // });
+    clone.querySelector(".action-delete").addEventListener("click", event => {
+      if (this.deleteHighlight(highlight)) {
+        // highlightElement.remove();
+        event.currentTarget.closest(".highlight").remove();
+      }
+    });
     return clone;
   }
 
@@ -583,8 +593,10 @@ class App {
   }
 
   generateHeaderFromBook(book) {
-    const count = this.countHighlights(book.highlights);
-    return `${book.title} (${count} highlight${count > 1 ? "s" : ""})`
+    return {
+      text: book.title,
+      count: this.countHighlights(book.highlights)
+    }
   }
 
   // TODO: OBSOLETE
@@ -636,6 +648,7 @@ class App {
   //   this.viewSourceHeader(source)
   // }
 
+  // OBSOLETE
   viewHighlights(highlights = this.highlights) {
     const template = document.querySelector("#highlight-template");
     const viewContainer = document.querySelector("#view-content");
@@ -669,22 +682,21 @@ class App {
       })
 
       clone.querySelector(".action-copy").addEventListener("click", (event) => {
-        const id = event.target.closest(".highlight").dataset.id;
+        const id = event.currentTarget.closest(".highlight").dataset.id;
         this.copyToClipboard(highlight.text);
       });
 
       clone.querySelector(".action-edit").addEventListener("click", (event) => {
-        event.target.innerText = 'Save';
-        event.target.parentElement.querySelector(".highlight-text").setAttribute("contentEditable", "true");
+        event.currentTarget.innerText = 'Save';
+        event.currentTarget.parentElement.querySelector(".highlight-text").setAttribute("contentEditable", "true");
       });
 
-      clone.querySelector(".action-delete").addEventListener("click", (event) => {
-        const id = event.target.closest(".highlight").dataset.id;
-        this.deleteHighlight(highlight);
-        if (highlight.deleted) {
-          const id = event.target.closest(".highlight").remove();
-        }
-      });
+      // clone.querySelector(".action-delete").addEventListener("click", (event) => {
+      //   this.deleteHighlight(highlight);
+      //   if (highlight.deleted) {
+      //     event.currentTarget.closest(".highlight").remove();
+      //   }
+      // });
 
       // Insert highlight into DOM
       viewContainer.appendChild(clone);
