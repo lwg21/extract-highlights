@@ -35,7 +35,7 @@ class App {
     document.querySelector("#reset").addEventListener("click", () => {
       // Reset data
       this.initializeData();
-      this.clearMenu();
+      this.renderMenu();
       this.clearView();
     }
     );
@@ -119,10 +119,7 @@ class App {
     // Analyse sources to populate highlights and books, update view
     this.extractHighlightsFromSource(source);
     this.sortBooksAlphabet();
-    this.hideDropInstructions()
-    this.displayBookList();
-    this.displaySourceList();
-    this.displaySmartLists();
+    this.renderMenu();
     this.clearView();
     this.state();
   }
@@ -205,10 +202,10 @@ class App {
     highlight.marked = false;
     highlight
     this.deleted.push(highlight);
-    this.displayBookList();
-    this.displaySmartLists();
-    this.displaySourceList();
-    this.displayHeaderFromBook(highlight.book);
+    this.renderBookList();
+    this.renderSmartLists();
+    this.renderSourceList();
+    this.renderHeaderFromBook(highlight.book);
     return highlight;
 
   }
@@ -256,11 +253,18 @@ class App {
 
   // ## MENU
 
-  clearMenu() {
-    this.showDropInstructions();
-    document.querySelector("#booklist").innerHTML = "";
-    document.querySelector("#smartlists").innerHTML = "";
-    document.querySelector("#sourcelist").innerHTML = "";
+  renderMenu() {
+    if (this.highlights.length === 0) {
+      this.showDropInstructions();
+      document.querySelector("#booklist").innerHTML = "";
+      document.querySelector("#smartlists").innerHTML = "";
+      document.querySelector("#sourcelist").innerHTML = "";
+    } else {
+      this.hideDropInstructions();
+      this.renderBookList();
+      this.renderSmartLists();
+      this.renderSourceList();
+    }
   }
 
   showDropInstructions() {
@@ -307,7 +311,7 @@ class App {
     return clone
   }
 
-  displayBookList() {
+  renderBookList() {
     const bookList = document.querySelector("#booklist");
     bookList.innerHTML = "";
     bookList.appendChild(this.generateBookList());
@@ -342,7 +346,7 @@ class App {
     return clone
   }
 
-  displaySourceList() {
+  renderSourceList() {
     const sourceList = document.querySelector("#sourcelist");
     sourceList.innerHTML = "";
     sourceList.appendChild(this.generateSourceList());
@@ -409,7 +413,7 @@ class App {
     return clone
   }
 
-  displaySmartLists() {
+  renderSmartLists() {
     const smartLists = document.querySelector("#smartlists");
     smartLists.innerHTML = "";
     smartLists.appendChild(this.generateSmartLists());
@@ -428,7 +432,7 @@ class App {
 
   // ### VIEW HEADER
 
-  displayViewHeader(text) {
+  renderViewHeader(text) {
     document.querySelector("#view-header").innerText = text;
   }
 
@@ -499,11 +503,11 @@ class App {
     return `${book.title} (${count} highlight${count > 1 ? "s" : ""})`
   }
 
-  displayHeaderFromBook(book) {
+  renderHeaderFromBook(book) {
     document.querySelector("#view-header").innerText = this.generateHeaderFromBook(book);
   }
 
-  displayViewFromBook(book) {
+  renderViewFromBook(book) {
 
     const template = document.querySelector("#view-template");
     const clone = template.content.cloneNode(true);
