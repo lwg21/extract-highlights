@@ -35,7 +35,8 @@ class App {
         count: null
       },
       actions: [],
-      content: []
+      content: [],
+      downloadFileName: "Download"
     }
   }
 
@@ -122,6 +123,13 @@ class App {
     URL.revokeObjectURL(url)
   }
 
+  addTxtExtension(filename) {
+    if (filename.substr(filename.length - 4) === ".txt") {
+      return filename
+    }
+    return filename + '.txt'
+  }
+
   // SOURCES
 
   extractDataFromSource(source) {
@@ -203,12 +211,13 @@ class App {
   }
 
   createOutput(highlights) {
-    const clippings = highlights.map(highlight => {
-      const text = highlight.textEdited || highlight.text;
-      return `${highlight.metadata}\r\n\r\n${text}`;
-    });
-    const output = clippings.join(this.settings.separator) + this.settings.separator;
-    return output
+    const clippings = highlights.map(highlight => this.generateClipping(highlight));
+    return clippings.join('')
+  }
+
+  generateClipping(highlight) {
+    const text = highlight.textEdited || highlight.text;
+    return [highlight.metadata, "\r\n\r\n", text, this.settings.separator].join('');
   }
 
   deleteHighlight(highlight) {
@@ -481,7 +490,8 @@ class App {
     return {
       header: this.generateHeaderFromBook(book),
       actions: this.generateActions(),
-      content: book.highlights.filter(h => !h.deleted)
+      content: book.highlights.filter(h => !h.deleted),
+      downloadFileName: book.title
     }
   }
 
@@ -494,7 +504,8 @@ class App {
     return {
       header: this.generateHeaderFromSource(source),
       actions: this.generateActions(),
-      content: source.highlights.filter(h => !h.deleted)
+      content: source.highlights.filter(h => !h.deleted),
+      downloadFileName: source.filename
     }
   }
 
@@ -503,19 +514,20 @@ class App {
     this.renderView();
   }
 
-  generateDeletedView() {
+  generateViewDeleted() {
     return {
       header: {
         text: "Deleted",
         count: this.deleted.length
       },
       actions: this.generateActions(),
-      content: this.deleted
+      content: this.deleted,
+      downloadFileName: "Deleted"
     }
   }
 
   viewDeleted() {
-    this.view = this.generateDeletedView();
+    this.view = this.generateViewDeleted();
     this.renderView();
   }
 
@@ -523,11 +535,19 @@ class App {
     return [
       {
         text: "Copy",
-        callback: () => {console.log('COPY!')},
+        callback: () => {
+          const output = this.createOutput(this.view.content);
+          this.copyToClipboard(output);
+          this.flashElement(document.querySelector("#view-content"));
+        },
       },
       {
         text: "Download",
-        callback: () => {console.log('DOWNLOAD!')},
+        callback: () => {
+          const filename = this.addTxtExtension(this.view.downloadFileName);
+          const output = this.createOutput(this.view.content);
+          this.downloadFile(filename, output);
+        },
       }
     ]
   }
@@ -567,8 +587,8 @@ class App {
 
     // Copy metadata + text to clipboard
     clone.querySelector(".highlight-metadata").addEventListener("mousedown", (event) => {
-      const text = highlight.textEdited || highlight.text;
-      this.copyToClipboard([highlight.metadata, "\r\n", "\r\n", text, this.settings.separator].join(''));
+      const clipping = this.generateClipping(highlight);
+      this.copyToClipboard(clipping);
       this.flashElement(event.currentTarget.parentElement);
     })
 
@@ -586,7 +606,6 @@ class App {
     // Delete
     clone.querySelector(".action-delete").addEventListener("click", event => {
       if (this.deleteHighlight(highlight)) {
-        // highlightElement.remove();
         event.currentTarget.closest(".highlight").remove();
       }
     });
