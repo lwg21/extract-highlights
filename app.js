@@ -22,7 +22,7 @@ class App {
     this.sources = []; // Contains objects representing raw source strings from 'my clippings.txt' files
     this.highlights = []; // Contains objects representing individual highlights
     this.books = []; // Contains objects representing distinct books
-    // this.marked
+    this.marked = [];
     // this.edited
     // this.duplicates
     this.deleted = [];
@@ -389,8 +389,8 @@ class App {
     const lists = [
       {
         id: "markedlist",
-        text: `all marked (${0})`,
-        callback: () => {console.log("TEST MARKED!")}
+        text: `all marked (${this.countHighlights(this.marked)})`,
+        callback: () => this.viewMarked()
       },
       {
         id: "editedlist",
@@ -528,6 +528,23 @@ class App {
 
   viewDeleted() {
     this.view = this.generateViewDeleted();
+    this.renderView();
+  }
+
+  generateViewMarked() {
+    return {
+      header: {
+        text: "Marked",
+        count: this.marked.length
+      },
+      actions: this.generateActions(),
+      content: this.marked,
+      downloadFileName: "Marked"
+    }
+  }
+
+  viewMarked() {
+    this.view = this.generateViewMarked();
     this.renderView();
   }
 
