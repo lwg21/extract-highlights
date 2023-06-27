@@ -23,7 +23,7 @@ class App {
     this.highlights = []; // Contains objects representing individual highlights
     this.books = []; // Contains objects representing distinct books
     this.marked = [];
-    // this.edited
+    this.edited = [];
     // this.duplicates
     this.deleted = [];
     // this.bookmarks
@@ -394,8 +394,8 @@ class App {
       },
       {
         id: "editedlist",
-        text: `all edited (${0})`,
-        callback: () => {console.log("TEST EDITED!")}
+        text: `all edited (${this.countHighlights(this.edited)})`,
+        callback: () => this.viewEdited()
       },
       {
         id: "duplicatelist",
@@ -545,6 +545,22 @@ class App {
 
   viewMarked() {
     this.view = this.generateViewMarked();
+    this.renderView();
+  }
+  generateViewEdited() {
+    return {
+      header: {
+        text: "Edited",
+        count: this.edited.length
+      },
+      actions: this.generateActions(),
+      content: this.edited,
+      downloadFileName: "Edited"
+    }
+  }
+
+  viewEdited() {
+    this.view = this.generateViewEdited();
     this.renderView();
   }
 
