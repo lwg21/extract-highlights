@@ -29,6 +29,23 @@ class App {
     // this.bookmarks
     // this.notes
     this.id = 0; // Unique id assign to object (of any kind)
+    this.view = {
+      header: "",
+      actions: [
+        {
+          // TODO: TEMPORARY
+          text: "Copy",
+          callback: () => {console.log('COPY!')},
+        },
+        {
+          // TODO: TEMPORARY
+          text: "Download",
+          callback: () => {console.log('DOWNLOAD!')},
+        }
+      ],
+      // TODO: TEMPORARY
+      content: this.highlights
+    }
   }
 
   initializeUI() {
@@ -255,7 +272,7 @@ class App {
 
   renderMenu() {
     if (this.highlights.length === 0) {
-      this.showDropInstructions();
+      this.renderDropInstructions();
       document.querySelector("#booklist").innerHTML = "";
       document.querySelector("#smartlists").innerHTML = "";
       document.querySelector("#sourcelist").innerHTML = "";
@@ -267,7 +284,7 @@ class App {
     }
   }
 
-  showDropInstructions() {
+  renderDropInstructions() {
     document.querySelector("#drop-instructions").style.display = "flex";
   }
 
@@ -300,7 +317,7 @@ class App {
 
       // Add event listener to display books and toggle active
       bookItem.addEventListener("click", (event) => {
-        this.viewHighlightsOfBook(book);
+        this.viewBook(book);
         this.removeActiveMenu();
         event.currentTarget.classList.add("active");
       });
@@ -365,35 +382,35 @@ class App {
     const lists = [
       {
         id: "markedlist",
-        header: `all marked (${0})`,
-        action: () => {console.log("TEST MARKED!")}
+        text: `all marked (${0})`,
+        callback: () => {console.log("TEST MARKED!")}
       },
       {
         id: "editedlist",
-        header: `all edited (${0})`,
-        action: () => {console.log("TEST EDITED!")}
+        text: `all edited (${0})`,
+        callback: () => {console.log("TEST EDITED!")}
       },
       {
         id: "duplicatelist",
-        header: `all duplicates (${0})`,
-        action: () => {console.log("TEST DUPLICATES!")}
+        text: `all duplicates (${0})`,
+        callback: () => {console.log("TEST DUPLICATES!")}
       },
       {
         id: "deletedlist",
-        header: `all deleted (${this.countDeletedHighlights(this.deleted)})`,
-        action: () => {
+        text: `all deleted (${this.countDeletedHighlights(this.deleted)})`,
+        callback: () => {
           console.log("TEST DELETED!");
         }
       },
       {
         id: "bookmarklist",
-        header: `all bookmarks (${0})`,
-        action: () => {console.log("TEST BOOKMARKS!")}
+        text: `all bookmarks (${0})`,
+        callback: () => {console.log("TEST BOOKMARKS!")}
       },
       {
         id: "notelist",
-        header: `all notes (${0})`,
-        action: () => {console.log("TEST NOTES!")}
+        text: `all notes (${0})`,
+        callback: () => {console.log("TEST NOTES!")}
       },
     ];
 
@@ -401,9 +418,9 @@ class App {
     lists.forEach(list => {
       const item = document.createElement("li");
       item.id = list.id;
-      item.textContent = list.header;
+      item.textContent = list.text;
       item.addEventListener("click", (event) => {
-        list.action();
+        list.callback();
         this.removeActiveMenu();
         event.currentTarget.classList.add("active");
       });
@@ -421,20 +438,82 @@ class App {
 
   // ## VIEW
 
-  clearView() {
-    const view = document.querySelector("#view");
-    view.innerHTML = "";
-
-    const template = document.querySelector("#view-template");
-    const clone = template.content.cloneNode(true);
-    view.appendChild(clone);
+  renderView() {
+    this.renderViewHeader(this.view.header);
+    this.renderViewActions(this.view.actions);
+    this.renderViewContent(this.view.content);
   }
-
-  // ### VIEW HEADER
 
   renderViewHeader(text) {
     document.querySelector("#view-header").innerText = text;
   }
+
+  renderViewActions(actions) {
+    const actionsContainer = document.querySelector("#view-actions");
+    actionsContainer.innerHTML = "";
+
+    actions.forEach(action => {
+      const button = document.createElement("button");
+      button.textContent = `${action.text}`;
+      button.addEventListener("click", action.callback);
+      actionsContainer.appendChild(button);
+    });
+  }
+
+  renderViewContent(highlights) {
+    const contentContainer = document.querySelector("#view-content");
+    contentContainer.innerHTML = "";
+    const content = this.generateHighlights(highlights);
+    contentContainer.appendChild(content);
+  }
+
+  clearView() {
+    this.view.header = "";
+    this.view.actions = [];
+    this.view.content = [];
+  }
+
+  generateViewFromBook(book) {
+    return {
+      header: this.generateHeaderFromBook(book),
+      actions: this.generateActions(),
+      content: book.highlights
+    }
+  }
+
+  viewBook(book) {
+    this.view = this.generateViewFromBook(book);
+    this.renderView();
+  }
+
+  generateViewFromSource(source) {
+    return {
+      header: this.generateHeaderFromSource(source),
+      actions: this.generateActions(),
+      content: source.highlights
+    }
+  }
+
+
+  viewSource(source) {
+    this.view = this.generateViewFromSource(source);
+    this.renderView();
+  }
+
+  generateActions() {
+    return [
+      {
+        text: "Copy",
+        callback: () => {console.log('COPY!')},
+      },
+      {
+        text: "Download",
+        callback: () => {console.log('DOWNLOAD!')},
+      }
+    ]
+  }
+
+  // ### VIEW HEADER
 
   // ## VIEW ACTIONS
   // TODO
@@ -507,43 +586,49 @@ class App {
     document.querySelector("#view-header").innerText = this.generateHeaderFromBook(book);
   }
 
-  renderViewFromBook(book) {
+  // renderViewFromBook(book) {
 
-    const template = document.querySelector("#view-template");
-    const clone = template.content.cloneNode(true);
+  //   const template = document.querySelector("#view-template");
+  //   const clone = template.content.cloneNode(true);
 
-    // Update header
-    clone.querySelector("#view-header").innerText = this.generateHeaderFromBook(book);
+  //   // Update header
+  //   clone.querySelector("#view-header").innerText = this.generateHeaderFromBook(book);
 
-    // TODO update actions
-    // clone.querySelector("#view-actions").appendChild();
-    // TODO scroll to top
+  //   // TODO update actions
+  //   // clone.querySelector("#view-actions").appendChild();
+  //   // TODO scroll to top
 
-    // Update content
-    const content = this.generateHighlights(book.highlights);
-    clone.querySelector("#view-content").appendChild(content);
+  //   // Update content
+  //   const content = this.generateHighlights(book.highlights);
+  //   clone.querySelector("#view-content").appendChild(content);
 
-    const view = document.querySelector("#view");
-    view.innerHTML = "";
+  //   const view = document.querySelector("#view");
+  //   view.innerHTML = "";
 
-    view.appendChild(clone)
+  //   view.appendChild(clone)
+  // }
+
+  generateHeaderFromSource(source) {
+    const count = this.countHighlights(source.highlights);
+    return `${source.filename} (${count} highlight${count > 1 ? "s" : ""})`
   }
+
 
   // ##############
 
-  viewSource(source) {
-    //  TODO: REWORK TO DISPLAY NOT JUST TEXT BUT HIGHLIGHTS FROM SOURCE
-    const viewContainer = document.querySelector("#view-content");
+  // viewSource(source) {
+  //   //  TODO: REWORK TO DISPLAY NOT JUST TEXT BUT HIGHLIGHTS FROM SOURCE
+  //   const viewContainer = document.querySelector("#view-content");
 
-    // Clear view
-    viewContainer.innerHTML = "";
+  //   // Clear view
+  //   viewContainer.innerHTML = "";
 
-    // Insert uploads contained in instance variable as text
-    viewContainer.innerText += source.text;
+  //   // Insert uploads contained in instance variable as text
+  //   viewContainer.innerText += source.text;
 
-    // Update title with number of files
-    this.viewSourceHeader(source)
-  }
+  //   // Update title with number of files
+  //   this.viewSourceHeader(source)
+  // }
 
   viewHighlights(highlights = this.highlights) {
     const template = document.querySelector("#highlight-template");
@@ -610,53 +695,53 @@ class App {
     header.innerText = `Source #${source.id} '${source.filename}'`;
   }
 
-  viewHighlightsOfBook(book) {
-    this.viewHighlights(book.highlights);
+  // viewHighlightsOfBook(book) {
+  //   this.viewHighlights(book.highlights);
 
-    // Update title with number of highlights
-    this.viewBookHeader(book);
+  //   // Update title with number of highlights
+  //   this.viewBookHeader(book);
 
-    const actionsContainer = document.querySelector("#view-actions");
-    actionsContainer.innerHTML = "";
+  //   const actionsContainer = document.querySelector("#view-actions");
+  //   actionsContainer.innerHTML = "";
 
-    // Add copy action
-    const copyButton = document.createElement("button");
-    copyButton.innerText = "Copy";
-    copyButton.addEventListener("click", (event) => {
-      const output = this.createOutput(book.highlights);
-      this.copyToClipboard(output);
-      this.viewFlash(event.currentTarget.closest("#view"))
-    });
-    actionsContainer.appendChild(copyButton);
+  //   // Add copy action
+  //   const copyButton = document.createElement("button");
+  //   copyButton.innerText = "Copy";
+  //   copyButton.addEventListener("click", (event) => {
+  //     const output = this.createOutput(book.highlights);
+  //     this.copyToClipboard(output);
+  //     this.viewFlash(event.currentTarget.closest("#view"))
+  //   });
+  //   actionsContainer.appendChild(copyButton);
 
-    // Add download action
-    const downloadButton = document.createElement("button");
-    downloadButton.innerText = "Download";
-    downloadButton.addEventListener("click", () => {
-      const output = this.createOutput(book.highlights);
-      this.downloadFile(`${book.title}.txt`, output);
-    });
-    actionsContainer.appendChild(downloadButton);
+  //   // Add download action
+  //   const downloadButton = document.createElement("button");
+  //   downloadButton.innerText = "Download";
+  //   downloadButton.addEventListener("click", () => {
+  //     const output = this.createOutput(book.highlights);
+  //     this.downloadFile(`${book.title}.txt`, output);
+  //   });
+  //   actionsContainer.appendChild(downloadButton);
 
-    // Add scan for duplicate text
-    const scanTextButton = document.createElement("button");
-    scanTextButton.innerText = "Scan duplicate text";
-    scanTextButton.addEventListener("click", () => {
-      this.viewDuplicatesOfBook(book);
-    });
-    actionsContainer.appendChild(scanTextButton);
+  //   // Add scan for duplicate text
+  //   const scanTextButton = document.createElement("button");
+  //   scanTextButton.innerText = "Scan duplicate text";
+  //   scanTextButton.addEventListener("click", () => {
+  //     this.viewDuplicatesOfBook(book);
+  //   });
+  //   actionsContainer.appendChild(scanTextButton);
 
-    // Add scan for duplicate locations
-    const scanLocationButton = document.createElement("button");
-    scanLocationButton.innerText = "Scan duplicate location";
-    scanLocationButton.addEventListener("click", () => {
-      // this.viewDuplicatesOfBook(book);
-    });
-    actionsContainer.appendChild(scanLocationButton);
+  //   // Add scan for duplicate locations
+  //   const scanLocationButton = document.createElement("button");
+  //   scanLocationButton.innerText = "Scan duplicate location";
+  //   scanLocationButton.addEventListener("click", () => {
+  //     // this.viewDuplicatesOfBook(book);
+  //   });
+  //   actionsContainer.appendChild(scanLocationButton);
 
-    // Scroll to top
-    document.querySelector("#view").scrollTo(0, 0);
-  }
+  //   // Scroll to top
+  //   document.querySelector("#view").scrollTo(0, 0);
+  // }
 
   viewFlash(element) {
     element.style.backgroundColor = "#F8D6A0";
@@ -671,11 +756,11 @@ class App {
     }, 620);
   }
 
-  viewDuplicatesOfBook(book) {
-    this.scanForDuplicates(book.highlights);
-    console.log("done");
-    this.viewHighlightsOfBook(book);
-  }
+  // viewDuplicatesOfBook(book) {
+  //   this.scanForDuplicates(book.highlights);
+  //   console.log("done");
+  //   this.viewHighlightsOfBook(book);
+  // }
 
 
   // UTILITIES & CHECKS
