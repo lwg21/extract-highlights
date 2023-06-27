@@ -505,7 +505,10 @@ class App {
 
   generateDeletedView() {
     return {
-      header: `Deleted highlights (${this.deleted.length})`,
+      header: {
+        text: "Deleted",
+        count: this.deleted.length
+      },
       actions: this.generateActions(),
       content: this.deleted
     }
