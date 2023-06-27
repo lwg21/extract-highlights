@@ -245,7 +245,11 @@ class App {
   }
 
   countHighlights(highlights) {
-    return highlights.filter(h => !h.deleted).length
+    return highlights.filter(h => !h.deleted).length;
+  }
+
+  countDeletedHighlights(highlights) {
+    return highlights.filter(h => h.deleted).length;
   }
 
   // # COMPONENTS
@@ -372,8 +376,10 @@ class App {
       },
       {
         id: "deletedlist",
-        header: `all deleted (${0})`,
-        action: () => {console.log("TEST DELETED!")}
+        header: `all deleted (${this.countDeletedHighlights(this.deleted)})`,
+        action: () => {
+          console.log("TEST DELETED!");
+        }
       },
       {
         id: "bookmarklist",
