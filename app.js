@@ -547,7 +547,7 @@ class App {
     // Populate template with highlight data
     clone.querySelector(".highlight").setAttribute("data-id", highlight.id);
     clone.querySelector(".highlight-metadata").textContent = highlight.metadata;
-    clone.querySelector(".highlight-text").textContent = highlight.text;
+    clone.querySelector(".highlight-text").textContent = highlight.textEdited || highlight.text;
     clone.querySelector(".separator").textContent = '==========';
 
     // Mark as duplicate TODO: rework
@@ -556,16 +556,18 @@ class App {
     //     clone.querySelector(".separator").textContent += ` 🚨 (id: ${duplicate.id})`;
     //   });
     // }
+
     // TODO: ADD ACTION AND EVENT LISTENERS
-    //   // Set event listeners to highlights and actions
-    //   clone.querySelector(".highlight-text").addEventListener("mousedown", (event) => {
-    //   this.copyToClipboard(highlight.textEdited || highlight.text)
-    //   this.viewFlash(event.currentTarget);
-    //   })
+
+    // Copy text to clipboard
+    clone.querySelector(".highlight-text").addEventListener("mousedown", (event) => {
+      this.copyToClipboard(highlight.textEdited || highlight.text);
+      this.flashElement(event.currentTarget);
+    })
 
     // clone.querySelector(".highlight-metadata").addEventListener("mousedown", (event) => {
     //   this.copyToClipboard(highlight.original + this.settings.separator) // TODO: handle case if edited
-    //   this.viewFlash(event.currentTarget.parentElement);
+    //   this.flashElement(event.currentTarget.parentElement);
     // })
 
     // clone.querySelector(".action-copy").addEventListener("click", (event) => {
@@ -635,12 +637,12 @@ class App {
   //     // Set event listeners to highlights and actions
   //     clone.querySelector(".highlight-text").addEventListener("mousedown", (event) => {
   //       this.copyToClipboard(highlight.textEdited || highlight.text)
-  //       this.viewFlash(event.currentTarget);
+  //       this.flashElement(event.currentTarget);
   //     })
 
   //     clone.querySelector(".highlight-metadata").addEventListener("mousedown", (event) => {
   //       this.copyToClipboard(highlight.original + this.settings.separator) // TODO: handle case if edited
-  //       this.viewFlash(event.currentTarget.parentElement);
+  //       this.flashElement(event.currentTarget.parentElement);
   //     })
 
   //     clone.querySelector(".action-copy").addEventListener("click", (event) => {
@@ -690,7 +692,7 @@ class App {
   //   copyButton.addEventListener("click", (event) => {
   //     const output = this.createOutput(book.highlights);
   //     this.copyToClipboard(output);
-  //     this.viewFlash(event.currentTarget.closest("#view"))
+  //     this.flashElement(event.currentTarget.closest("#view"))
   //   });
   //   actionsContainer.appendChild(copyButton);
 
@@ -723,18 +725,25 @@ class App {
   //   document.querySelector("#view").scrollTo(0, 0);
   // }
 
-  viewFlash(element) {
-    element.style.backgroundColor = "#F8D6A0";
+  flashElement(element) {
+    element.classList.add("flash");
     setTimeout(() => {
-      element.style.transitionDuration = "0.6s";
-      element.transitionTimingFunction = "ease-in";
-      element.style.backgroundColor = null;
-    }, 20);
-    setTimeout(() => {
-      element.style.transitionDuration = null;
-      element.transitionTimingFunction = null;
-    }, 620);
+      element.classList.remove("flash");
+    }, 250);
   }
+
+  // flashElement(element) {
+  //   element.style.backgroundColor = "#F8D6A0";
+  //   setTimeout(() => {
+  //     element.style.transitionDuration = "0.3s";
+  //     element.transitionTimingFunction = "ease-in";
+  //     element.style.backgroundColor = null;
+  //   }, 10);
+  //   setTimeout(() => {
+  //     element.style.transitionDuration = null;
+  //     element.transitionTimingFunction = null;
+  //   }, 320);
+  // }
 
   // viewDuplicatesOfBook(book) {
   //   this.scanForDuplicates(book.highlights);
