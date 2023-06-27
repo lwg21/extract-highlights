@@ -602,109 +602,68 @@ class App {
     }
   }
 
-  // TODO: OBSOLETE
-  renderHeaderFromBook(book) {
-    document.querySelector("#view-header").innerText = this.generateHeaderFromBook(book);
-  }
-
-  // renderViewFromBook(book) {
-
-  //   const template = document.querySelector("#view-template");
-  //   const clone = template.content.cloneNode(true);
-
-  //   // Update header
-  //   clone.querySelector("#view-header").innerText = this.generateHeaderFromBook(book);
-
-  //   // TODO update actions
-  //   // clone.querySelector("#view-actions").appendChild();
-  //   // TODO scroll to top
-
-  //   // Update content
-  //   const content = this.generateHighlights(book.highlights);
-  //   clone.querySelector("#view-content").appendChild(content);
-
-  //   const view = document.querySelector("#view");
-  //   view.innerHTML = "";
-
-  //   view.appendChild(clone)
-  // }
-
   generateHeaderFromSource(source) {
-    const count = this.countHighlights(source.highlights);
-    return `Source '${source.filename}' (${count} highlight${count > 1 ? "s" : ""})`
+    return {
+      text: `Source '${source.filename}'`,
+      count: this.countHighlights(source.highlights)
+    }
   }
 
 
-  // ##############
-
-  // viewSource(source) {
-  //   //  TODO: REWORK TO DISPLAY NOT JUST TEXT BUT HIGHLIGHTS FROM SOURCE
+  // OBSOLETE
+  // viewHighlights(highlights = this.highlights) {
+  //   const template = document.querySelector("#highlight-template");
   //   const viewContainer = document.querySelector("#view-content");
 
   //   // Clear view
   //   viewContainer.innerHTML = "";
 
-  //   // Insert uploads contained in instance variable as text
-  //   viewContainer.innerText += source.text;
+  //   // Insert highlights contained in instance variable using content template
+  //   highlights.forEach((highlight) => {
+  //     // Populate template with highlight data
+  //     const clone = template.content.cloneNode(true);
+  //     clone.querySelector(".highlight").setAttribute("data-id", highlight.id);
+  //     clone.querySelector(".highlight-metadata").textContent = highlight.metadata;
+  //     clone.querySelector(".highlight-text").textContent = highlight.text;
+  //     clone.querySelector(".separator").textContent = '==========';
 
-  //   // Update title with number of files
-  //   this.viewSourceHeader(source)
+  //     // [TESTING] TODO:REMOVE
+  //     highlight.duplicates.forEach(duplicate => {
+  //       clone.querySelector(".separator").textContent += ` 🚨 (id: ${duplicate.id})`;
+  //     });
+
+  //     // Set event listeners to highlights and actions
+  //     clone.querySelector(".highlight-text").addEventListener("mousedown", (event) => {
+  //       this.copyToClipboard(highlight.textEdited || highlight.text)
+  //       this.viewFlash(event.currentTarget);
+  //     })
+
+  //     clone.querySelector(".highlight-metadata").addEventListener("mousedown", (event) => {
+  //       this.copyToClipboard(highlight.original + this.settings.separator) // TODO: handle case if edited
+  //       this.viewFlash(event.currentTarget.parentElement);
+  //     })
+
+  //     clone.querySelector(".action-copy").addEventListener("click", (event) => {
+  //       const id = event.currentTarget.closest(".highlight").dataset.id;
+  //       this.copyToClipboard(highlight.text);
+  //     });
+
+  //     clone.querySelector(".action-edit").addEventListener("click", (event) => {
+  //       event.currentTarget.innerText = 'Save';
+  //       event.currentTarget.parentElement.querySelector(".highlight-text").setAttribute("contentEditable", "true");
+  //     });
+
+  //     clone.querySelector(".action-delete").addEventListener("click", (event) => {
+  //       this.deleteHighlight(highlight);
+  //       if (highlight.deleted) {
+  //         event.currentTarget.closest(".highlight").remove();
+  //       }
+  //     });
+
+  //     Insert highlight into DOM
+  //     viewContainer.appendChild(clone);
+  //   });
   // }
-
-  // OBSOLETE
-  viewHighlights(highlights = this.highlights) {
-    const template = document.querySelector("#highlight-template");
-    const viewContainer = document.querySelector("#view-content");
-
-    // Clear view
-    viewContainer.innerHTML = "";
-
-    // Insert highlights contained in instance variable using content template
-    highlights.forEach((highlight) => {
-      // Populate template with highlight data
-      const clone = template.content.cloneNode(true);
-      clone.querySelector(".highlight").setAttribute("data-id", highlight.id);
-      clone.querySelector(".highlight-metadata").textContent = highlight.metadata;
-      clone.querySelector(".highlight-text").textContent = highlight.text;
-      clone.querySelector(".separator").textContent = '==========';
-
-      // [TESTING] TODO:REMOVE
-      highlight.duplicates.forEach(duplicate => {
-        clone.querySelector(".separator").textContent += ` 🚨 (id: ${duplicate.id})`;
-      });
-
-      // Set event listeners to highlights and actions
-      clone.querySelector(".highlight-text").addEventListener("mousedown", (event) => {
-        this.copyToClipboard(highlight.textEdited || highlight.text)
-        this.viewFlash(event.currentTarget);
-      })
-
-      clone.querySelector(".highlight-metadata").addEventListener("mousedown", (event) => {
-        this.copyToClipboard(highlight.original + this.settings.separator) // TODO: handle case if edited
-        this.viewFlash(event.currentTarget.parentElement);
-      })
-
-      clone.querySelector(".action-copy").addEventListener("click", (event) => {
-        const id = event.currentTarget.closest(".highlight").dataset.id;
-        this.copyToClipboard(highlight.text);
-      });
-
-      clone.querySelector(".action-edit").addEventListener("click", (event) => {
-        event.currentTarget.innerText = 'Save';
-        event.currentTarget.parentElement.querySelector(".highlight-text").setAttribute("contentEditable", "true");
-      });
-
-      // clone.querySelector(".action-delete").addEventListener("click", (event) => {
-      //   this.deleteHighlight(highlight);
-      //   if (highlight.deleted) {
-      //     event.currentTarget.closest(".highlight").remove();
-      //   }
-      // });
-
-      // Insert highlight into DOM
-      viewContainer.appendChild(clone);
-    });
-  }
 
   viewBookHeader(book) {
     const header = document.querySelector("#view-header");
