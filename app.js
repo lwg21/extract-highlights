@@ -211,8 +211,9 @@ class App {
   }
 
   createOutput(highlights) {
-    const clippings = highlights.map(highlight => this.generateClipping(highlight));
-    return clippings.join('')
+    const existingHighlights = highlights.filter(h => !h.deleted);
+    const clippings = existingHighlights.map(h => this.generateClipping(h));
+    return clippings.join('');
   }
 
   generateClipping(highlight) {
@@ -233,6 +234,7 @@ class App {
   }
 
   undoDeleteHighlight(highlight) {
+    // TODO: improve to remove highlight from instance array
     highlight.deleted = false;
     return highlight;
   }
@@ -244,6 +246,10 @@ class App {
       this.renderMenu();
     }
     return highlight
+  }
+
+  unmarkHighlight(highlight) {
+    // TODO
   }
 
   duplicateCompare(highlight1, highlight2) {
@@ -671,7 +677,7 @@ class App {
     // Delete
     clone.querySelector(".action-delete").addEventListener("click", event => {
       if (this.deleteHighlight(highlight)) {
-        event.currentTarget.closest(".highlight").remove();
+        event.currentTarget.closest(".highlight").classList.add("deleted");
       }
     });
     return clone;

@@ -191,20 +191,12 @@ li.active {
   white-space: pre-wrap;
 }
 
-.highlight button {
-  opacity: 0;
-}
-
 .highlight-metadata:hover, .highlight-text:hover {
   cursor: pointer;
 }
 
 button {
   font-size: 0.7em;
-}
-
-.highlight:hover button {
-  opacity: 1;
 }
 
 .separator {
@@ -293,4 +285,8 @@ button {
 
 .marked {
   background-color: #daedda;
+}
+
+.deleted {
+  background-color: #eddada;
 }
