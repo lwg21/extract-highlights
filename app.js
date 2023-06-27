@@ -237,6 +237,15 @@ class App {
     return highlight;
   }
 
+  markHighlight(highlight) {
+    if (!highlight.marked && !highlight.deleted ) {
+      highlight.marked = true;
+      this.marked.push(highlight);
+      this.renderMenu();
+    }
+    return highlight
+  }
+
   duplicateCompare(highlight1, highlight2) {
     const check = this.checkForCommonSubstring(highlight1.text, highlight2.text, this.settings.duplicateSubstringLength);
     if (check.found) {
@@ -651,6 +660,13 @@ class App {
     //   event.currentTarget.innerText = 'Save';
     //   event.currentTarget.parentElement.querySelector(".highlight-text").setAttribute("contentEditable", "true");
     // });
+
+    // Mark
+    clone.querySelector(".action-mark").addEventListener("click", event => {
+      if (this.markHighlight(highlight)) {
+        event.currentTarget.closest(".highlight").classList.add("marked");
+      }
+    });
 
     // Delete
     clone.querySelector(".action-delete").addEventListener("click", event => {

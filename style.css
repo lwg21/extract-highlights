@@ -287,6 +287,10 @@ button {
     background-color: #F8D6A0;
   }
   100% {
-    background-color: white;
+    background-color: none;
   }
+}
+
+.marked {
+  background-color: #daedda;
 }
