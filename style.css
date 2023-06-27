@@ -278,7 +278,7 @@ button {
 .flash {
   transition: ease-out;
   animation-name: flash;
-  animation-duration: 0.3s;
+  animation-duration: 0.25s;
   animation-iteration-count: 1;
 }
 

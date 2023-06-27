@@ -565,11 +565,14 @@ class App {
       this.flashElement(event.currentTarget);
     })
 
-    // clone.querySelector(".highlight-metadata").addEventListener("mousedown", (event) => {
-    //   this.copyToClipboard(highlight.original + this.settings.separator) // TODO: handle case if edited
-    //   this.flashElement(event.currentTarget.parentElement);
-    // })
+    // Copy metadata + text to clipboard
+    clone.querySelector(".highlight-metadata").addEventListener("mousedown", (event) => {
+      const text = highlight.textEdited || highlight.text;
+      this.copyToClipboard([highlight.metadata, "\r\n", "\r\n", text, this.settings.separator].join(''));
+      this.flashElement(event.currentTarget.parentElement);
+    })
 
+    //
     // clone.querySelector(".action-copy").addEventListener("click", (event) => {
     //   const id = event.currentTarget.closest(".highlight").dataset.id;
     //   this.copyToClipboard(highlight.text);
@@ -580,6 +583,7 @@ class App {
     //   event.currentTarget.parentElement.querySelector(".highlight-text").setAttribute("contentEditable", "true");
     // });
 
+    // Delete
     clone.querySelector(".action-delete").addEventListener("click", event => {
       if (this.deleteHighlight(highlight)) {
         // highlightElement.remove();
@@ -732,19 +736,6 @@ class App {
     }, 250);
   }
 
-  // flashElement(element) {
-  //   element.style.backgroundColor = "#F8D6A0";
-  //   setTimeout(() => {
-  //     element.style.transitionDuration = "0.3s";
-  //     element.transitionTimingFunction = "ease-in";
-  //     element.style.backgroundColor = null;
-  //   }, 10);
-  //   setTimeout(() => {
-  //     element.style.transitionDuration = null;
-  //     element.transitionTimingFunction = null;
-  //   }, 320);
-  // }
-
   // viewDuplicatesOfBook(book) {
   //   this.scanForDuplicates(book.highlights);
   //   console.log("done");
@@ -756,7 +747,8 @@ class App {
 
   copyToClipboard(text) {
     window.navigator.clipboard.writeText(text);
-    console.log(`Copied to clipboard:\n${text}`);
+    console.log(text);
+    return text
   }
 
   checkForCommonSubstring(string1, string2, threshold = 50) {
@@ -830,6 +822,7 @@ class App {
     // TODO: same for edited, deleted, marked and duplicates
     // TODO: Do all books have a title and an author?
     // TODO: Do all highlights have a book?
+    // TODO: Test if copy to clipboard produces Kindle format output
   }
 }
 
