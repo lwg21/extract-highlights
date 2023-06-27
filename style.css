@@ -290,3 +290,31 @@ button {
 .deleted {
   background-color: #eddada;
 }
+
+.highlight-actions {
+  display: inline;
+}
+
+.highlight-actions button {
+  background: none;
+  border: none;
+  border-radius: 3px;
+  font-size: 0.7em;
+  color: #D4880C;
+  cursor: pointer;
+}
+
+.highlight-actions button:hover {
+  background-color: #D4880C;
+  color: #FBE6C5;
+}
+
+.highlight-actions .action-delete:hover {
+  background-color: #d40c0c;
+  color: #fbc5c5;
+}
+
+.highlight-actions .action-mark:hover {
+  background-color: #0c8f1d;
+  color: #daedda;
+}

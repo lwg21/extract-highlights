@@ -14,7 +14,8 @@ class App {
   initializeSettings() {
     this.settings = {
       separator: "\r\n==========\r\n",
-      duplicateSubstringLength: 40
+      duplicateSubstringLength: 40,
+      hideMetadata: false
     };
   }
 
@@ -463,6 +464,7 @@ class App {
     this.renderViewHeader(this.view.header);
     this.renderViewActions(this.view.actions);
     this.renderViewContent(this.view.content);
+    if (this.settings.hideMetadata) this.hideMetadata();
   }
 
   renderViewHeader(header) {
@@ -826,14 +828,15 @@ class App {
     }, 250);
   }
 
-  // viewDuplicatesOfBook(book) {
-  //   this.scanForDuplicates(book.highlights);
-  //   console.log("done");
-  //   this.viewHighlightsOfBook(book);
-  // }
+  hideMetadata() {
+    const highlightElements = document.querySelectorAll(".highlight");
+    highlightElements.forEach(element => {
+      element.querySelector(".highlight-metadata").style.display = "none";
+      element.querySelector("br").style.display = "none";
+    });
+  }
 
-
-  // UTILITIES & CHECKS
+  // UTILITIES
 
   copyToClipboard(text) {
     window.navigator.clipboard.writeText(text);
@@ -868,6 +871,14 @@ class App {
     }
   }
 
+  // EXPERIMENTAL
+
+  insertMark(text, start, end) {
+    return text.slice(0,start) + "<mark>" + text.slice(start, end) + "</mark>" + text.slice(end)
+  }
+
+  // TESTING & DEBUGGING
+
   state() {
     console.log(`*--State--*`
       + `\n${this.sources.length} uploads`
@@ -875,15 +886,6 @@ class App {
       + `\n${this.books.length} books`
     )
   }
-
-
-  // EXPERIMENTAL
-
-  insertMark(text, start, end) {
-    return text.slice(0,start) + "<mark>" + text.slice(start, end) + "</mark>" + text.slice(end)
-  }
-
-  // TESTING
 
   findHighlightsFromBook(book) {
     return this.highlights.filter(highlight => ((highlight.title === book.title) && !highlight.deleted));
