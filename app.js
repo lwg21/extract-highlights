@@ -392,7 +392,7 @@ class App {
     sourceList.appendChild(this.generateSourceList());
   }
 
-  // ## SMART LISTS
+  // ### SMART LISTS
 
   generateSmartLists() {
     // Clone template
@@ -426,12 +426,12 @@ class App {
       {
         id: "bookmarklist",
         text: `all bookmarks (${0})`,
-        callback: () => {console.log("TEST BOOKMARKS!")}
+        callback: () => {console.log("TEST BOOKMARKS!")} // TODO
       },
       {
         id: "notelist",
         text: `all notes (${0})`,
-        callback: () => {console.log("TEST NOTES!")}
+        callback: () => {console.log("TEST NOTES!")} // TODO
       },
     ];
 
@@ -875,6 +875,72 @@ class App {
 
   insertMark(text, start, end) {
     return text.slice(0,start) + "<mark>" + text.slice(start, end) + "</mark>" + text.slice(end)
+  }
+
+  initializeKeyboardNavigation() {
+    document.addEventListener("keydown", event => {
+      if (event.key === "j") {
+        this.scrollToNextHighlight();
+      } else if (event.key === "k") {
+        this.scrollToPreviousHighlight();
+      } else if (event.key === "r") {
+        this.scrollToRandomHighlight();
+      } else if (event.key === "d") {
+        this.activeHighlightDelete();
+      }
+    })
+  }
+
+  scrollToNextHighlight() {
+    let active = document.querySelector(".active-highlight");
+    if (active) {
+      active.classList.remove("active-highlight");
+      active = active.nextElementSibling;
+    } else {
+      active = document.querySelector(".highlight")
+    }
+    active.classList.add("active-highlight");
+    active.scrollIntoView({behavior: "instant", block: "nearest"});
+  }
+
+  scrollToPreviousHighlight() {
+    // Combine with 'next' method with option {}?
+    let active = document.querySelector(".active-highlight");
+    if (active) {
+      active.classList.remove("active-highlight");
+      active = active.previousElementSibling;
+    } else {
+      const nodes = document.querySelectorAll(".highlight");
+      active = nodes[nodes.length - 1];
+    }
+    active.classList.add("active-highlight");
+    active.scrollIntoView({behavior: "instant", block: "nearest"});
+  }
+
+  scrollToRandomHighlight() {
+    const active = document.querySelector(".active-highlight");
+    if (active) {
+      active.classList.remove("active-highlight");
+    }
+    const highlights = document.querySelectorAll(".highlight");
+    const random = highlights[Math.floor(Math.random() * highlights.length)];
+    random.classList.add("active-highlight");
+    random.scrollIntoView({behavior: "instant", block: "center"});
+  }
+
+  activeHighlightDelete() {
+    const active = document.querySelector(".active-highlight");
+    if (active) {
+      const id = Number.parseInt(active.dataset.id, 10);
+      const highlight = this.findHighlightById(id);
+      if (this.deleteHighlight(highlight)) {
+        active.classList.add("deleted");
+      }
+    }
+  }
+
+  findHighlightById(id) {
+    return this.highlights.find(highlight => highlight.id === id);
   }
 
   // TESTING & DEBUGGING

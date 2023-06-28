@@ -187,6 +187,11 @@ li.active {
   flex-grow: 1;
 }
 
+.active-highlight {
+  /* Experimental */
+  background-color: #b9c8d6;
+}
+
 .highlight-metadata {
   white-space: pre-wrap;
 }
