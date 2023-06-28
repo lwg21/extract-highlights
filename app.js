@@ -142,7 +142,7 @@ class App {
     this.extractHighlightsFromSource(source);
     this.sortBooksAlphabet();
     this.renderMenu();
-    this.clearView();
+    this.viewSource(source);
     this.state();
   }
 
