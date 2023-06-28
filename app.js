@@ -15,7 +15,8 @@ class App {
     this.settings = {
       separator: "\r\n==========\r\n",
       duplicateSubstringLength: 40,
-      hideMetadata: false
+      hideMetadata: false,
+      keyboardNavigation: false // Experimental
     };
   }
 
@@ -515,6 +516,9 @@ class App {
     this.view.header = {};
     this.view.actions = [];
     this.view.content = [];
+    document.querySelector("#view-header").innerHTML = "";
+    document.querySelector("#view-actions").innerHTML = "";
+    document.querySelector("#view-content").innerHTML = "";
   }
 
   generateViewFromBook(book) {
