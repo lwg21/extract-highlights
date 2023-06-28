@@ -13,6 +13,10 @@ body {
   align-items: center;
 }
 
+.none {
+  display: none;
+}
+
 .full-height {
   height: calc(100vh - 80px) !important;
   overflow: auto;
@@ -68,6 +72,8 @@ h2 {
 /* MENU */
 
 #menu {
+  display: flex;
+  flex-direction: column;
   flex-grow: 0;
   flex-shrink: 0;
   flex-basis: 400px;

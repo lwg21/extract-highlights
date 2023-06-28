@@ -42,6 +42,9 @@ class App {
   }
 
   initializeUI() {
+    this.renderMenu();
+    this.clearView();
+
     document.querySelector("#reset").addEventListener("click", () => {
       // Reset data
       this.initializeData();
@@ -294,14 +297,10 @@ class App {
   renderMenu() {
     if (this.highlights.length === 0) {
       this.renderDropInstructions();
-      document.querySelector("#booklist").innerHTML = "";
-      document.querySelector("#smartlists").innerHTML = "";
-      document.querySelector("#sourcelist").innerHTML = "";
+      this.hideMenuLists();
     } else {
       this.hideDropInstructions();
-      this.renderBookList();
-      this.renderSmartLists();
-      this.renderSourceList();
+      this.renderMenuLists()
     }
   }
 
@@ -311,6 +310,18 @@ class App {
 
   hideDropInstructions() {
     document.querySelector("#drop-instructions").style.display = "none";
+  }
+
+  renderMenuLists() {
+    this.renderBookList();
+    this.renderSmartLists();
+    this.renderSourceList();
+  }
+
+  hideMenuLists() {
+    document.querySelector("#booklist").classList.add("none");
+    document.querySelector("#smartlists").classList.add("none");
+    document.querySelector("#sourcelist").classList.add("none");
   }
 
   removeActiveMenu() {
@@ -354,6 +365,7 @@ class App {
   renderBookList() {
     const bookList = document.querySelector("#booklist");
     bookList.innerHTML = "";
+    bookList.classList.remove("none");
     bookList.appendChild(this.generateBookList());
   }
 
@@ -389,6 +401,7 @@ class App {
   renderSourceList() {
     const sourceList = document.querySelector("#sourcelist");
     sourceList.innerHTML = "";
+    sourceList.classList.remove("none");
     sourceList.appendChild(this.generateSourceList());
   }
 
@@ -454,6 +467,7 @@ class App {
   renderSmartLists() {
     const smartLists = document.querySelector("#smartlists");
     smartLists.innerHTML = "";
+    smartLists.classList.remove("none");
     smartLists.appendChild(this.generateSmartLists());
   }
 
