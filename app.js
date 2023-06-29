@@ -187,12 +187,15 @@ class App {
     const regex = /(?<title>[\S ]+) (?:- (?<authorAlt>[\w ]+)|\((?<author>[^(]+)\))\s*- Your (?<type>\w+) on page (?<pageStart>\d*)-?(?<pageEnd>\d*)(?: \| location (?<locationStart>\d+)-?(?<locationEnd>\d*))? \| Added on (?<date>[\S ]*)\s*(?<text>.*)\s*/
     const highlight = clipping.match(regex).groups
 
+    // Assign unique id
+    highlight.id = this.assignId();
+
     // Save original clipping and metadata
     highlight.original = clipping;
     highlight.metadata = clipping.split(/(\r?\n)/).slice(0,3).join('');
 
-    // Assign unique id
-    highlight.id = this.assignId();
+    // Set author in case of alternative format (' - ' instead of ' ()')
+    highlight.author = highlight.author || highlight.authorAlt
 
     // Initialise duplicates array
     highlight.duplicates = [];
@@ -713,7 +716,7 @@ class App {
 
   generateHeaderFromBook(book) {
     return {
-      text: book.title,
+      text: `${book.title}, ${book.author}`,
       count: this.countHighlights(book.highlights)
     }
   }
