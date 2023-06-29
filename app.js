@@ -28,7 +28,7 @@ class App {
     this.edited = [];
     this.duplicates = [];
     this.deleted = [];
-    // this.bookmarks
+    this.bookmarks = [];
     // this.notes
     this.id = 0; // Unique id assign to object (of any kind)
     this.view = {
@@ -214,6 +214,11 @@ class App {
 
     // Push to book
     book.highlights.push(highlight);
+
+    // Push to bookmarks if appropriate
+    if (highlight.type === "Bookmark") {
+      this.bookmarks.push(highlight);
+    }
 
     return highlight;
   }
@@ -442,8 +447,8 @@ class App {
       },
       {
         id: "bookmarklist",
-        text: `all bookmarks (${0})`,
-        callback: () => {console.log("TEST BOOKMARKS!")} // TODO
+        text: `all bookmarks (${this.countHighlights(this.bookmarks)})`,
+        callback: () => this.viewBookmarks() // TODO
       },
       {
         id: "notelist",
@@ -566,6 +571,23 @@ class App {
 
   viewDeleted() {
     this.view = this.generateViewDeleted();
+    this.renderView();
+  }
+
+  generateViewBookmarks() {
+    return {
+      header: {
+        text: "Bookmarks",
+        count: this.bookmarks.length
+      },
+      actions: this.generateActions(),
+      content: this.bookmarks,
+      downloadFileName: "Bookmarks"
+    }
+  }
+
+  viewBookmarks() {
+    this.view = this.generateViewBookmarks();
     this.renderView();
   }
 
