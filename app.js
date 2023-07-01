@@ -1030,13 +1030,30 @@ class App {
     return measure
   }
 
-  runTests() {
+  checkNumberHighlights(source) {
+    const count = source.text.match(/- Your (Highlight|Bookmark|Note) on page/g).length;
+    const numHighlights = source.highlights.length;
+    const check = (count === numHighlights);
+    if (!check) {
+      console.error(`Source '${source.filename}' (id ${source.id}) should have ${count} highlights, has ${numHighlights}.`)
+    }
+    return check
+  }
+
+  test() {
+    console.log("Running tests")
+    // Check sources
+    this.sources.forEach(source => {
+      this.checkNumberHighlights(source);
+    });
+
     // TODO: Write tests to compare number of highlights/books on display with objects in memory
     // TODO: Compare highlights in book.highlights with findHighlightsFromBook(book)
     // TODO: same for edited, deleted, marked and duplicates
     // TODO: Do all books have a title and an author?
     // TODO: Do all highlights have a book?
     // TODO: Test if copy to clipboard produces Kindle format output
+    console.log("Tests completed")
   }
 }
 
