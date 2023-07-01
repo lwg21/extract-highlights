@@ -98,20 +98,33 @@ class App {
     // Add a listener for the file load
     reader.addEventListener("load", (event) => {
 
-      // Create source and add to sources
-      const source = {
-        id: this.assignId(),
-        filename: file.name,
-        text: event.target.result,
-        highlights: []
-      };
-      this.sources.push(source)
-      console.log(`File '${source.filename}' imported`);
+      // Get text from file
+      const text = event.target.result;
 
-      // Extract data from source
-      this.extractDataFromSource(source);
+      // Check if source has already been imported
+      const check = this.findSourceFromText(text);
+      if (check) {
+        console.log(`Source already exists (id: ${check.id})`);
+      } else {
+        // Create source and add to sources
+        const source = {
+          id: this.assignId(),
+          filename: file.name,
+          text: event.target.result,
+          highlights: []
+        };
+        this.sources.push(source)
+        console.log(`File '${source.filename}' imported`);
+
+        // Extract data from source
+        this.extractDataFromSource(source);
+      }
     });
     reader.readAsText(file);
+  }
+
+  findSourceFromText(text) {
+    return this.sources.find(source => (source.text === text));
   }
 
   downloadFile(filename, text) {
