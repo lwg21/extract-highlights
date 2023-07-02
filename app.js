@@ -934,7 +934,7 @@ class App {
   }
 
   initializeKeyboardNavigation() {
-    document.addEventListener("keydown", event => {
+    window.addEventListener("keydown", event => {
       if (event.key === "j") {
         this.scrollToNextHighlight();
       } else if (event.key === "k") {
