@@ -653,6 +653,8 @@ class App {
     this.renderView();
   }
 
+  // ## VIEW ACTIONS
+
   generateActions() {
     return [
       {
@@ -675,9 +677,6 @@ class App {
   }
 
   // ### VIEW HEADER
-
-  // ## VIEW ACTIONS
-  // TODO
 
   // ## VIEW CONTENT
 
@@ -763,62 +762,6 @@ class App {
     }
   }
 
-
-  // OBSOLETE
-  // viewHighlights(highlights = this.highlights) {
-  //   const template = document.querySelector("#highlight-template");
-  //   const viewContainer = document.querySelector("#view-content");
-
-  //   // Clear view
-  //   viewContainer.innerHTML = "";
-
-  //   // Insert highlights contained in instance variable using content template
-  //   highlights.forEach((highlight) => {
-  //     // Populate template with highlight data
-  //     const clone = template.content.cloneNode(true);
-  //     clone.querySelector(".highlight").setAttribute("data-id", highlight.id);
-  //     clone.querySelector(".highlight-metadata").textContent = highlight.metadata;
-  //     clone.querySelector(".highlight-text").textContent = highlight.text;
-  //     clone.querySelector(".separator").textContent = '==========';
-
-  //     // [TESTING] TODO:REMOVE
-  //     highlight.duplicates.forEach(duplicate => {
-  //       clone.querySelector(".separator").textContent += ` 🚨 (id: ${duplicate.id})`;
-  //     });
-
-  //     // Set event listeners to highlights and actions
-  //     clone.querySelector(".highlight-text").addEventListener("mousedown", (event) => {
-  //       this.copyToClipboard(highlight.textEdited || highlight.text)
-  //       this.flashElement(event.currentTarget);
-  //     })
-
-  //     clone.querySelector(".highlight-metadata").addEventListener("mousedown", (event) => {
-  //       this.copyToClipboard(highlight.original + this.settings.separator) // TODO: handle case if edited
-  //       this.flashElement(event.currentTarget.parentElement);
-  //     })
-
-  //     clone.querySelector(".action-copy").addEventListener("click", (event) => {
-  //       const id = event.currentTarget.closest(".highlight").dataset.id;
-  //       this.copyToClipboard(highlight.text);
-  //     });
-
-  //     clone.querySelector(".action-edit").addEventListener("click", (event) => {
-  //       event.currentTarget.innerText = 'Save';
-  //       event.currentTarget.parentElement.querySelector(".highlight-text").setAttribute("contentEditable", "true");
-  //     });
-
-  //     clone.querySelector(".action-delete").addEventListener("click", (event) => {
-  //       this.deleteHighlight(highlight);
-  //       if (highlight.deleted) {
-  //         event.currentTarget.closest(".highlight").remove();
-  //       }
-  //     });
-
-  //     Insert highlight into DOM
-  //     viewContainer.appendChild(clone);
-  //   });
-  // }
-
   viewBookHeader(book) {
     const header = document.querySelector("#view-header");
     header.innerText = `${book.title} (${book.highlights.length} highlight${book.highlights.length > 1 ? "s" : ""})`;
@@ -830,13 +773,6 @@ class App {
   }
 
   // viewHighlightsOfBook(book) {
-  //   this.viewHighlights(book.highlights);
-
-  //   // Update title with number of highlights
-  //   this.viewBookHeader(book);
-
-  //   const actionsContainer = document.querySelector("#view-actions");
-  //   actionsContainer.innerHTML = "";
 
   //   // Add copy action
   //   const copyButton = document.createElement("button");
