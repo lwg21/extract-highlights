@@ -250,7 +250,7 @@ class App {
   deleteHighlight(highlight) {
     if (!highlight.deleted) {
       highlight.deleted = true;
-      highlight.marked = false;
+      this.unmarkHighlight(highlight);
       this.deleted.push(highlight);
       this.renderMenu();
       this.view.header.count--;
@@ -259,7 +259,7 @@ class App {
     return highlight;
   }
 
-  undoDeleteHighlight(highlight) {
+  undeleteHighlight(highlight) {
     if (highlight.deleted) {
       highlight.deleted = false;
 
@@ -767,8 +767,8 @@ class App {
     });
 
     // Restore
-    clone.querySelector(".action-restore").addEventListener("click", event => {
-      if (this.undoDeleteHighlight(highlight)) {
+    clone.querySelector(".action-undelete").addEventListener("click", event => {
+      if (this.undeleteHighlight(highlight)) {
         event.currentTarget.closest(".highlight").classList.remove("deleted");
       }
     });
