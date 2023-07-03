@@ -733,17 +733,18 @@ class App {
       this.flashElement(event.currentTarget.parentElement);
     })
 
-    // Edit
+    // Copy
     clone.querySelector(".action-copy").addEventListener("click", (event) => {
       const clipping = this.generateClipping(highlight);
       this.copyToClipboard(clipping);
       this.flashElement(event.target.closest(".highlight"))
     });
 
-    // clone.querySelector(".action-edit").addEventListener("click", (event) => {
-    //   event.currentTarget.innerText = 'Save';
-    //   event.currentTarget.parentElement.querySelector(".highlight-text").setAttribute("contentEditable", "true");
-    // });
+    // Edit
+    clone.querySelector(".action-edit").addEventListener("click", (event) => {
+      event.currentTarget.innerText = 'Save';
+      event.currentTarget.closest(".highlight").querySelector(".highlight-text").setAttribute("contentEditable", "plaintext-only");
+    });
 
     // Mark
     clone.querySelector(".action-mark").addEventListener("click", event => {
