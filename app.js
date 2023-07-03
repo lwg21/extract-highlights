@@ -15,7 +15,7 @@ class App {
     this.settings = {
       separator: "\r\n==========\r\n",
       duplicateSubstringLength: 40,
-      hideMetadata: false,
+      hideMetadata: false, // Experimental
       keyboardNavigation: false // Experimental
     };
   }
@@ -260,8 +260,18 @@ class App {
   }
 
   undoDeleteHighlight(highlight) {
-    // TODO: improve to remove highlight from instance array
-    highlight.deleted = false;
+    if (highlight.deleted) {
+      highlight.deleted = false;
+
+      // Find index of highlight in deleted array
+      const index = this.deleted.findIndex(h => h === highlight);
+
+      // Remove highlight from array (mutation)
+      this.deleted.splice(index, 1);
+      this.renderMenu();
+      this.view.header.count++;
+      this.renderViewHeader(this.view.header);
+    }
     return highlight;
   }
 
@@ -271,11 +281,21 @@ class App {
       this.marked.push(highlight);
       this.renderMenu();
     }
-    return highlight
+    return highlight;
   }
 
   unmarkHighlight(highlight) {
-    // TODO
+    if (highlight.marked) {
+      highlight.marked = false;
+
+      // Find index of highlight in marked array
+      const index = this.marked.findIndex(h => h === highlight);
+
+      // Remove highlight from array (mutation)
+      this.marked.splice(index, 1);
+      this.renderMenu();
+    }
+    return highlight;
   }
 
   duplicateCompare(highlight1, highlight2) {
@@ -713,11 +733,12 @@ class App {
       this.flashElement(event.currentTarget.parentElement);
     })
 
-    //
-    // clone.querySelector(".action-copy").addEventListener("click", (event) => {
-    //   const id = event.currentTarget.closest(".highlight").dataset.id;
-    //   this.copyToClipboard(highlight.text);
-    // });
+    // Edit
+    clone.querySelector(".action-copy").addEventListener("click", (event) => {
+      const clipping = this.generateClipping(highlight);
+      this.copyToClipboard(clipping);
+      this.flashElement(event.target.closest(".highlight"))
+    });
 
     // clone.querySelector(".action-edit").addEventListener("click", (event) => {
     //   event.currentTarget.innerText = 'Save';
@@ -731,10 +752,24 @@ class App {
       }
     });
 
+    // Unmark
+    clone.querySelector(".action-unmark").addEventListener("click", event => {
+      if (this.unmarkHighlight(highlight)) {
+        event.currentTarget.closest(".highlight").classList.remove("marked");
+      }
+    });
+
     // Delete
     clone.querySelector(".action-delete").addEventListener("click", event => {
       if (this.deleteHighlight(highlight)) {
         event.currentTarget.closest(".highlight").classList.add("deleted");
+      }
+    });
+
+    // Restore
+    clone.querySelector(".action-restore").addEventListener("click", event => {
+      if (this.undoDeleteHighlight(highlight)) {
+        event.currentTarget.closest(".highlight").classList.remove("deleted");
       }
     });
     return clone;
