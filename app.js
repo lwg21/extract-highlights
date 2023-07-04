@@ -742,8 +742,16 @@ class App {
 
     // Edit
     clone.querySelector(".action-edit").addEventListener("click", (event) => {
-      event.currentTarget.innerText = 'Save';
-      event.currentTarget.closest(".highlight").querySelector(".highlight-text").setAttribute("contentEditable", "plaintext-only");
+      // event.currentTarget.innerText = 'Save';
+      const textField = event.currentTarget.closest(".highlight").querySelector(".highlight-text");
+      textField.setAttribute("contentEditable", "plaintext-only");
+      textField.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+          event.preventDefault;
+          event.stopPropagation;
+          console.log(event.currentTarget.textContent)
+        }
+      });
     });
 
     // Mark
