@@ -28,8 +28,9 @@ class App {
     this.edited = [];
     this.duplicates = [];
     this.deleted = [];
+    this.highlights = [];
     this.bookmarks = [];
-    // this.notes
+    this.notes = [];
     this.id = 0; // Unique id assign to object (of any kind)
     this.view = {
       header: {
@@ -197,7 +198,7 @@ class App {
     this.books.sort((a, b) => {return a.title.localeCompare(b.title)});
   }
 
-  // HIGHLIGHTS
+  // CLIPPINGS
 
   createClipping(text) {
     // Parse text and create clipping object
@@ -232,9 +233,13 @@ class App {
     // Push to book
     book.clippings.push(clipping);
 
-    // Push to bookmarks if appropriate
-    if (clipping.type === "Bookmark") {
+    // Push clipping to relevant array if appropriate
+    if (clipping.type === "Highlight") {
+      this.highlights.push(clipping);
+    } else if (clipping.type === "Bookmark") {
       this.bookmarks.push(clipping);
+    } else if (clipping.type === "Note") {
+      this.notes.push(clipping);
     }
 
     return clipping;
@@ -463,6 +468,21 @@ class App {
 
     const lists = [
       {
+        id: "highlightlist",
+        text: `all highlights (${this.countClippings(this.highlights)})`,
+        callback: () => {console.log("TEST HIGHLIGHTS!")} // TODO
+      },
+      {
+        id: "bookmarklist",
+        text: `all bookmarks (${this.countClippings(this.bookmarks)})`,
+        callback: () => this.viewBookmarks()
+      },
+      {
+        id: "notelist",
+        text: `all notes (${0})`,
+        callback: () => {console.log("TEST NOTES!")} // TODO
+      },
+      {
         id: "markedlist",
         text: `all marked (${this.countClippings(this.marked)})`,
         callback: () => this.viewMarked()
@@ -481,16 +501,6 @@ class App {
         id: "deletedlist",
         text: `all deleted (${this.countDeletedClippings(this.deleted)})`,
         callback: () => this.viewDeleted()
-      },
-      {
-        id: "bookmarklist",
-        text: `all bookmarks (${this.countClippings(this.bookmarks)})`,
-        callback: () => this.viewBookmarks() // TODO
-      },
-      {
-        id: "notelist",
-        text: `all notes (${0})`,
-        callback: () => {console.log("TEST NOTES!")} // TODO
       },
     ];
 
