@@ -22,7 +22,7 @@ class App {
 
   initializeData() {
     this.sources = []; // Contains objects representing raw source strings from 'my clippings.txt' files
-    this.highlights = []; // Contains objects representing individual highlights
+    this.clippings = []; // Contains objects representing individual clippings
     this.books = []; // Contains objects representing distinct books
     this.marked = [];
     this.edited = [];
@@ -85,7 +85,7 @@ class App {
   // FILES
 
   readFilesFromDrop(event) {
-    // Read each dropped file upon drop
+    // Read each dropped file upon drop event using dataTransfer
     const files = event.dataTransfer.files;
     for (let i = 0; i < files.length; i++) {
       this.readFile(files.item(i));
@@ -111,7 +111,7 @@ class App {
           id: this.assignId(),
           filename: file.name,
           text: event.target.result,
-          highlights: []
+          clippings: []
         };
         this.sources.push(source)
         console.log(`File '${source.filename}' imported`);
@@ -151,42 +151,42 @@ class App {
   // SOURCES
 
   extractDataFromSource(source) {
-    // Analyse sources to populate highlights and books, update view
-    this.extractHighlightsFromSource(source);
+    // Analyse sources to populate clippings and books, update view
+    this.extractClippingsFromSource(source);
     this.sortBooksAlphabet();
     this.renderMenu();
     this.viewSource(source);
     this.state();
   }
 
-  extractHighlightsFromSource(source) {
-    const clippings = source.text.split(/\s*==========\s*/);
-    clippings.forEach((clipping) => {
-      if (clipping) return this.createHighlight(clipping);
+  extractClippingsFromSource(source) {
+    const fragments = source.text.split(/\s*==========\s*/);
+    fragments.forEach(text => {
+      if (text) return this.createClipping(text);
     });
   }
 
   // BOOKS
 
-  createBook(highlight) {
+  createBook(clipping) {
     const book = {
       id: this.assignId(),
-      title: highlight.title,
-      author: highlight.author,
-      highlights: []
+      title: clipping.title,
+      author: clipping.author,
+      clippings: []
     }
     this.books.push(book);
     return book;
   }
 
-  findBookOfHighlight(highlight) {
+  findBookOfClipping(clipping) {
     return this.books.find(book => {
-      return (book.title === highlight.title) && (book.author === highlight.author)
+      return (book.title === clipping.title) && (book.author === clipping.author)
     });
   }
 
-  findOrCreateBook(highlight) {
-    return this.findBookOfHighlight(highlight) || this.createBook(highlight);
+  findOrCreateBook(clipping) {
+    return this.findBookOfClipping(clipping) || this.createBook(clipping);
   }
 
   sortBooksAlphabet() {
@@ -195,141 +195,141 @@ class App {
 
   // HIGHLIGHTS
 
-  createHighlight(clipping) {
-    // Parse clipping and create highlight object
+  createClipping(text) {
+    // Parse text and create clipping object
     const regex = /(?<title>[\S ]+) (?:- (?<authorAlt>[\w ]+)|\((?<author>[^(]+)\))\s*- Your (?<type>\w+) on page (?<pageStart>\d*)-?(?<pageEnd>\d*)(?: \| location (?<locationStart>\d+)-?(?<locationEnd>\d*))? \| Added on (?<date>[\S ]*)\s*(?<text>.*)\s*/
-    const highlight = clipping.match(regex).groups
+    const clipping = text.match(regex).groups
 
     // Assign unique id
-    highlight.id = this.assignId();
+    clipping.id = this.assignId();
 
-    // Save original clipping and metadata
-    highlight.original = clipping;
-    highlight.metadata = clipping.split(/(\r?\n)/).slice(0,3).join('');
+    // Save original text and metadata
+    clipping.original = text;
+    clipping.metadata = text.split(/(\r?\n)/).slice(0,3).join('');
 
     // Set author in case of alternative format (' - ' instead of ' ()')
-    highlight.author = highlight.author || highlight.authorAlt
+    clipping.author = clipping.author || clipping.authorAlt
 
     // Initialise duplicates array
-    highlight.duplicates = [];
+    clipping.duplicates = [];
 
     // Find existing book or create new book
-    const book = this.findOrCreateBook(highlight);
+    const book = this.findOrCreateBook(clipping);
 
-    // Assign book to highlight
-    highlight.book = book;
+    // Assign book to clipping
+    clipping.book = book;
 
-    // Push into highlights
-    this.highlights.push(highlight);
+    // Push into clippings
+    this.clippings.push(clipping);
 
     // Push to last imported source
-    this.sources.slice(-1)[0].highlights.push(highlight);
+    this.sources.slice(-1)[0].clippings.push(clipping);
 
     // Push to book
-    book.highlights.push(highlight);
+    book.clippings.push(clipping);
 
     // Push to bookmarks if appropriate
-    if (highlight.type === "Bookmark") {
-      this.bookmarks.push(highlight);
+    if (clipping.type === "Bookmark") {
+      this.bookmarks.push(clipping);
     }
 
-    return highlight;
+    return clipping;
   }
 
-  createOutput(highlights) {
-    const existingHighlights = highlights.filter(h => !h.deleted);
-    const clippings = existingHighlights.map(h => this.generateClipping(h));
-    return clippings.join('');
+  createOutput(clippings) {
+    const existingClippings = clippings.filter(h => !h.deleted);
+    const fragments = existingClippings.map(h => this.generateFragment(h));
+    return fragments.join('');
   }
 
-  generateClipping(highlight) {
-    const text = highlight.textEdited || highlight.text;
-    return [highlight.metadata, "\r\n\r\n", text, this.settings.separator].join('');
+  generateFragment(clipping) {
+    const text = clipping.textEdited || clipping.text;
+    return [clipping.metadata, "\r\n\r\n", text, this.settings.separator].join('');
   }
 
-  deleteHighlight(highlight) {
-    if (!highlight.deleted) {
-      highlight.deleted = true;
-      this.unmarkHighlight(highlight);
-      this.deleted.push(highlight);
+  deleteClipping(clipping) {
+    if (!clipping.deleted) {
+      clipping.deleted = true;
+      this.unmarkClipping(clipping);
+      this.deleted.push(clipping);
       this.renderMenu();
       this.view.header.count--;
       this.renderViewHeader(this.view.header);
     }
-    return highlight;
+    return clipping;
   }
 
-  undeleteHighlight(highlight) {
-    if (highlight.deleted) {
-      highlight.deleted = false;
+  undeleteClipping(clipping) {
+    if (clipping.deleted) {
+      clipping.deleted = false;
 
-      // Find index of highlight in deleted array
-      const index = this.deleted.findIndex(h => h === highlight);
+      // Find index of clipping in deleted array
+      const index = this.deleted.findIndex(h => h === clipping);
 
-      // Remove highlight from array (mutation)
+      // Remove clipping from array (mutation)
       this.deleted.splice(index, 1);
       this.renderMenu();
       this.view.header.count++;
       this.renderViewHeader(this.view.header);
     }
-    return highlight;
+    return clipping;
   }
 
-  markHighlight(highlight) {
-    if (!highlight.marked && !highlight.deleted ) {
-      highlight.marked = true;
-      this.marked.push(highlight);
+  markClipping(clipping) {
+    if (!clipping.marked && !clipping.deleted ) {
+      clipping.marked = true;
+      this.marked.push(clipping);
       this.renderMenu();
     }
-    return highlight;
+    return clipping;
   }
 
-  unmarkHighlight(highlight) {
-    if (highlight.marked) {
-      highlight.marked = false;
+  unmarkClipping(clipping) {
+    if (clipping.marked) {
+      clipping.marked = false;
 
-      // Find index of highlight in marked array
-      const index = this.marked.findIndex(h => h === highlight);
+      // Find index of clipping in marked array
+      const index = this.marked.findIndex(h => h === clipping);
 
-      // Remove highlight from array (mutation)
+      // Remove clipping from array (mutation)
       this.marked.splice(index, 1);
       this.renderMenu();
     }
-    return highlight;
+    return clipping;
   }
 
-  duplicateCompare(highlight1, highlight2) {
-    const check = this.checkForCommonSubstring(highlight1.text, highlight2.text, this.settings.duplicateSubstringLength);
+  duplicateCompare(clipping1, clipping2) {
+    const check = this.checkForCommonSubstring(clipping1.text, clipping2.text, this.settings.duplicateSubstringLength);
     if (check.found) {
-      // Link duplicate highlights
-      highlight1.duplicates.push(highlight2);
-      highlight2.duplicates.push(highlight1);
+      // Link duplicate clippings
+      clipping1.duplicates.push(clipping2);
+      clipping2.duplicates.push(clipping1);
     }
     return check
   }
 
-  scanForDuplicates(highlights) {
-    const n = highlights.length;
+  scanForDuplicates(clippings) {
+    const n = clippings.length;
 
-    // Compare each highlight with all the others once
+    // Compare each clipping with all the others once
     for (let i = 0; i <= n - 1; i++) {
       for (let j = i + 1; j <= n - 1; j++) {
-        this.duplicateCompare(highlights[i], highlights[j])
+        this.duplicateCompare(clippings[i], clippings[j])
 
         // [TESTING]
-        // Count number of times a highlight has been tested (should equal n - 1)
-        highlights[i].tested = highlights[i].tested + 1 || 1;
-        highlights[j].tested = highlights[j].tested + 1 || 1;
+        // Count number of times a clipping has been tested (should equal n - 1)
+        clippings[i].tested = clippings[i].tested + 1 || 1;
+        clippings[j].tested = clippings[j].tested + 1 || 1;
       }
     }
   }
 
-  countHighlights(highlights) {
-    return highlights.filter(h => !h.deleted).length;
+  countClippings(clippings) {
+    return clippings.filter(h => !h.deleted).length;
   }
 
-  countDeletedHighlights(highlights) {
-    return highlights.filter(h => h.deleted).length;
+  countDeletedClippings(clippings) {
+    return clippings.filter(h => h.deleted).length;
   }
 
   // # COMPONENTS
@@ -337,7 +337,7 @@ class App {
   // ## MENU
 
   renderMenu() {
-    if (this.highlights.length === 0) {
+    if (this.clippings.length === 0) {
       this.renderDropInstructions();
       this.hideMenuLists();
     } else {
@@ -388,7 +388,7 @@ class App {
 
       const countElement = document.createElement("span");
       countElement.classList.add("count");
-      countElement.textContent = this.countHighlights(book.highlights);
+      countElement.textContent = this.countClippings(book.clippings);
       bookItem.appendChild(countElement);
 
       // Add event listener to display books and toggle active
@@ -425,7 +425,7 @@ class App {
     this.sources.forEach((source, index) => {
       const sourceItem = document.createElement("li");
       sourceItem.setAttribute("data-id", source.id);
-      const count = this.countHighlights(source.highlights);
+      const count = this.countClippings(source.clippings);
       sourceItem.textContent = `${index + 1}. ` + source.filename + ` (${count})`;
 
       // Add event listener to display source and toggle active
@@ -460,27 +460,27 @@ class App {
     const lists = [
       {
         id: "markedlist",
-        text: `all marked (${this.countHighlights(this.marked)})`,
+        text: `all marked (${this.countClippings(this.marked)})`,
         callback: () => this.viewMarked()
       },
       {
         id: "editedlist",
-        text: `all edited (${this.countHighlights(this.edited)})`,
+        text: `all edited (${this.countClippings(this.edited)})`,
         callback: () => this.viewEdited()
       },
       {
         id: "duplicatelist",
-        text: `all duplicates (${this.countHighlights(this.duplicates)})`,
+        text: `all duplicates (${this.countClippings(this.duplicates)})`,
         callback: () => this.viewDuplicates()
       },
       {
         id: "deletedlist",
-        text: `all deleted (${this.countDeletedHighlights(this.deleted)})`,
+        text: `all deleted (${this.countDeletedClippings(this.deleted)})`,
         callback: () => this.viewDeleted()
       },
       {
         id: "bookmarklist",
-        text: `all bookmarks (${this.countHighlights(this.bookmarks)})`,
+        text: `all bookmarks (${this.countClippings(this.bookmarks)})`,
         callback: () => this.viewBookmarks() // TODO
       },
       {
@@ -546,10 +546,10 @@ class App {
     });
   }
 
-  renderViewContent(highlights) {
+  renderViewContent(clippings) {
     const contentContainer = document.querySelector("#view-content");
     contentContainer.innerHTML = "";
-    const content = this.generateHighlights(highlights);
+    const content = this.generateClippings(clippings);
     contentContainer.appendChild(content);
   }
 
@@ -566,7 +566,7 @@ class App {
     return {
       header: this.generateHeaderFromBook(book),
       actions: this.generateActions(),
-      content: book.highlights.filter(h => !h.deleted),
+      content: book.clippings.filter(h => !h.deleted),
       downloadFileName: book.title
     }
   }
@@ -580,7 +580,7 @@ class App {
     return {
       header: this.generateHeaderFromSource(source),
       actions: this.generateActions(),
-      content: source.highlights.filter(h => !h.deleted),
+      content: source.clippings.filter(h => !h.deleted),
       downloadFileName: source.filename
     }
   }
@@ -700,20 +700,20 @@ class App {
 
   // ## VIEW CONTENT
 
-  generateHighlight(highlight) {
+  generateClipping(clipping) {
     // Clone template
-    const template = document.querySelector("#highlight-template");
+    const template = document.querySelector("#clipping-template");
     const clone = template.content.cloneNode(true);
 
-    // Populate template with highlight data
-    clone.querySelector(".highlight").setAttribute("data-id", highlight.id);
-    clone.querySelector(".highlight-metadata").textContent = highlight.metadata;
-    clone.querySelector(".highlight-text").textContent = highlight.textEdited || highlight.text;
+    // Populate template with clipping data
+    clone.querySelector(".clipping").setAttribute("data-id", clipping.id);
+    clone.querySelector(".clipping-metadata").textContent = clipping.metadata;
+    clone.querySelector(".clipping-text").textContent = clipping.textEdited || clipping.text;
     clone.querySelector(".separator").textContent = '==========';
 
     // Mark as duplicate TODO: rework
-    // if (highlight.duplicates !== 0) {
-    //   highlight.duplicates.forEach(duplicate => {
+    // if (clipping.duplicates !== 0) {
+    //   clipping.duplicates.forEach(duplicate => {
     //     clone.querySelector(".separator").textContent += ` 🚨 (id: ${duplicate.id})`;
     //   });
     // }
@@ -721,29 +721,29 @@ class App {
     // TODO: ADD ACTION AND EVENT LISTENERS
 
     // Copy text to clipboard
-    clone.querySelector(".highlight-text").addEventListener("mousedown", (event) => {
-      this.copyToClipboard(highlight.textEdited || highlight.text);
+    clone.querySelector(".clipping-text").addEventListener("mousedown", (event) => {
+      this.copyToClipboard(clipping.textEdited || clipping.text);
       this.flashElement(event.currentTarget);
     })
 
     // Copy metadata + text to clipboard
-    clone.querySelector(".highlight-metadata").addEventListener("mousedown", (event) => {
-      const clipping = this.generateClipping(highlight);
-      this.copyToClipboard(clipping);
+    clone.querySelector(".clipping-metadata").addEventListener("mousedown", (event) => {
+      const text = this.generateFragment(clipping);
+      this.copyToClipboard(text);
       this.flashElement(event.currentTarget.parentElement);
     })
 
     // Copy
     clone.querySelector(".action-copy").addEventListener("click", (event) => {
-      const clipping = this.generateClipping(highlight);
-      this.copyToClipboard(clipping);
-      this.flashElement(event.target.closest(".highlight"))
+      const text = this.generateFragment(clipping);
+      this.copyToClipboard(text);
+      this.flashElement(event.target.closest(".clipping"))
     });
 
     // Edit
     clone.querySelector(".action-edit").addEventListener("click", (event) => {
       // event.currentTarget.innerText = 'Save';
-      const textField = event.currentTarget.closest(".highlight").querySelector(".highlight-text");
+      const textField = event.currentTarget.closest(".clipping").querySelector(".clipping-text");
       textField.setAttribute("contentEditable", "plaintext-only");
       textField.addEventListener("keydown", (event) => {
         if (event.key === "Enter") {
@@ -756,38 +756,38 @@ class App {
 
     // Mark
     clone.querySelector(".action-mark").addEventListener("click", event => {
-      if (this.markHighlight(highlight)) {
-        event.currentTarget.closest(".highlight").classList.add("marked");
+      if (this.markClipping(clipping)) {
+        event.currentTarget.closest(".clipping").classList.add("marked");
       }
     });
 
     // Unmark
     clone.querySelector(".action-unmark").addEventListener("click", event => {
-      if (this.unmarkHighlight(highlight)) {
-        event.currentTarget.closest(".highlight").classList.remove("marked");
+      if (this.unmarkClipping(clipping)) {
+        event.currentTarget.closest(".clipping").classList.remove("marked");
       }
     });
 
     // Delete
     clone.querySelector(".action-delete").addEventListener("click", event => {
-      if (this.deleteHighlight(highlight)) {
-        event.currentTarget.closest(".highlight").classList.add("deleted");
+      if (this.deleteClipping(clipping)) {
+        event.currentTarget.closest(".clipping").classList.add("deleted");
       }
     });
 
     // Restore
     clone.querySelector(".action-undelete").addEventListener("click", event => {
-      if (this.undeleteHighlight(highlight)) {
-        event.currentTarget.closest(".highlight").classList.remove("deleted");
+      if (this.undeleteClipping(clipping)) {
+        event.currentTarget.closest(".clipping").classList.remove("deleted");
       }
     });
     return clone;
   }
 
-  generateHighlights(highlights) {
+  generateClippings(clippings) {
     const fragment = new DocumentFragment;
-    highlights.forEach(highlight => {
-      fragment.appendChild(this.generateHighlight(highlight));
+    clippings.forEach(clipping => {
+      fragment.appendChild(this.generateClipping(clipping));
     });
     return fragment;
   }
@@ -795,20 +795,20 @@ class App {
   generateHeaderFromBook(book) {
     return {
       text: `${book.title}, ${book.author}`,
-      count: this.countHighlights(book.highlights)
+      count: this.countClippings(book.clippings)
     }
   }
 
   generateHeaderFromSource(source) {
     return {
       text: `Source '${source.filename}'`,
-      count: this.countHighlights(source.highlights)
+      count: this.countClippings(source.clippings)
     }
   }
 
   viewBookHeader(book) {
     const header = document.querySelector("#view-header");
-    header.innerText = `${book.title} (${book.highlights.length} highlight${book.highlights.length > 1 ? "s" : ""})`;
+    header.innerText = `${book.title} (${book.clippings.length} clipping${book.clippings.length > 1 ? "s" : ""})`;
   }
 
   viewSourceHeader(source) {
@@ -816,13 +816,13 @@ class App {
     header.innerText = `Source #${source.id} '${source.filename}'`;
   }
 
-  // viewHighlightsOfBook(book) {
+  // viewClippingsOfBook(book) {
 
   //   // Add copy action
   //   const copyButton = document.createElement("button");
   //   copyButton.innerText = "Copy";
   //   copyButton.addEventListener("click", (event) => {
-  //     const output = this.createOutput(book.highlights);
+  //     const output = this.createOutput(book.clippings);
   //     this.copyToClipboard(output);
   //     this.flashElement(event.currentTarget.closest("#view"))
   //   });
@@ -832,7 +832,7 @@ class App {
   //   const downloadButton = document.createElement("button");
   //   downloadButton.innerText = "Download";
   //   downloadButton.addEventListener("click", () => {
-  //     const output = this.createOutput(book.highlights);
+  //     const output = this.createOutput(book.clippings);
   //     this.downloadFile(`${book.title}.txt`, output);
   //   });
   //   actionsContainer.appendChild(downloadButton);
@@ -865,9 +865,9 @@ class App {
   }
 
   hideMetadata() {
-    const highlightElements = document.querySelectorAll(".highlight");
-    highlightElements.forEach(element => {
-      element.querySelector(".highlight-metadata").style.display = "none";
+    const clippingElements = document.querySelectorAll(".clipping");
+    clippingElements.forEach(element => {
+      element.querySelector(".clipping-metadata").style.display = "none";
       element.querySelector("br").style.display = "none";
     });
   }
@@ -916,67 +916,67 @@ class App {
   initializeKeyboardNavigation() {
     window.addEventListener("keydown", event => {
       if (event.key === "j") {
-        this.scrollToNextHighlight();
+        this.scrollToNextClipping();
       } else if (event.key === "k") {
-        this.scrollToPreviousHighlight();
+        this.scrollToPreviousClipping();
       } else if (event.key === "r") {
-        this.scrollToRandomHighlight();
+        this.scrollToRandomClipping();
       } else if (event.key === "d") {
-        this.activeHighlightDelete();
+        this.activeClippingDelete();
       }
     })
   }
 
-  scrollToNextHighlight() {
-    let active = document.querySelector(".active-highlight");
+  scrollToNextClipping() {
+    let active = document.querySelector(".active-clipping");
     if (active) {
-      active.classList.remove("active-highlight");
+      active.classList.remove("active-clipping");
       active = active.nextElementSibling;
     } else {
-      active = document.querySelector(".highlight")
+      active = document.querySelector(".clipping")
     }
-    active.classList.add("active-highlight");
+    active.classList.add("active-clipping");
     active.scrollIntoView({behavior: "instant", block: "nearest"});
   }
 
-  scrollToPreviousHighlight() {
+  scrollToPreviousClipping() {
     // Combine with 'next' method with option {}?
-    let active = document.querySelector(".active-highlight");
+    let active = document.querySelector(".active-clipping");
     if (active) {
-      active.classList.remove("active-highlight");
+      active.classList.remove("active-clipping");
       active = active.previousElementSibling;
     } else {
-      const nodes = document.querySelectorAll(".highlight");
+      const nodes = document.querySelectorAll(".clipping");
       active = nodes[nodes.length - 1];
     }
-    active.classList.add("active-highlight");
+    active.classList.add("active-clipping");
     active.scrollIntoView({behavior: "instant", block: "nearest"});
   }
 
-  scrollToRandomHighlight() {
-    const active = document.querySelector(".active-highlight");
+  scrollToRandomClipping() {
+    const active = document.querySelector(".active-clipping");
     if (active) {
-      active.classList.remove("active-highlight");
+      active.classList.remove("active-clipping");
     }
-    const highlights = document.querySelectorAll(".highlight");
-    const random = highlights[Math.floor(Math.random() * highlights.length)];
-    random.classList.add("active-highlight");
+    const clippings = document.querySelectorAll(".clipping");
+    const random = clippings[Math.floor(Math.random() * clippings.length)];
+    random.classList.add("active-clipping");
     random.scrollIntoView({behavior: "instant", block: "center"});
   }
 
-  activeHighlightDelete() {
-    const active = document.querySelector(".active-highlight");
+  activeClippingDelete() {
+    const active = document.querySelector(".active-clipping");
     if (active) {
       const id = Number.parseInt(active.dataset.id, 10);
-      const highlight = this.findHighlightById(id);
-      if (this.deleteHighlight(highlight)) {
+      const clipping = this.findClippingById(id);
+      if (this.deleteClipping(clipping)) {
         active.classList.add("deleted");
       }
     }
   }
 
-  findHighlightById(id) {
-    return this.highlights.find(highlight => highlight.id === id);
+  findClippingById(id) {
+    return this.clippings.find(clipping => clipping.id === id);
   }
 
   // TESTING & DEBUGGING
@@ -984,21 +984,21 @@ class App {
   state() {
     console.log(`*--State--*`
       + `\n${this.sources.length} uploads`
-      + `\n${this.highlights.length} highlights (${this.findDeletedHighlights(this.highlights).length} deleted, ${this.findEditedHighlights(this.highlights).length} edited)`
+      + `\n${this.clippings.length} clippings (${this.findDeletedClippings(this.clippings).length} deleted, ${this.findEditedClippings(this.clippings).length} edited)`
       + `\n${this.books.length} books`
     )
   }
 
-  findHighlightsFromBook(book) {
-    return this.highlights.filter(highlight => ((highlight.title === book.title) && !highlight.deleted));
+  findClippingsFromBook(book) {
+    return this.clippings.filter(clipping => ((clipping.title === book.title) && !clipping.deleted));
   }
 
-  findEditedHighlights(highlights) {
-    return highlights.filter(highlight => (highlight.textEdited));
+  findEditedClippings(clippings) {
+    return clippings.filter(clipping => (clipping.textEdited));
 
   }
-  findDeletedHighlights(highlights) {
-    return highlights.filter(highlight => (highlight.deleted));
+  findDeletedClippings(clippings) {
+    return clippings.filter(clipping => (clipping.deleted));
   }
 
   time(code) {
@@ -1010,12 +1010,12 @@ class App {
     return measure
   }
 
-  checkNumberHighlights(source) {
+  checkNumberClippings(source) {
     const count = source.text.match(/- Your (Highlight|Bookmark|Note) on page/g).length;
-    const numHighlights = source.highlights.length;
-    const check = (count === numHighlights);
+    const numClippings = source.clippings.length;
+    const check = (count === numClippings);
     if (!check) {
-      console.error(`Source '${source.filename}' (id ${source.id}) should have ${count} highlights, has ${numHighlights}.`)
+      console.error(`Source '${source.filename}' (id ${source.id}) should have ${count} clippings, has ${numClippings}.`)
     }
     return check
   }
@@ -1024,14 +1024,14 @@ class App {
     console.log("Running tests")
     // Check sources
     this.sources.forEach(source => {
-      this.checkNumberHighlights(source);
+      this.checkNumberClippings(source);
     });
 
-    // TODO: Write tests to compare number of highlights/books on display with objects in memory
-    // TODO: Compare highlights in book.highlights with findHighlightsFromBook(book)
+    // TODO: Write tests to compare number of clippings/books on display with objects in memory
+    // TODO: Compare clippings in book.clippings with findClippingsFromBook(book)
     // TODO: same for edited, deleted, marked and duplicates
     // TODO: Do all books have a title and an author?
-    // TODO: Do all highlights have a book?
+    // TODO: Do all clippings have a book?
     // TODO: Test if copy to clipboard produces Kindle format output
     console.log("Tests completed")
   }

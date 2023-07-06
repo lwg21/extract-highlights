@@ -192,16 +192,16 @@ li.active {
   flex-grow: 1;
 }
 
-.active-highlight {
+.active-clipping {
   /* Experimental */
   background-color: #b9c8d6;
 }
 
-.highlight-metadata {
+.clipping-metadata {
   white-space: pre-wrap;
 }
 
-.highlight-metadata:hover, .highlight-text:hover {
+.clipping-metadata:hover, .clipping-text:hover {
   cursor: pointer;
 }
 
@@ -301,11 +301,11 @@ button {
   background-color: #eddada;
 }
 
-.highlight-actions {
+.clipping-actions {
   display: inline;
 }
 
-.highlight-actions button {
+.clipping-actions button {
   background: none;
   border: none;
   border-radius: 3px;
@@ -314,17 +314,17 @@ button {
   cursor: pointer;
 }
 
-.highlight-actions button:hover {
+.clipping-actions button:hover {
   background-color: #D4880C;
   color: #FBE6C5;
 }
 
-.highlight-actions .action-delete:hover {
+.clipping-actions .action-delete:hover {
   background-color: #d40c0c;
   color: #fbc5c5;
 }
 
-.highlight-actions .action-mark:hover {
+.clipping-actions .action-mark:hover {
   background-color: #0c8f1d;
   color: #daedda;
 }
