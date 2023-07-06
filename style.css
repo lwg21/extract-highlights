@@ -199,6 +199,7 @@ li.active {
 
 .clipping-metadata {
   white-space: pre-wrap;
+  color: #b1b1b1;
 }
 
 .clipping-metadata:hover, .clipping-text:hover {
@@ -210,7 +211,7 @@ button {
 }
 
 .separator {
-  color: #D4880C;
+  color: #b1b1b1;
 }
 
 #view-actions {
@@ -310,7 +311,7 @@ button {
   border: none;
   border-radius: 3px;
   font-size: 0.7em;
-  color: #D4880C;
+  color: #b1b1b1;
   cursor: pointer;
 }
 
@@ -327,4 +328,9 @@ button {
 .clipping-actions .action-mark:hover {
   background-color: #0c8f1d;
   color: #daedda;
+}
+
+.clipping-actions .action-unmark:hover, .action-undelete:hover, .action-revert:hover {
+  background-color: #707070;
+  color: #ebebeb;
 }
