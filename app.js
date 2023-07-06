@@ -910,6 +910,8 @@ class App {
         this.activeClippingDelete();
       } else if (event.key === "x") {
         this.activeClippingMark();
+      } else if (event.key === "e") {
+        this.activeClippingEdit();
       }
     })
   }
@@ -997,6 +999,10 @@ class App {
         active.classList.add("marked");
       }
     }
+  }
+
+  activeClippingEdit() {
+    // TODO
   }
 
   findClippingById(id) {
