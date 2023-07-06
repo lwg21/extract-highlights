@@ -822,25 +822,6 @@ class App {
 
   // viewClippingsOfBook(book) {
 
-  //   // Add copy action
-  //   const copyButton = document.createElement("button");
-  //   copyButton.innerText = "Copy";
-  //   copyButton.addEventListener("click", (event) => {
-  //     const output = this.createOutput(book.clippings);
-  //     this.copyToClipboard(output);
-  //     this.flashElement(event.currentTarget.closest("#view"))
-  //   });
-  //   actionsContainer.appendChild(copyButton);
-
-  //   // Add download action
-  //   const downloadButton = document.createElement("button");
-  //   downloadButton.innerText = "Download";
-  //   downloadButton.addEventListener("click", () => {
-  //     const output = this.createOutput(book.clippings);
-  //     this.downloadFile(`${book.title}.txt`, output);
-  //   });
-  //   actionsContainer.appendChild(downloadButton);
-
   //   // Add scan for duplicate text
   //   const scanTextButton = document.createElement("button");
   //   scanTextButton.innerText = "Scan duplicate text";
@@ -856,10 +837,6 @@ class App {
   //     // this.viewDuplicatesOfBook(book);
   //   });
   //   actionsContainer.appendChild(scanLocationButton);
-
-  //   // Scroll to top
-  //   document.querySelector("#view").scrollTo(0, 0);
-  // }
 
   flashElement(element) {
     element.classList.add("flash");
