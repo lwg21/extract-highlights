@@ -56,31 +56,23 @@ class App {
 
     // Initialize drag-and-drop area
     const dropArea = document.querySelector("#menu")
-    dropArea.addEventListener("dragenter", (event) => {
+    dropArea.addEventListener("dragenter", () => {
       dropArea.style.backgroundColor = "#F8D6A0";
     });
-
-    dropArea.addEventListener("dragleave", (event) => {
+    dropArea.addEventListener("dragleave", () => {
       dropArea.style.backgroundColor = null;
     });
-
     dropArea.addEventListener('dragover', (event) => {
       event.stopPropagation();
       event.preventDefault();
       event.dataTransfer.dropEffect = 'copy';
       dropArea.style.backgroundColor = "#F8D6A0";
     });
-
     dropArea.addEventListener("drop", (event) => {
       event.stopPropagation();
       event.preventDefault();
       dropArea.style.backgroundColor = null;
-
-      // Read each dropped file upon drop
-      const files = event.dataTransfer.files;
-      for (let i = 0; i < files.length; i++) {
-        this.readFile(files.item(i));
-      }
+      this.readFilesFromDrop(event);
     });
   }
 
@@ -91,6 +83,14 @@ class App {
   // }
 
   // FILES
+
+  readFilesFromDrop(event) {
+    // Read each dropped file upon drop
+    const files = event.dataTransfer.files;
+    for (let i = 0; i < files.length; i++) {
+      this.readFile(files.item(i));
+    }
+  }
 
   readFile(file) {
     const reader = new FileReader();
