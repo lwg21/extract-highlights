@@ -141,6 +141,16 @@ li.active {
   suffix: " ";
 }
 
+#highlightlist {
+  list-style: hlight inside;
+}
+
+@counter-style hlight {
+  system: cyclic;
+  symbols: ✨;
+  suffix: " ";
+}
+
 #bookmarklist {
   list-style: bookmark inside;
 }

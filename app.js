@@ -470,7 +470,7 @@ class App {
       {
         id: "highlightlist",
         text: `all highlights (${this.countClippings(this.highlights)})`,
-        callback: () => {console.log("TEST HIGHLIGHTS!")} // TODO
+        callback: () => this.viewHighlights()
       },
       {
         id: "bookmarklist",
@@ -480,7 +480,7 @@ class App {
       {
         id: "notelist",
         text: `all notes (${0})`,
-        callback: () => {console.log("TEST NOTES!")} // TODO
+        callback: () => this.viewNotes()
       },
       {
         id: "markedlist",
@@ -625,7 +625,7 @@ class App {
     return {
       header: {
         text: "Bookmarks",
-        count: this.bookmarks.filter(c => !c.deleted).length
+        count: this.bookmarks.filter(b => !b.deleted).length
       },
       actions: this.generateActions(),
       content: this.bookmarks,
@@ -635,6 +635,40 @@ class App {
 
   viewBookmarks() {
     this.view = this.generateViewBookmarks();
+    this.renderView();
+  }
+
+  generateViewHighlights() {
+    return {
+      header: {
+        text: "Highlights",
+        count: this.highlights.filter(h => !h.deleted).length
+      },
+      actions: this.generateActions(),
+      content: this.highlights,
+      downloadFileName: "Highlights"
+    }
+  }
+
+  viewHighlights() {
+    this.view = this.generateViewHighlights();
+    this.renderView();
+  }
+
+  generateViewNotes() {
+    return {
+      header: {
+        text: "Notes",
+        count: this.notes.filter(h => !h.deleted).length
+      },
+      actions: this.generateActions(),
+      content: this.notes,
+      downloadFileName: "Notes"
+    }
+  }
+
+  viewNotes() {
+    this.view = this.generateViewNotes();
     this.renderView();
   }
 
