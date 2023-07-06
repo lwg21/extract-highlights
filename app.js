@@ -911,17 +911,24 @@ class App {
       } else if (event.key === "x") {
         this.activeClippingMark();
       } else if (event.key === "e") {
-        this.activeClippingEdit();
+        // TODO
+        // this.activeClippingEdit();
+      } else if (event.key === "e") {
+        // TODO
+        // this.activeClippingEdit();
+      } else if (event.shiftKey && event.key === "Tab") {
+        // TODO
+        // this.activeClippingEdit();
       }
     })
   }
 
   scrollToNextClipping() {
     let active = document.querySelector(".active-clipping");
-    if (active) {
+    if (active && active.nextElementSibling) {
       active.classList.remove("active-clipping");
       active = active.nextElementSibling;
-    } else {
+    } else if (!active) {
       active = document.querySelector(".clipping")
     }
     active.classList.add("active-clipping");
@@ -931,10 +938,12 @@ class App {
   scrollToPreviousClipping() {
     // Combine with 'next' method with option {}?
     let active = document.querySelector(".active-clipping");
-    if (active) {
+    if (active && active.previousElementSibling) {
       active.classList.remove("active-clipping");
       active = active.previousElementSibling;
-    } else {
+    } else if (active && !active.previousElementSibling) {
+      active.scrollIntoView({behavior: "instant", block: "end"});
+    } else if (!active) {
       const nodes = document.querySelectorAll(".clipping");
       active = nodes[nodes.length - 1];
     }
@@ -986,6 +995,7 @@ class App {
       } else {
         this.deleteClipping(clipping);
         active.classList.add("deleted");
+        active.classList.remove("marked");
       }
     }
   }
@@ -995,15 +1005,16 @@ class App {
     if (active) {
       const id = Number.parseInt(active.dataset.id, 10);
       const clipping = this.findClippingById(id);
-      if (this.markClipping(clipping)) {
+      if (clipping.marked) {
+        this.unmarkClipping(clipping);
+        active.classList.remove("marked");
+      } else {
+        this.markClipping(clipping);
         active.classList.add("marked");
       }
     }
   }
 
-  activeClippingEdit() {
-    // TODO
-  }
 
   findClippingById(id) {
     return this.clippings.find(clipping => clipping.id === id);
