@@ -16,7 +16,7 @@ class App {
       separator: "\r\n==========\r\n",
       duplicateSubstringLength: 40,
       hideMetadata: false, // Experimental
-      keyboardNavigation: false // Experimental
+      keyboardNavigation: true // Experimental
     };
   }
 
@@ -74,6 +74,10 @@ class App {
       dropArea.style.backgroundColor = null;
       this.readFilesFromDrop(event);
     });
+
+    if (this.settings.keyboardNavigation) {
+      this.initializeKeyboardNavigation();
+    }
   }
 
   assignId() {return this.id += 1}
@@ -919,10 +923,16 @@ class App {
         this.scrollToNextClipping();
       } else if (event.key === "k") {
         this.scrollToPreviousClipping();
+      } else if (event.key === "J") {
+        this.scrollToEnd();
+      } else if (event.key === "K") {
+        this.scrollToTop();
       } else if (event.key === "r") {
         this.scrollToRandomClipping();
       } else if (event.key === "d") {
         this.activeClippingDelete();
+      } else if (event.key === "x") {
+        this.activeClippingMark();
       }
     })
   }
@@ -953,6 +963,28 @@ class App {
     active.scrollIntoView({behavior: "instant", block: "nearest"});
   }
 
+  scrollToTop() {
+    let active = document.querySelector(".active-clipping");
+    if (active) {
+      active.classList.remove("active-clipping");
+    }
+    active = document.querySelector(".clipping")
+    active.classList.add("active-clipping");
+    active.scrollIntoView({behavior: "instant", block: "end"});
+  }
+
+  scrollToEnd() {
+    let active = document.querySelector(".active-clipping");
+    if (active) {
+      active.classList.remove("active-clipping");
+    }
+    const nodes = document.querySelectorAll(".clipping");
+    active = nodes[nodes.length - 1];
+    active.classList.add("active-clipping");
+    active.scrollIntoView({behavior: "instant", block: "nearest"});
+  }
+
+
   scrollToRandomClipping() {
     const active = document.querySelector(".active-clipping");
     if (active) {
@@ -969,8 +1001,23 @@ class App {
     if (active) {
       const id = Number.parseInt(active.dataset.id, 10);
       const clipping = this.findClippingById(id);
-      if (this.deleteClipping(clipping)) {
+      if (clipping.deleted) {
+        this.undeleteClipping(clipping);
+        active.classList.remove("deleted");
+      } else {
+        this.deleteClipping(clipping);
         active.classList.add("deleted");
+      }
+    }
+  }
+
+  activeClippingMark() {
+    const active = document.querySelector(".active-clipping");
+    if (active) {
+      const id = Number.parseInt(active.dataset.id, 10);
+      const clipping = this.findClippingById(id);
+      if (this.markClipping(clipping)) {
+        active.classList.add("marked");
       }
     }
   }
