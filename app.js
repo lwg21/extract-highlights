@@ -14,7 +14,7 @@ class App {
   initializeSettings() {
     this.settings = {
       separator: "\r\n==========\r\n",
-      duplicateSubstringLength: 40,
+      similarSubstringLength: 40,
       hideMetadata: false, // Experimental
       keyboardNavigation: true // Experimental
     };
@@ -26,7 +26,7 @@ class App {
     this.books = []; // Contains objects representing distinct books
     this.marked = [];
     this.edited = [];
-    this.duplicates = [];
+    this.similars = [];
     this.deleted = [];
     this.highlights = [];
     this.bookmarks = [];
@@ -215,8 +215,8 @@ class App {
     // Set author in case of alternative format (' - ' instead of ' ()')
     clipping.author = clipping.author || clipping.authorAlt
 
-    // Initialise duplicates array
-    clipping.duplicates = [];
+    // Initialise similars array
+    clipping.similars = [];
 
     // Find existing book or create new book
     const book = this.findOrCreateBook(clipping);
@@ -307,23 +307,23 @@ class App {
     return clipping;
   }
 
-  duplicateCompare(clipping1, clipping2) {
-    const check = this.checkForCommonSubstring(clipping1.text, clipping2.text, this.settings.duplicateSubstringLength);
+  similarCompare(clipping1, clipping2) {
+    const check = this.checkForCommonSubstring(clipping1.text, clipping2.text, this.settings.similarSubstringLength);
     if (check.found) {
-      // Link duplicate clippings
-      clipping1.duplicates.push(clipping2);
-      clipping2.duplicates.push(clipping1);
+      // Link similar clippings
+      clipping1.similars.push(clipping2);
+      clipping2.similars.push(clipping1);
     }
     return check
   }
 
-  scanForDuplicates(clippings) {
+  scanForSimilars(clippings) {
     const n = clippings.length;
 
     // Compare each clipping with all the others once
     for (let i = 0; i <= n - 1; i++) {
       for (let j = i + 1; j <= n - 1; j++) {
-        this.duplicateCompare(clippings[i], clippings[j])
+        this.similarCompare(clippings[i], clippings[j])
 
         // [TESTING]
         // Count number of times a clipping has been tested (should equal n - 1)
@@ -493,9 +493,9 @@ class App {
         callback: () => this.viewEdited()
       },
       {
-        id: "duplicatelist",
-        text: `all duplicates (${this.countClippings(this.duplicates)})`,
-        callback: () => this.viewDuplicates()
+        id: "similarlist",
+        text: `all similar (${this.countClippings(this.similars)})`,
+        callback: () => this.viewSimilars()
       },
       {
         id: "deletedlist",
@@ -704,20 +704,20 @@ class App {
     this.view = this.generateViewEdited();
     this.renderView();
   }
-  generateViewDuplicates() {
+  generateViewSimilars() {
     return {
       header: {
-        text: "Duplicates",
-        count: this.duplicates.length
+        text: "Similars",
+        count: this.similars.length
       },
       actions: this.generateActions(),
-      content: this.duplicates,
-      downloadFileName: "Duplicates"
+      content: this.similars,
+      downloadFileName: "Similars"
     }
   }
 
-  viewDuplicates() {
-    this.view = this.generateViewDuplicates();
+  viewSimilars() {
+    this.view = this.generateViewSimilars();
     this.renderView();
   }
 
@@ -765,10 +765,10 @@ class App {
     if (clipping.marked) clippingElement.classList.add("marked");
     if (clipping.deleted) clippingElement.classList.add("deleted");
 
-    // Mark as duplicate TODO: rework
-    // if (clipping.duplicates !== 0) {
-    //   clipping.duplicates.forEach(duplicate => {
-    //     clone.querySelector(".separator").textContent += ` 🚨 (id: ${duplicate.id})`;
+    // Mark as similar TODO: rework
+    // if (clipping.similars !== 0) {
+    //   clipping.similars.forEach(similar => {
+    //     clone.querySelector(".separator").textContent += ` 🚨 (id: ${similar.id})`;
     //   });
     // }
 
@@ -879,19 +879,19 @@ class App {
 
   // viewClippingsOfBook(book) {
 
-  //   // Add scan for duplicate text
+  //   // Add scan for similar text
   //   const scanTextButton = document.createElement("button");
-  //   scanTextButton.innerText = "Scan duplicate text";
+  //   scanTextButton.innerText = "Scan similar text";
   //   scanTextButton.addEventListener("click", () => {
-  //     this.viewDuplicatesOfBook(book);
+  //     this.viewSimilarsOfBook(book);
   //   });
   //   actionsContainer.appendChild(scanTextButton);
 
-  //   // Add scan for duplicate locations
+  //   // Add scan for similar locations
   //   const scanLocationButton = document.createElement("button");
-  //   scanLocationButton.innerText = "Scan duplicate location";
+  //   scanLocationButton.innerText = "Scan similar location";
   //   scanLocationButton.addEventListener("click", () => {
-  //     // this.viewDuplicatesOfBook(book);
+  //     // this.viewSimilarsOfBook(book);
   //   });
   //   actionsContainer.appendChild(scanLocationButton);
 
@@ -1127,7 +1127,7 @@ class App {
 
     // TODO: Write tests to compare number of clippings/books on display with objects in memory
     // TODO: Compare clippings in book.clippings with findClippingsFromBook(book)
-    // TODO: same for edited, deleted, marked and duplicates
+    // TODO: same for edited, deleted, marked and similars
     // TODO: Do all books have a title and an author?
     // TODO: Do all clippings have a book?
     // TODO: Test if copy to clipboard produces Kindle format output

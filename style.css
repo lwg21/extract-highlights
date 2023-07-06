@@ -131,7 +131,7 @@ li.active {
   suffix: " ";
 }
 
-#duplicatelist {
+#similarlist {
   list-style: orange-book inside;
 }
 
