@@ -306,10 +306,21 @@ button {
 
 .deleted {
   background-color: #eddada;
+  border-bottom: solid 1px white;
 }
 
-.deleted .clipping-metadata, .deleted .clipping-text {
+.deleted .clipping-metadata,
+.deleted .clipping-text,
+.deleted .separator,
+.deleted .clipping-actions {
   display: none;
+}
+
+.deleted br::after {
+  content: "deleted";
+  color: #f09090;
+  overflow: hidden;
+  height: 1em;
 }
 
 .clipping-actions {
