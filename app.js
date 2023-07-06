@@ -721,7 +721,6 @@ class App {
     if (clipping.marked) clippingElement.classList.add("marked");
     if (clipping.deleted) clippingElement.classList.add("deleted");
 
-
     // Mark as duplicate TODO: rework
     // if (clipping.duplicates !== 0) {
     //   clipping.duplicates.forEach(duplicate => {
@@ -730,6 +729,13 @@ class App {
     // }
 
     // TODO: ADD ACTION AND EVENT LISTENERS
+
+    // Mark clipping as active on click
+    clone.querySelector(".clipping").addEventListener("click", (event) => {
+      const active = document.querySelector(".active-clipping");
+      if (active) active.classList.remove("active-clipping");
+      event.currentTarget.classList.add("active-clipping");
+    })
 
     // Copy text to clipboard
     clone.querySelector(".clipping-text").addEventListener("mousedown", (event) => {
