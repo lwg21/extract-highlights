@@ -570,7 +570,7 @@ class App {
     return {
       header: this.generateHeaderFromBook(book),
       actions: this.generateActions(),
-      content: book.clippings.filter(h => !h.deleted),
+      content: book.clippings,
       downloadFileName: book.title
     }
   }
@@ -584,7 +584,7 @@ class App {
     return {
       header: this.generateHeaderFromSource(source),
       actions: this.generateActions(),
-      content: source.clippings.filter(h => !h.deleted),
+      content: source.clippings,
       downloadFileName: source.filename
     }
   }
@@ -615,7 +615,7 @@ class App {
     return {
       header: {
         text: "Bookmarks",
-        count: this.bookmarks.length
+        count: this.bookmarks.filter(c => !c.deleted).length
       },
       actions: this.generateActions(),
       content: this.bookmarks,
@@ -710,10 +710,17 @@ class App {
     const clone = template.content.cloneNode(true);
 
     // Populate template with clipping data
-    clone.querySelector(".clipping").setAttribute("data-id", clipping.id);
+    const clippingElement = clone.querySelector(".clipping")
+    clippingElement.setAttribute("data-id", clipping.id);
+
     clone.querySelector(".clipping-metadata").textContent = clipping.metadata;
     clone.querySelector(".clipping-text").textContent = clipping.textEdited || clipping.text;
     clone.querySelector(".separator").textContent = '==========';
+
+    // Add relevant classes
+    if (clipping.marked) clippingElement.classList.add("marked");
+    if (clipping.deleted) clippingElement.classList.add("deleted");
+
 
     // Mark as duplicate TODO: rework
     // if (clipping.duplicates !== 0) {
@@ -1031,7 +1038,7 @@ class App {
   }
 
   findClippingsFromBook(book) {
-    return this.clippings.filter(clipping => ((clipping.title === book.title) && !clipping.deleted));
+    return this.clippings.filter(clipping => clipping.title === book.title);
   }
 
   findEditedClippings(clippings) {
