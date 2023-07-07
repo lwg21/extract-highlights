@@ -26,7 +26,7 @@ class App {
     this.books = []; // Contains objects representing distinct books
     this.marked = [];
     this.edited = [];
-    this.similars = [];
+    this.similar = [];
     this.deleted = [];
     this.highlights = [];
     this.bookmarks = [];
@@ -202,38 +202,42 @@ class App {
 
   createClipping(text) {
     // Parse text and create clipping object
-    const regex = /(?<title>[\S ]+) (?:- (?<authorAlt>[\w ]+)|\((?<author>[^(]+)\))\s*- Your (?<type>\w+) on page (?<pageStart>\d*)-?(?<pageEnd>\d*)(?: \| location (?<locationStart>\d+)-?(?<locationEnd>\d*))? \| Added on (?<date>[\S ]*)\s*(?<text>.*)\s*/
-    const clipping = text.match(regex).groups
+    const regex = /(?<title>[\S ]+) (?:- (?<authorAlt>[\w ]+)|\((?<author>[^(]+)\))\s*- Your (?<type>\w+) on page (?<pageStart>\d*)-?(?<pageEnd>\d*)(?: \| location (?<locationStart>\d+)-?(?<locationEnd>\d*))? \| Added on (?<date>[\S ]*)\s*(?<text>.*)\s*/;
+    const clipping = text.match(regex).groups;
 
     // Save original text and metadata
     clipping.original = text;
     clipping.metadata = text.split(/(\r?\n)/).slice(0,3).join('');
 
     // Set author in case of alternative format (' - ' instead of ' ()')
-    clipping.author = clipping.author || clipping.authorAlt
+    clipping.author = clipping.author || clipping.authorAlt;
+
+    // Initialise similar array
+    clipping.similar = [];
+
+    // Assign book (existing or new)
+    clipping.book = this.findOrCreateBook(clipping);
 
     // Assign unique id
     clipping.id = this.assignId();
 
-    // Initialise similars array
-    clipping.similars = [];
+    // Push clipping to relevant arrays for tracking
+    this.assignClipping(clipping);
 
-    // Find existing book or create new book
-    const book = this.findOrCreateBook(clipping);
+    return clipping;
+  }
 
-    // Assign book to clipping
-    clipping.book = book;
-
-    // Push into clippings
+  assignClipping(clipping) {
+    // Push to main clippings array
     this.clippings.push(clipping);
 
-    // Push to last imported source
+    // Assign to last source
     this.sources.slice(-1)[0].clippings.push(clipping);
 
-    // Push to book
-    book.clippings.push(clipping);
+    // Assign to book
+    clipping.book.clippings.push(clipping);
 
-    // Push clipping to relevant array if appropriate
+    // Assign to clipping type array
     if (clipping.type === "Highlight") {
       this.highlights.push(clipping);
     } else if (clipping.type === "Bookmark") {
@@ -241,8 +245,6 @@ class App {
     } else if (clipping.type === "Note") {
       this.notes.push(clipping);
     }
-
-    return clipping;
   }
 
   createOutput(clippings) {
@@ -311,8 +313,8 @@ class App {
     const check = this.checkForCommonSubstring(clipping1.text, clipping2.text, this.settings.similarSubstringLength);
     if (check.found) {
       // Link similar clippings
-      clipping1.similars.push(clipping2);
-      clipping2.similars.push(clipping1);
+      clipping1.similar.push(clipping2);
+      clipping2.similar.push(clipping1);
     }
     return check
   }
@@ -494,7 +496,7 @@ class App {
       },
       {
         id: "similarlist",
-        text: `all similar (${this.countClippings(this.similars)})`,
+        text: `all similar (${this.countClippings(this.similar)})`,
         callback: () => this.viewSimilars()
       },
       {
@@ -708,10 +710,10 @@ class App {
     return {
       header: {
         text: "Similars",
-        count: this.similars.length
+        count: this.similar.length
       },
       actions: this.generateActions(),
-      content: this.similars,
+      content: this.similar,
       downloadFileName: "Similars"
     }
   }
@@ -766,8 +768,8 @@ class App {
     if (clipping.deleted) clippingElement.classList.add("deleted");
 
     // Mark as similar TODO: rework
-    // if (clipping.similars !== 0) {
-    //   clipping.similars.forEach(similar => {
+    // if (clipping.similar !== 0) {
+    //   clipping.similar.forEach(similar => {
     //     clone.querySelector(".separator").textContent += ` 🚨 (id: ${similar.id})`;
     //   });
     // }
@@ -1127,7 +1129,7 @@ class App {
 
     // TODO: Write tests to compare number of clippings/books on display with objects in memory
     // TODO: Compare clippings in book.clippings with findClippingsFromBook(book)
-    // TODO: same for edited, deleted, marked and similars
+    // TODO: same for edited, deleted, marked and similar
     // TODO: Do all books have a title and an author?
     // TODO: Do all clippings have a book?
     // TODO: Test if copy to clipboard produces Kindle format output
