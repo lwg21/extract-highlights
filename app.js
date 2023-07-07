@@ -17,7 +17,7 @@ class App {
       similarSubstringLength: 40,
       hideMetadata: false, // Experimental
       keyboardNavigation: true, // Experimental
-      numClipPerPage: 100 // Experimental
+      numClipPerPage: 50 // Experimental
     };
   }
 
@@ -558,13 +558,27 @@ class App {
   // ## VIEW
 
   renderView() {
+    const viewElement = document.querySelector("#view");
+
     // Scroll to top
-    document.querySelector("#view").scrollTo(0, 0);
+    viewElement.scrollTo(0, 0);
+
+    // Reset scroll event listener
+    viewElement.removeEventListener("scroll", event => this.loadNextContent(event));
+    viewElement.addEventListener("scroll", event => this.loadNextContent(event));
+
     // Render view from app state
     this.renderViewHeader(this.view.header);
     this.renderViewActions(this.view.actions);
     this.renderViewContent(this.view.content);
     if (this.settings.hideMetadata) this.hideMetadata();
+  }
+
+  loadNextContent(event) {
+    const checkScroll = (event.currentTarget.scrollTop >= event.currentTarget.scrollHeight - window.innerHeight);
+    if (checkScroll) {
+      this.renderViewContent(this.view.content, {append: true})
+    }
   }
 
   renderViewHeader(header) {
