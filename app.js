@@ -26,6 +26,7 @@ class App {
     this.books = []; // Contains objects representing distinct books
     this.marked = [];
     this.edited = [];
+    this.originals = [];
     this.duplicates = [];
     this.deleted = [];
     this.highlights = [];
@@ -231,11 +232,13 @@ class App {
   }
 
   findOriginalClipping(clipping) {
-    const original = this.clippings.find(c => c.raw === clipping.raw && !c.original);
-    if (original) {
+    const identical = this.clippings.find(c => c.raw === clipping.raw && !c.original);
+    if (identical) {
       this.duplicates.push(clipping)
+    } else {
+      this.originals.push(clipping)
     }
-    return original
+    return identical
   }
 
   assignClipping(clipping) {
@@ -506,6 +509,11 @@ class App {
         callback: () => this.viewEdited()
       },
       {
+        id: "originallist",
+        text: `originals (${this.countClippings(this.originals)})`,
+        callback: () => this.viewOriginals()
+      },
+      {
         id: "duplicatelist",
         text: `duplicates (${this.countClippings(this.duplicates)})`,
         callback: () => this.viewDuplicates()
@@ -619,6 +627,19 @@ class App {
     this.renderView();
   }
 
+  // viewList(list) {
+  //   if (list = "highlights") {
+  //     this.generateViewHighlights();
+  //   } else if (list = "deleted") {
+  //     this.generateViewDeleted();
+  //   } else if (list = "deleted") {
+  //     this.generateViewDeleted();
+  //   }
+  //   this.renderView();
+  // }
+
+
+
   generateViewDeleted() {
     return {
       header: {
@@ -719,6 +740,7 @@ class App {
     this.view = this.generateViewEdited();
     this.renderView();
   }
+
   generateViewDuplicates() {
     return {
       header: {
@@ -733,6 +755,23 @@ class App {
 
   viewDuplicates() {
     this.view = this.generateViewDuplicates();
+    this.renderView();
+  }
+
+  generateViewOriginals() {
+    return {
+      header: {
+        text: "Originals",
+        count: this.originals.length
+      },
+      actions: this.generateActions(),
+      content: this.originals,
+      downloadFileName: "Originals"
+    }
+  }
+
+  viewOriginals() {
+    this.view = this.generateViewOriginals();
     this.renderView();
   }
 
