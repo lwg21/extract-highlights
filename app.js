@@ -205,15 +205,15 @@ class App {
     const regex = /(?<title>[\S ]+) (?:- (?<authorAlt>[\w ]+)|\((?<author>[^(]+)\))\s*- Your (?<type>\w+) on page (?<pageStart>\d*)-?(?<pageEnd>\d*)(?: \| location (?<locationStart>\d+)-?(?<locationEnd>\d*))? \| Added on (?<date>[\S ]*)\s*(?<text>.*)\s*/
     const clipping = text.match(regex).groups
 
-    // Assign unique id
-    clipping.id = this.assignId();
-
     // Save original text and metadata
     clipping.original = text;
     clipping.metadata = text.split(/(\r?\n)/).slice(0,3).join('');
 
     // Set author in case of alternative format (' - ' instead of ' ()')
     clipping.author = clipping.author || clipping.authorAlt
+
+    // Assign unique id
+    clipping.id = this.assignId();
 
     // Initialise similars array
     clipping.similars = [];
