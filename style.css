@@ -105,14 +105,16 @@ li.active {
   list-style: book-blue inside;
 }
 
+@counter-style orange-book {
+  system: cyclic;
+  symbols: 📙;
+  suffix: " ";
+}
+
 @counter-style book-blue {
   system: cyclic;
   symbols: 📘;
   suffix: " ";
-}
-
-#sourcelist li {
-  list-style: ledger inside;
 }
 
 @counter-style ledger {
@@ -121,74 +123,12 @@ li.active {
   suffix: " ";
 }
 
-#deletedlist {
-  list-style: red-book inside;
+#sourcelist li {
+  list-style: ledger inside;
 }
 
-@counter-style red-book {
-  system: cyclic;
-  symbols: 📕;
-  suffix: " ";
-}
-
-#duplicatelist {
+#clippinglist, #highlightlist, #bookmarklist, #notelist, #markedlist, #editedlist, #originallist, #duplicatelist, #deletedlist {
   list-style: orange-book inside;
-}
-
-@counter-style orange-book {
-  system: cyclic;
-  symbols: 📙;
-  suffix: " ";
-}
-
-#highlightlist {
-  list-style: hlight inside;
-}
-
-@counter-style hlight {
-  system: cyclic;
-  symbols: ✨;
-  suffix: " ";
-}
-
-#bookmarklist {
-  list-style: bookmark inside;
-}
-
-@counter-style bookmark {
-  system: cyclic;
-  symbols: 🔖;
-  suffix: " ";
-}
-
-#editedlist {
-  list-style: edited inside;
-}
-
-@counter-style edited {
-  system: cyclic;
-  symbols: 📓;
-  suffix: " ";
-}
-
-#markedlist {
-  list-style: marked inside;
-}
-
-@counter-style marked {
-  system: cyclic;
-  symbols: 📗;
-  suffix: " ";
-}
-
-#notelist {
-  list-style: note inside;
-}
-
-@counter-style note {
-  system: cyclic;
-  symbols: 📝;
-  suffix: " ";
 }
 
 /* VIEW */
@@ -321,22 +261,15 @@ button {
 
 .deleted {
   background-color: #eddada;
-  border-bottom: solid 1px white;
+  color: #bf5959;
 }
-
+/*
 .deleted .clipping-metadata,
 .deleted .clipping-text,
 .deleted .separator,
 .deleted .clipping-actions {
   display: none;
-}
-
-.deleted br::after {
-  content: "deleted";
-  color: #f09090;
-  overflow: hidden;
-  height: 1em;
-}
+} */
 
 .clipping-actions {
   display: inline;
