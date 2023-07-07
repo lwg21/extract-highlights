@@ -108,23 +108,23 @@ class App {
       const text = event.target.result;
 
       // Check if source has already been imported
-      const check = this.findSourceFromText(text);
-      if (check) {
-        console.log(`Source already exists (id: ${check.id})`);
-      } else {
-        // Create source and add to sources
-        const source = {
-          id: this.assignId(),
-          filename: file.name,
-          text: event.target.result,
-          clippings: []
-        };
-        this.sources.push(source)
-        console.log(`File '${source.filename}' imported`);
+      // const check = this.findSourceFromText(text);
+      // if (check) {
+      //   console.log(`Source already exists (id: ${check.id})`);
+      // } else {}
 
-        // Extract data from source
-        this.extractDataFromSource(source);
-      }
+      // Create source and add to sources
+      const source = {
+        id: this.assignId(),
+        filename: file.name,
+        text: event.target.result,
+        clippings: []
+      };
+      this.sources.push(source)
+      console.log(`File '${source.filename}' imported`);
+
+      // Extract data from source
+      this.extractDataFromSource(source);
     });
     reader.readAsText(file);
   }
@@ -500,7 +500,7 @@ class App {
       },
       {
         id: "notelist",
-        text: `notes (${0})`,
+        text: `notes (${this.countClippings(this.notes)})`,
         callback: () => this.viewNotes()
       },
       {
@@ -911,7 +911,7 @@ class App {
 
   generateClippings(clippings) {
     const fragment = new DocumentFragment;
-    clippings.forEach(clipping => {
+    clippings.slice(0,100).forEach(clipping => {
       fragment.appendChild(this.generateClipping(clipping));
     });
     return fragment;
