@@ -543,6 +543,8 @@ class App {
   // ## VIEW
 
   renderView() {
+    // Scroll to top
+    document.querySelector("#view").scrollTo(0, 0);
     // Render view from app state
     this.renderViewHeader(this.view.header);
     this.renderViewActions(this.view.actions);
@@ -776,6 +778,7 @@ class App {
 
     // Add relevant classes
     if (clipping.marked) clippingElement.classList.add("marked");
+    if (clipping.original) clippingElement.classList.add("duplicate");
     if (clipping.deleted) clippingElement.classList.add("deleted");
 
     // Mark as similar TODO: rework

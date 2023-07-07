@@ -314,6 +314,11 @@ button {
   background-color: #daedda;
 }
 
+
+.duplicate {
+  background-color: #e6ccac;
+}
+
 .deleted {
   background-color: #eddada;
   border-bottom: solid 1px white;
