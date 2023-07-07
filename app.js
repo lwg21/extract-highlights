@@ -26,7 +26,7 @@ class App {
     this.books = []; // Contains objects representing distinct books
     this.marked = [];
     this.edited = [];
-    this.similar = [];
+    this.duplicates = [];
     this.deleted = [];
     this.highlights = [];
     this.bookmarks = [];
@@ -220,6 +220,11 @@ class App {
 
     // Assign unique id
     clipping.id = this.assignId();
+
+    // Check for duplicate clipping in memory
+    if (this.clippings.find(c => c.original === text)) {
+      this.duplicates.push(clipping)
+    }
 
     // Push clipping to relevant arrays for tracking
     this.assignClipping(clipping);
@@ -495,9 +500,9 @@ class App {
         callback: () => this.viewEdited()
       },
       {
-        id: "similarlist",
-        text: `all similar (${this.countClippings(this.similar)})`,
-        callback: () => this.viewSimilars()
+        id: "duplicatelist",
+        text: `all duplicates (${this.countClippings(this.duplicates)})`,
+        callback: () => this.viewDuplicates()
       },
       {
         id: "deletedlist",
@@ -706,20 +711,20 @@ class App {
     this.view = this.generateViewEdited();
     this.renderView();
   }
-  generateViewSimilars() {
+  generateViewDuplicates() {
     return {
       header: {
-        text: "Similars",
-        count: this.similar.length
+        text: "Duplicates",
+        count: this.duplicates.length
       },
       actions: this.generateActions(),
-      content: this.similar,
-      downloadFileName: "Similars"
+      content: this.duplicates,
+      downloadFileName: "Duplicates"
     }
   }
 
-  viewSimilars() {
-    this.view = this.generateViewSimilars();
+  viewDuplicates() {
+    this.view = this.generateViewDuplicates();
     this.renderView();
   }
 
@@ -885,7 +890,7 @@ class App {
   //   const scanTextButton = document.createElement("button");
   //   scanTextButton.innerText = "Scan similar text";
   //   scanTextButton.addEventListener("click", () => {
-  //     this.viewSimilarsOfBook(book);
+  //     this.viewDuplicatesOfBook(book);
   //   });
   //   actionsContainer.appendChild(scanTextButton);
 
@@ -893,7 +898,7 @@ class App {
   //   const scanLocationButton = document.createElement("button");
   //   scanLocationButton.innerText = "Scan similar location";
   //   scanLocationButton.addEventListener("click", () => {
-  //     // this.viewSimilarsOfBook(book);
+  //     // this.viewDuplicatesOfBook(book);
   //   });
   //   actionsContainer.appendChild(scanLocationButton);
 
