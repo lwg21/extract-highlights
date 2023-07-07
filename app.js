@@ -484,6 +484,11 @@ class App {
 
     const lists = [
       {
+        id: "clippinglist",
+        text: `clippings (${this.countClippings(this.clippings)})`,
+        callback: () => this.viewClippings()
+      },
+      {
         id: "highlightlist",
         text: `highlights (${this.countClippings(this.highlights)})`,
         callback: () => this.viewHighlights()
@@ -627,18 +632,22 @@ class App {
     this.renderView();
   }
 
-  // viewList(list) {
-  //   if (list = "highlights") {
-  //     this.generateViewHighlights();
-  //   } else if (list = "deleted") {
-  //     this.generateViewDeleted();
-  //   } else if (list = "deleted") {
-  //     this.generateViewDeleted();
-  //   }
-  //   this.renderView();
-  // }
+  generateViewClippings() {
+    return {
+      header: {
+        text: "Clippings",
+        count: this.clippings.length
+      },
+      actions: this.generateActions(),
+      content: this.clippings,
+      downloadFileName: "Clippings"
+    }
+  }
 
-
+  viewClippings() {
+    this.view = this.generateViewClippings();
+    this.renderView();
+  }
 
   generateViewDeleted() {
     return {
