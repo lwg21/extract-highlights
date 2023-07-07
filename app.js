@@ -16,7 +16,8 @@ class App {
       separator: "\r\n==========\r\n",
       similarSubstringLength: 40,
       hideMetadata: false, // Experimental
-      keyboardNavigation: true // Experimental
+      keyboardNavigation: true, // Experimental
+      numClipPerPage: 100 // Experimental
     };
   }
 
@@ -40,6 +41,7 @@ class App {
       },
       actions: [],
       content: [],
+      scrollPosition: 0,
       downloadFileName: "Download"
     }
   }
@@ -208,7 +210,7 @@ class App {
 
     // Save raw text and metadata
     clipping.raw = text;
-    clipping.metadata = text.split(/(\r?\n)/).slice(0,3).join('');
+    clipping.metadata = text.split(/(\r?\n)/).slice(0, 3).join('');
 
     // Set author in case of alternative format (' - ' instead of ' ()')
     clipping.author = clipping.author || clipping.authorAlt;
@@ -588,11 +590,26 @@ class App {
     });
   }
 
-  renderViewContent(clippings) {
+  renderViewContent(clippings, options = {}) {
     const contentContainer = document.querySelector("#view-content");
-    contentContainer.innerHTML = "";
-    const content = this.generateClippings(clippings);
+
+    // Unless option 'append' is true, empty content and reset render scroll position
+    if (!options.append) {
+      contentContainer.innerHTML = "";
+      this.view.scrollPosition = 0;
+    }
+
+    // Slice the clippings to render (for performance)
+    const start = this.view.scrollPosition;
+    const end = start + this.settings.numClipPerPage;
+    const clippingsBatch = clippings.slice(start, end);
+
+    // Generate clippings and append to DOM
+    const content = this.generateClippings(clippingsBatch);
     contentContainer.appendChild(content);
+
+    // Update scroll position
+    this.view.scrollPosition = end;
   }
 
   clearView() {
@@ -911,7 +928,7 @@ class App {
 
   generateClippings(clippings) {
     const fragment = new DocumentFragment;
-    clippings.slice(0,100).forEach(clipping => {
+    clippings.forEach(clipping => {
       fragment.appendChild(this.generateClipping(clipping));
     });
     return fragment;
@@ -1012,7 +1029,7 @@ class App {
   // EXPERIMENTAL
 
   insertMark(text, start, end) {
-    return text.slice(0,start) + "<mark>" + text.slice(start, end) + "</mark>" + text.slice(end)
+    return text.slice(0, start) + "<mark>" + text.slice(start, end) + "</mark>" + text.slice(end)
   }
 
   initializeKeyboardNavigation() {
