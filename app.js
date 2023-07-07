@@ -400,7 +400,7 @@ class App {
     const clone = template.content.cloneNode(true);
 
     // Update header with total number of books
-    clone.querySelector("#booklist-header").innerText = `all books (${this.books.length})`;
+    clone.querySelector("#booklist-header").innerText = `books (${this.books.length})`;
 
     // Add books as list items
     this.books.forEach(book => {
@@ -441,7 +441,7 @@ class App {
     const clone = template.content.cloneNode(true);
 
     // Update header with total number of sources
-    clone.querySelector("#sourcelist-header").innerText = `all sources (${this.sources.length})`
+    clone.querySelector("#sourcelist-header").innerText = `sources (${this.sources.length})`
 
     // Add sources as list items
     this.sources.forEach((source, index) => {
@@ -477,42 +477,42 @@ class App {
     const clone = template.content.cloneNode(true);
 
     // Update header
-    clone.querySelector("#smartlists-header").innerText = `all lists`
+    clone.querySelector("#smartlists-header").innerText = `lists`
 
     const lists = [
       {
         id: "highlightlist",
-        text: `all highlights (${this.countClippings(this.highlights)})`,
+        text: `highlights (${this.countClippings(this.highlights)})`,
         callback: () => this.viewHighlights()
       },
       {
         id: "bookmarklist",
-        text: `all bookmarks (${this.countClippings(this.bookmarks)})`,
+        text: `bookmarks (${this.countClippings(this.bookmarks)})`,
         callback: () => this.viewBookmarks()
       },
       {
         id: "notelist",
-        text: `all notes (${0})`,
+        text: `notes (${0})`,
         callback: () => this.viewNotes()
       },
       {
         id: "markedlist",
-        text: `all marked (${this.countClippings(this.marked)})`,
+        text: `marked (${this.countClippings(this.marked)})`,
         callback: () => this.viewMarked()
       },
       {
         id: "editedlist",
-        text: `all edited (${this.countClippings(this.edited)})`,
+        text: `edited (${this.countClippings(this.edited)})`,
         callback: () => this.viewEdited()
       },
       {
         id: "duplicatelist",
-        text: `all duplicates (${this.countClippings(this.duplicates)})`,
+        text: `duplicates (${this.countClippings(this.duplicates)})`,
         callback: () => this.viewDuplicates()
       },
       {
         id: "deletedlist",
-        text: `all deleted (${this.countDeletedClippings(this.deleted)})`,
+        text: `deleted (${this.countDeletedClippings(this.deleted)})`,
         callback: () => this.viewDeleted()
       },
     ];
