@@ -205,8 +205,8 @@ class App {
     const regex = /(?<title>[\S ]+) (?:- (?<authorAlt>[\w ]+)|\((?<author>[^(]+)\))\s*- Your (?<type>\w+) on page (?<pageStart>\d*)-?(?<pageEnd>\d*)(?: \| location (?<locationStart>\d+)-?(?<locationEnd>\d*))? \| Added on (?<date>[\S ]*)\s*(?<text>.*)\s*/;
     const clipping = text.match(regex).groups;
 
-    // Save original text and metadata
-    clipping.original = text;
+    // Save raw text and metadata
+    clipping.raw = text;
     clipping.metadata = text.split(/(\r?\n)/).slice(0,3).join('');
 
     // Set author in case of alternative format (' - ' instead of ' ()')
@@ -222,14 +222,20 @@ class App {
     clipping.id = this.assignId();
 
     // Check for duplicate clipping in memory
-    if (this.clippings.find(c => c.original === text)) {
-      this.duplicates.push(clipping)
-    }
+    clipping.original = this.findOriginalClipping(clipping);
 
     // Push clipping to relevant arrays for tracking
     this.assignClipping(clipping);
 
     return clipping;
+  }
+
+  findOriginalClipping(clipping) {
+    const original = this.clippings.find(c => c.raw === clipping.raw && !c.original);
+    if (original) {
+      this.duplicates.push(clipping)
+    }
+    return original
   }
 
   assignClipping(clipping) {
@@ -1138,6 +1144,7 @@ class App {
     // TODO: Do all books have a title and an author?
     // TODO: Do all clippings have a book?
     // TODO: Test if copy to clipboard produces Kindle format output
+    // TODO: Check is number of clippings in this.duplicates is same as number of clippings with duplicate property
     console.log("Tests completed")
   }
 }
