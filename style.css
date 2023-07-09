@@ -136,6 +136,7 @@ li.active {
 #view {
   flex-grow: 1;
   flex-shrink: 1;
+  scroll-padding: 15vh;
 }
 
 #view-header {
