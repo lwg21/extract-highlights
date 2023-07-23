@@ -872,8 +872,12 @@ class App {
     // Mark clipping as active on click
     clone.querySelector(".clipping").addEventListener("click", (event) => {
       const active = document.querySelector(".active-clipping");
-      if (active) active.classList.remove("active-clipping");
-      event.currentTarget.classList.add("active-clipping");
+      if (active) {
+        const id = active.dataset.id
+        console.log(id)
+        active.classList.remove("active-clipping");
+      }
+      event.target.closest(".clipping").classList.add("active-clipping");
     })
 
     // Copy text to clipboard
@@ -920,7 +924,10 @@ class App {
     // Unmark
     clone.querySelector(".action-unmark").addEventListener("click", event => {
       if (this.unmarkClipping(clipping)) {
-        event.currentTarget.closest(".clipping").classList.remove("marked");
+        this.refreshClippingElement(clipping, clippingElement);
+        // const newClippingElement = this.generateClipping(clipping);
+        // document.querySelector("#view-content").replaceChild(newClippingElement, clippingElement);
+        // event.currentTarget.closest(".clipping").classList.remove("marked");
       }
     });
 
@@ -931,10 +938,14 @@ class App {
       }
     });
 
-    // Restore
+    // Undelete
     clone.querySelector(".action-undelete").addEventListener("click", event => {
       if (this.undeleteClipping(clipping)) {
-        event.currentTarget.closest(".clipping").classList.remove("deleted");
+        this.refreshClippingElement(clipping, clippingElement);
+        // const newClippingElement = this.generateClipping(clipping);
+        // const oldClippingElement = event.currentTarget.closest(".clipping");
+        // document.querySelector("#view-content").replaceChild(newClippingElement, oldClippingElement);
+        // event.currentTarget.closest(".clipping").classList.remove("deleted");
       }
     });
     return clone;
@@ -946,6 +957,12 @@ class App {
       fragment.appendChild(this.generateClipping(clipping));
     });
     return fragment;
+  }
+
+  refreshClippingElement(clipping, clippingElement) {
+    const newNode = this.generateClipping(clipping);
+    newNode.querySelector(".clipping").classList.add("active-clipping");
+    clippingElement.parentElement.replaceChild(newNode, clippingElement);
   }
 
   generateHeaderFromBook(book) {
