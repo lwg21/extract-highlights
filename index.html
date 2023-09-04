@@ -8,14 +8,14 @@
   <script defer src="./app.js"></script>
 </head>
 <body>
-  <header class="flex">
-    <h1 id="reset">📚 Clippings extractor</h1>
-    <nav>
-      <a href="https://github.com/lwg21/extract-highlights">About</a>
-    </nav>
-  </header>
-  <main>
-    <section id="menu" class="full-height">
+  <nav>
+    <header>
+      <h1 id="reset">📚 Clippings extractor</h1>
+      <!-- <div>
+        <a href="https://github.com/lwg21/extract-highlights">about</a>
+      </div> -->
+    </header>
+    <section id="menu">
       <div id="drop-instructions">
         <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-monitor-up"><path d="m9 10 3-3 3 3"/><path d="M12 13V7"/><rect width="20" height="14" x="2" y="3" rx="2"/><path d="M12 17v4"/><path d="M8 21h8"/></svg>
         <p>Drop 'My clippings.txt' file(s)</p>
@@ -24,7 +24,9 @@
       <div id="booklist"></div>
       <div id="sourcelist"></div>
     </section>
-    <section id="view" class="full-height">
+  </nav>
+  <main>
+    <section id="view">
       <div class="h-pad">
         <h2 id="view-header"></h2>
         <div id="view-actions"></div>

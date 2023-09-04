@@ -1,6 +1,7 @@
 /* CONTAINERS */
 
 body {
+  display: flex;
   margin: 0;
   padding: 0;
   font-family: "Inter";
@@ -8,20 +9,18 @@ body {
   color: black;
 }
 
-.flex {
-  display: flex;
-  align-items: center;
+nav {
+  width: 28%;
 }
+
+main {
+  width: 72%;
+}
+
+/* STYLING */
 
 .none {
   display: none;
-}
-
-.full-height {
-  height: calc(100vh - 80px - 30px) !important;
-  overflow: auto;
-  padding-top: 10px;
-  padding-bottom: 20px;
 }
 
 .h-pad {
@@ -32,6 +31,10 @@ body {
 /* HEADER */
 
 header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   height: 80px;
   padding-left: 20px;
   padding-right: 40px;
@@ -39,32 +42,19 @@ header {
 }
 
 h1 {
-  min-width: 300px;
-  flex: auto;
   font-size: 1.4em;
   color: white;
+  margin: 0;
 }
 
 header a {
   color: white;
   text-decoration: none;
-  font-size: 0.9em;
+  font-size: 0.7em;
 }
 
 header a:hover {
   color: #F8D6A0;
-}
-
-/* MAIN */
-
-main {
-  display: flex;
-}
-
-h2 {
-  font-size: 1.1em;
-  margin: 30px 0 20px 0;
-  font-weight: normal;
 }
 
 /* MENU */
@@ -75,7 +65,17 @@ h2 {
   flex-grow: 0;
   flex-shrink: 0;
   flex-basis: 400px;
+  height: calc(100vh - 80px) !important;
+  overflow: auto;
   background-color: #fafafa;
+  /* padding-top: 10px;
+  padding-bottom: 20px; */
+}
+
+#menu h2 {
+  font-size: 1.1em;
+  margin: 30px 0 20px 0;
+  font-weight: normal;
 }
 
 ul {
@@ -90,7 +90,6 @@ li {
   text-overflow: ellipsis;
   padding: 4px 20px 0px 20px;
 }
-
 
 li:hover {
   background-color: #FBE6C5;
@@ -134,6 +133,8 @@ li.active {
 /* VIEW */
 
 #view {
+  height: 100vh !important;
+  overflow: auto;
   flex-grow: 1;
   flex-shrink: 1;
   scroll-padding: 15vh;
@@ -141,6 +142,9 @@ li.active {
 
 #view-header {
   flex-grow: 1;
+  font-size: 1.3em;
+  margin: 30px 0 20px 0;
+  font-weight: normal;
 }
 
 .clipping {
