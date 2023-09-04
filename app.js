@@ -575,7 +575,7 @@ class App {
   }
 
   loadNextContent(event) {
-    const checkScroll = (event.currentTarget.scrollTop >= event.currentTarget.scrollHeight - window.innerHeight);
+    const checkScroll = (event.currentTarget.scrollTop >= event.currentTarget.scrollHeight - window.innerHeight - 100);
     if (checkScroll) {
       this.renderViewContent(this.view.content, {append: true})
     }
