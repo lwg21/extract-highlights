@@ -38,12 +38,13 @@ header {
   height: 80px;
   padding-left: 20px;
   padding-right: 40px;
-  background-color: #145C9E;
+  background-color: #cacaca;
 }
 
 h1 {
-  font-size: 1.4em;
-  color: white;
+  font-size: 1.3em;
+  color: #303030;
+  text-align: center;
   margin: 0;
 }
 
@@ -217,6 +218,7 @@ button {
 
 #drop-instructions * {
   color: #707070;
+  text-align: center;
   transition: ease-out;
   animation: pulse 3s infinite;
 }
