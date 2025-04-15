@@ -1,9 +1,7 @@
 class App {
   constructor() {
     // Confirm whether app.js is connected
-    document.addEventListener("DOMContentLoaded", () => {
-      console.log("app.js connected")
-    });
+    document.addEventListener("DOMContentLoaded", () => console.log("app.js connected"));
     this.initializeSettings();
     this.initializeData();
     this.initializeUI();
@@ -1248,4 +1246,4 @@ class App {
   }
 }
 
-const app = new App
+window.app = new App
